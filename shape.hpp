@@ -29,6 +29,7 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
+#include <math.h> //pow, sqrt
 
 /**
  * \class Shape
@@ -73,17 +74,17 @@ public:
   std::vector< T > boundingBox( int k, int m, T w, T u, T f );
   
   /**
-   * \fn bool intersectionShape( Shape& shape, T pointIntersection )
+   * \fn bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
    *
    * \brief This method check if the shape intersect the region delimited
    * by vertices and return the point of intersection.
    *
    * \param shape - Shape analyzed
-   *        pointIntersection - Position (x, y) that intersect the shape
+   *        pointIntersection - List of positions (x, y) that intersect the shape
    *
    * \return True if shape intersect and false otherwise.
    */
-  bool intersectionShape( Shape& shape, T pointIntersection );  
+  bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );    
   
 private:
   //
@@ -117,6 +118,22 @@ private:
    * \return Return the final pixel on the both axis of level k to build MMF.
    */
   T getSize( int k, int m, T w, T u );
+
+  /**
+   * \fn bool distance( T verticeA, T verticeB, T point )
+   *
+   * \brief Calculates an equation of the line and computes the value of distance
+   * between the point and the line.
+   *
+   * \param verticeA - First vertice to build the line
+   *        verticeB - Second vertice to build the line
+   *        point - Point to be analyzed
+   *
+   * \return Return true if distance is bigger or equal to zero, in other words,
+   * the point is up or on the right of the line and false otherwise ( left side ) 
+   */
+  bool distance( T verticeA, T verticeB, T point );
+  
   
   //
   // Attributes
@@ -163,8 +180,25 @@ Shape::boundingBox( int k, int m, T w, T u, T f ){
  *
  * \return True if shape intersect and false otherwise.
  */
-bool intersectionShape( Shape& shape, T pointIntersection ){
-  
+/*
+
+  v0, v1
+  v1, v2
+  v2, v3
+  ...
+  vi, vi+1
+  ...
+  if ( vi == vn-1 )
+  vn-1, v0
+
+ */
+bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
+  for ( int i = 0; i < shape->vertices.size(); i++ ){ // Percorrer todos os vértices do shape
+    for ( int j = 0; j < vertices.size(); j++ ){ // Percorrer os vértices da estrutura atual 
+      
+    }
+  }
+    
 }
   
 
@@ -213,3 +247,27 @@ Shape::getSize( int k, int m, T w, T u ){
 #endif
   return T( sx, sy );
 }
+
+/**
+ * \fn bool distance( T verticeA, T verticeB, T point )
+ *
+ * \brief Calculates an equation of the line and computes the value of distance
+ * between the point and the line.
+ *
+ * \param verticeA - First vertice to build the line
+ *        verticeB - Second vertice to build the line
+ *        point - Point to be analyzed
+ *
+ * \return Return true if distance is bigger or equal to zero, in other words,
+ * the point is up or on the right of the line and false otherwise ( left side ) 
+ */
+bool 
+Shape::distance( T verticeA, T verticeB, T point ){
+  float a = verticeA.y - verticeB.y;
+  float b = verticeB.x - verticeA.x;
+  float c = (verticeA.x * verticeB.y) - (verticeB.x * verticeA.y);
+  float dist = ( a * point.x + b * point.y + c ) / ( sqrt ( pow( a, 2.0 ) + pow( b, 2.0 ) ) ); 
+  if ( dist >= 0.0 ) return true;
+  return false;
+}
+
