@@ -30,6 +30,10 @@
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
 #include <math.h> //pow, sqrt
+#ifdef _OPENMP
+#include <omp.h> //#pragma omp parallel for
+#endif
+
 
 /**
  * \class Shape
@@ -74,9 +78,9 @@ public:
   std::vector< T > boundingBox( int k, int m, T w, T u, T f );
   
   /**
-   * \fn bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
+   * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
    *
-   * \brief This method check if the shape intersect the region delimited
+   * \brief This method checks if the shape intersect the region delimited
    * by vertices and return the point of intersection.
    *
    * \param shape - Shape analyzed
@@ -84,7 +88,7 @@ public:
    *
    * \return True if shape intersect and false otherwise.
    */
-  bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );    
+  virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );    
   
 private:
   //
@@ -120,19 +124,19 @@ private:
   T getSize( int k, int m, T w, T u );
 
   /**
-   * \fn bool distance( T verticeA, T verticeB, T point )
+   * \fn bool distance( T vertexA, T vertexB, T point )
    *
    * \brief Calculates an equation of the line and computes the value of distance
    * between the point and the line.
    *
-   * \param verticeA - First vertice to build the line
-   *        verticeB - Second vertice to build the line
+   * \param vertexA - First vertex to build the line
+   *        vertexB - Second vertex to build the line
    *        point - Point to be analyzed
    *
    * \return Return true if distance is bigger or equal to zero, in other words,
    * the point is up or on the right of the line and false otherwise ( left side ) 
    */
-  bool distance( T verticeA, T verticeB, T point );
+  bool distance( T vertexA, T vertexB, T point );
   
   
   //
@@ -170,9 +174,9 @@ Shape::boundingBox( int k, int m, T w, T u, T f ){
 }
 
 /**
- * \fn bool intersectionShape( Shape& shape, T pointIntersection )
+ * \fn virtual bool intersectionShape( Shape& shape, T pointIntersection )
  *
- * \brief This method check if the shape intersect the region delimited
+ * \brief This method checks if the shape intersect the region delimited
  * by vertices and return the point of intersection.
  *
  * \param shape - Shape analyzed
@@ -180,27 +184,32 @@ Shape::boundingBox( int k, int m, T w, T u, T f ){
  *
  * \return True if shape intersect and false otherwise.
  */
-/*
-
-  v0, v1
-  v1, v2
-  v2, v3
-  ...
-  vi, vi+1
-  ...
-  if ( vi == vn-1 )
-  vn-1, v0
-
- */
-bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
-  for ( int i = 0; i < shape->vertices.size(); i++ ){ // Percorrer todos os vértices do shape
-    for ( int j = 0; j < vertices.size(); j++ ){ // Percorrer os vértices da estrutura atual 
+virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
+  T vertexShape, vertexA, vertexB;
+  bool insideStruct;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+  for ( int i = 0; i < shape->vertices.size(); i++ ){ // Shape vertices iterator
+    vertexShape = shape->vertices[i];
+    insideStruct = true;
+    for ( int j = 0; (( j < vertices.size() ) && ( insideStruct != false )); j++ ){ // Current shape vertices iterator
+      vertexA = vertices[j];
+      vertexB = vertices[0];
+      // Only the last vertex is not updated
+      if ( j < vertices.size() - 1 )
+	vertexB = vertices[j+1];
+      
+      if ( distance( vertexA, vertexB, vertexShape ) == false )
+	insideStruct &= false;
       
     }
+    // Insert point of intersection between shapes
+    if ( insideStruct == true )
+      pointIntersection.push_back( vertexShape );
   }
     
 }
-  
 
 
 /**
@@ -249,23 +258,23 @@ Shape::getSize( int k, int m, T w, T u ){
 }
 
 /**
- * \fn bool distance( T verticeA, T verticeB, T point )
+ * \fn bool distance( T vertexA, T vertexB, T point )
  *
  * \brief Calculates an equation of the line and computes the value of distance
  * between the point and the line.
  *
- * \param verticeA - First vertice to build the line
- *        verticeB - Second vertice to build the line
+ * \param vertexA - First vertex to build the line
+ *        vertexB - Second vertex to build the line
  *        point - Point to be analyzed
  *
  * \return Return true if distance is bigger or equal to zero, in other words,
  * the point is up or on the right of the line and false otherwise ( left side ) 
  */
 bool 
-Shape::distance( T verticeA, T verticeB, T point ){
-  float a = verticeA.y - verticeB.y;
-  float b = verticeB.x - verticeA.x;
-  float c = (verticeA.x * verticeB.y) - (verticeB.x * verticeA.y);
+Shape::distance( T vertexA, T vertexB, T point ){
+  float a = vertexA.y - vertexB.y;
+  float b = vertexB.x - vertexA.x;
+  float c = (vertexA.x * vertexB.y) - (vertexB.x * vertexA.y);
   float dist = ( a * point.x + b * point.y + c ) / ( sqrt ( pow( a, 2.0 ) + pow( b, 2.0 ) ) ); 
   if ( dist >= 0.0 ) return true;
   return false;
