@@ -28,6 +28,9 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
+#ifdef _OPENMP
+#include <omp.h> //#pragma omp parallel for
+#endif
 
 /**
  * \class Rectangle
@@ -57,6 +60,19 @@ public:
   // It's necessary to make an overwrite in the function testIntersection
   // because this class implement a classic approach of fovea model
   //
+
+  /**
+   * \fn bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
+   *
+   * \brief This method checks if the shape intersect the region delimited
+   * by vertices and return the point of intersection.
+   *
+   * \param shape - Shape analyzed
+   *        pointIntersection - List of positions (x, y) that intersect the shape
+   *
+   * \return True if shape intersect and false otherwise.
+   */
+  bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );
   
 };
 
@@ -74,5 +90,32 @@ public:
  */
 void 
 Rectangle::defVertices( int m, T w, T u, T f ){
-  vertices = boundingBox( int k, int m, T w, T u, T f );
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+  for ( int k = 0; k < m; k++ )
+    vertices = boundingBox( k, m, w, u, f );
+  
+  // Saving parameters of fovea
+  _m = m;
+  _w = w;
+  _u = u;
+  _f = f;
+
+}
+
+/**
+ * \fn bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
+ *
+ * \brief This method checks if the shape intersect the region delimited
+ * by vertices and return the point of intersection.
+ *
+ * \param shape - Shape analyzed
+ *        pointIntersection - List of positions (x, y) that intersect the shape
+ *
+ * \return True if shape intersect and false otherwise.
+ */
+bool 
+Rectangle::intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
+  
 }
