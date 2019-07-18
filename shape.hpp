@@ -34,12 +34,18 @@
 #include <omp.h> //#pragma omp parallel for
 #endif
 
+/**
+ * \defgroup ProjectFovea Project Fovea
+ * @{
+ */
 
 /**
  * \class Shape
  *
  * \brief This class implements the Shape TAD to represent structure
  * of fovea with generic type.
+ *
+ * \tparam T - Generic representation for type cv::Point
  */
 Template < typename T > // cv::Point
 class Shape {
@@ -54,9 +60,9 @@ public:
    * This method initialize all vertices of the shape.
    *
    * \param m - Number levels of fovea
-   *        w - Size of levels
-   *        u - Size of image
-   *        f - Position (x, y) to build the fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
    */
   virtual void defVertices( int m, T w, T u, T f ) = 0;
   
@@ -67,10 +73,10 @@ public:
    * the region where will be created the shape.
    *
    * \param k - Level of fovea
-   *        m - Number levels of fovea
-   *        w - Size of levels
-   *        u - Size of image
-   *        f - Position (x, y) to build the fovea
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
    *
    * \return Vector containing 2 positions with tuple 
    * information the limits of rectangular region ( delta and size ).
@@ -84,7 +90,7 @@ public:
    * by vertices and return the point of intersection.
    *
    * \param shape - Shape analyzed
-   *        pointIntersection - List of positions (x, y) that intersect the shape
+   * \param pointIntersection - List of positions (x, y) that intersect the shape
    *
    * \return True if shape intersect and false otherwise.
    */
@@ -100,10 +106,10 @@ private:
    * \brief Calculates the initial pixel to build MMF.
    *
    * \param k - Level of fovea
-   *        m - Number levels of fovea
-   *        w - Size of levels
-   *        u - Size of image
-   *        f - Position (x, y) to build the fovea
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
    *
    * \return Return the initial pixel on the both axis of level k to build MMF.
    */
@@ -115,9 +121,9 @@ private:
    * \brief Calculates the final pixel to build MMF.
    *
    * \param k - Level of fovea
-   *        m - Number levels of fovea
-   *        w - Size of levels
-   *        u - Size of image
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
    *
    * \return Return the final pixel on the both axis of level k to build MMF.
    */
@@ -130,8 +136,8 @@ private:
    * between the point and the line.
    *
    * \param vertexA - First vertex to build the line
-   *        vertexB - Second vertex to build the line
-   *        point - Point to be analyzed
+   * \param vertexB - Second vertex to build the line
+   * \param point - Point to be analyzed
    *
    * \return Return true if distance is bigger or equal to zero, in other words,
    * the point is up or on the right of the line and false otherwise ( left side ) 
@@ -142,11 +148,11 @@ private:
   //
   // Attributes
   //
-  std::vector< T > vertices; // vertices of shape
-  int _m; // Number levels of fovea
-  T _w; // Size of levels
-  T _u; // Size of image
-  T _f; // Position (x, y) to build the fovea
+  std::vector< T > vertices; ///< vertices of shape
+  int _m; ///< Number levels of fovea
+  T _w; ///< Size of levels
+  T _u; ///< Size of image
+  T _f; ///< Position (x, y) to build the fovea
 
 };
 
@@ -159,32 +165,32 @@ private:
  * the region where will be created the shape.
  *
  * \param k - Level of fovea
- *        m - Number levels of fovea
- *        w - Size of levels
- *        u - Size of image
- *        f - Position (x, y) to build the fovea
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
  *
  * \return Vector containing 2 positions with tuple 
  * information the limits of rectangular region ( delta and size ).
  */
 std::vector< T > 
 Shape::boundingBox( int k, int m, T w, T u, T f ){
-  T delta = getDelta( k, m, w, u, f );
-  T size = getSize( k, m, w, u );
-  std::vector< T > _boundingBox;
+  T delta = getDelta( k, m, w, u, f ); ///< Delta is the upper left corner of bounding box
+  T size = getSize( k, m, w, u ); ///< Size is the dimension between Delta and bottom right corner of bounding box
+  std::vector< T > _boundingBox;  ///< Tuple vector containing delta and size
   _boundingBox.push_back( delta );
   _boundingBox.push_back( size );
   return _boundingBox;
 }
 
 /**
- * \fn virtual bool intersectionShape( Shape& shape, T pointIntersection )
+ * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
  *
  * \brief This method checks if the shape intersect the region delimited
  * by vertices and return the point of intersection.
  *
  * \param shape - Shape analyzed
- *        pointIntersection - Position (x, y) that intersect the shape
+ * \param pointIntersection - Position (x, y) that intersect the shape
  *
  * \return True if shape intersect and false otherwise.
  */
@@ -222,10 +228,10 @@ virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersectio
  * \brief Calculates the initial pixel to build MMF.
  *
  * \param k - Level of fovea
- *        m - Number levels of fovea
- *        w - Size of levels
- *        u - Size of image
- *        f - Position (x, y) to build the fovea
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
  *
  * \return Return the initial pixel on the both axis of level k to build MMF.
  */
@@ -245,9 +251,9 @@ Shape::getDelta( int k, int m, T w, T u, T f ){
  * \brief Calculates the final pixel to build MMF.
  *
  * \param k - Level of fovea
- *        m - Number levels of fovea
- *        w - Size of levels
- *        u - Size of image
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
  *
  * \return Return the final pixel on the both axis of level k to build MMF.
  */
@@ -268,8 +274,8 @@ Shape::getSize( int k, int m, T w, T u ){
  * between the point and the line.
  *
  * \param vertexA - First vertex to build the line
- *        vertexB - Second vertex to build the line
- *        point - Point to be analyzed
+ * \param vertexB - Second vertex to build the line
+ * \param point - Point to be analyzed
  *
  * \return Return true if distance is bigger or equal to zero, in other words,
  * the point is up or on the right of the line and false otherwise ( left side ) 
@@ -284,3 +290,4 @@ Shape::distance( T vertexA, T vertexB, T point ){
   return false;
 }
 
+/** @} */ //end of group class.

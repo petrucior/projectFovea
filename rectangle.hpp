@@ -33,10 +33,17 @@
 #endif
 
 /**
+ * \defgroup ProjectFovea Project Fovea
+ * @{
+ */
+
+/**
  * \class Rectangle
  *
  * \brief This class implements the Shape TAD to represent structure
  * of fovea.
+ *
+ * \tparam T - Generic representation for type cv::Point
  */
 Template < typename T > // cv::Point 
 class Rectangle : public Shape {
@@ -50,9 +57,9 @@ public:
    * \brief Pure virtual method caracterize this class like abstract.
    * This method initialize all vertices of the shape.
    * \param m - Number levels of fovea
-   *        w - Size of levels
-   *        u - Size of image
-   *        f - Position (x, y) to build the fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
    */
   void defVertices( int m, T w, T u, T f );
 
@@ -68,7 +75,7 @@ public:
    * by vertices and return the point of intersection.
    *
    * \param shape - Shape analyzed
-   *        pointIntersection - List of positions (x, y) that intersect the shape
+   * \param pointIntersection - List of positions (x, y) that intersect the shape
    *
    * \return True if shape intersect and false otherwise.
    */
@@ -84,9 +91,9 @@ public:
  * \brief Pure virtual method caracterize this class like abstract.
  * This method initialize all vertices of the shape.
  * \param m - Number levels of fovea
- *        w - Size of levels
- *        u - Size of image
- *        f - Position (x, y) to build the fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
  */
 void 
 Rectangle::defVertices( int m, T w, T u, T f ){
@@ -111,7 +118,7 @@ Rectangle::defVertices( int m, T w, T u, T f ){
  * by vertices and return the point of intersection.
  *
  * \param shape - Shape analyzed
- *        pointIntersection - List of positions (x, y) that intersect the shape
+ * \param pointIntersection - List of positions (x, y) that intersect the shape
  *
  * \return True if shape intersect and false otherwise.
  */
@@ -119,3 +126,5 @@ bool
 Rectangle::intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
   
 }
+
+/** @} */ //end of group class.
