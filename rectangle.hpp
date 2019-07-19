@@ -79,7 +79,7 @@ public:
    *
    * \return True if shape intersect and false otherwise.
    */
-  bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );
+  //bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );
   
 };
 
@@ -102,13 +102,6 @@ Rectangle::defVertices( int m, T w, T u, T f ){
 #endif
   for ( int k = 0; k < m; k++ )
     vertices = boundingBox( k, m, w, u, f );
-  
-  // Saving parameters of fovea
-  _m = m;
-  _w = w;
-  _u = u;
-  _f = f;
-
 }
 
 /**
@@ -122,9 +115,9 @@ Rectangle::defVertices( int m, T w, T u, T f ){
  *
  * \return True if shape intersect and false otherwise.
  */
-bool 
+/*bool 
 Rectangle::intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
-  
-}
+  // To do
+}*/
 
 /** @} */ //end of group class.

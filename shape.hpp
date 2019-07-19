@@ -149,10 +149,10 @@ private:
   // Attributes
   //
   std::vector< T > vertices; ///< vertices of shape
-  int _m; ///< Number levels of fovea
-  T _w; ///< Size of levels
-  T _u; ///< Size of image
-  T _f; ///< Position (x, y) to build the fovea
+  //int _m; ///< Number levels of fovea
+  //T _w; ///< Size of levels
+  //T _u; ///< Size of image
+  //T _f; ///< Position (x, y) to build the fovea
 
 };
 
