@@ -30,9 +30,37 @@
 
 #include <iostream> //std::cout, std::endl
 
-template< typename T >
+/**
+ * \defgroup ProjectFovea Project Fovea
+ * @{
+ */
+
+/**
+ * \class Fovea
+ *
+ * \brief This class implements the Fovea TAD with generic type
+ *
+ * \tparam T - Generic representation for type cv::Point
+ */
+template< typename T > // cv::Point
 class Fovea{
+public:
+  //
+  // Methods
+  //
+  
+
+private:
+  //
+  // Attributes
+  //
+  int m; ///< Number levels of fovea
+  T w; ///< Size of levels
+  T u; ///< Size of image
+  T f; ///< Position (x, y) to build the fovea
   
 }
 
 #endif
+
+/** @} */ //end of group class.

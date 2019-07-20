@@ -45,7 +45,7 @@
  *
  * \tparam T - Generic representation for type cv::Point
  */
-Template < typename T > // cv::Point 
+template < typename T > // cv::Point 
 class Rectangle : public Shape {
 public:
   //
