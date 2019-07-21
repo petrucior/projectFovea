@@ -48,7 +48,12 @@ public:
   //
   // Methods
   //
-  
+  /**
+   * \fn Fovea( )
+   *
+   * \brief Constructor default of fovea class
+   */
+  Fovea();
 
 private:
   //
