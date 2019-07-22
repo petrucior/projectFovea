@@ -612,6 +612,7 @@ WARN_LOGFILE           = errors.log
 
 INPUT                  = ../shape.hpp \
                          ../rectangle.hpp \
+			 ../level.hpp \
 			 ../fovea.hpp
 
 # This tag can be used to specify the character encoding of the source files
