@@ -54,34 +54,16 @@ public:
   // Methods
   //
   /**
-   * \fn virtual void defVertices( int m, T w, T u, T f ) = 0
+   * \fn virtual void defVertices( std::vector< T > boundingBox ) = 0
    *
    * \brief Pure virtual method caracterize this class like abstract.
    * This method initialize all vertices of the shape.
    *
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
+   * \param boundingBox - Vector containing 2 positions with tuple
+   * information the limits of rectangular region ( delta and size ) 
+   * to create the fovea.
    */
-  virtual void defVertices( int m, T w, T u, T f ) = 0;
-  
-  /**
-   * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )
-   *
-   * \brief This method return the bounding box delimiting
-   * the region where will be created the shape.
-   *
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
-   *
-   * \return Vector containing 2 positions with tuple 
-   * information the limits of rectangular region ( delta and size ).
-   */
-  std::vector< T > boundingBox( int k, int m, T w, T u, T f );
+  virtual void defVertices( std::vector< T > boundingbox ) = 0;
   
   /**
    * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
@@ -100,34 +82,6 @@ private:
   //
   // Methods
   //
-  /**
-   * \fn T getDelta( int k, int m, T w, T u, T f )
-   *
-   * \brief Calculates the initial pixel to build MMF.
-   *
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
-   *
-   * \return Return the initial pixel on the both axis of level k to build MMF.
-   */
-  T getDelta( int k, int m, T w, T u, T f );
-
-  /**
-   * \fn T getSize( int k, int m, T w, T u )
-   *
-   * \brief Calculates the final pixel to build MMF.
-   *
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   *
-   * \return Return the final pixel on the both axis of level k to build MMF.
-   */
-  T getSize( int k, int m, T w, T u );
 
   /**
    * \fn bool distance( T vertexA, T vertexB, T point )
@@ -153,31 +107,6 @@ private:
 };
 
 #endif
-
-/**
- * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )
- *
- * \brief This method return the bounding box delimiting
- * the region where will be created the shape.
- *
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- * \param f - Position (x, y) to build the fovea
- *
- * \return Vector containing 2 positions with tuple 
- * information the limits of rectangular region ( delta and size ).
- */
-std::vector< T > 
-Shape::boundingBox( int k, int m, T w, T u, T f ){
-  T delta = getDelta( k, m, w, u, f ); ///< Delta is the upper left corner of bounding box
-  T size = getSize( k, m, w, u ); ///< Size is the dimension between Delta and bottom right corner of bounding box
-  std::vector< T > _boundingBox;  ///< Tuple vector containing delta and size
-  _boundingBox.push_back( delta );
-  _boundingBox.push_back( size );
-  return _boundingBox;
-}
 
 /**
  * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
@@ -215,52 +144,6 @@ virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersectio
       pointIntersection.push_back( vertexShape );
   }
     
-}
-
-
-/**
- * \fn T getDelta( int k, int m, T w, T u, T f )
- *
- * \brief Calculates the initial pixel to build MMF.
- *
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- * \param f - Position (x, y) to build the fovea
- *
- * \return Return the initial pixel on the both axis of level k to build MMF.
- */
-T 
-Shape::getDelta( int k, int m, T w, T u, T f ){
-  int dx = int( k * ( u.x - w.x + ( 2 * f.x ) ) )/ ( 2 * m );
-  int dy = int( k * ( u.y - w.y + ( 2 * f.y ) ) )/ ( 2 * m );
-#ifdef DEBUG
-  std::cout << "Delta: ( " << dx << ", " << dy << " ) " << std::endl;  
-#endif
-  return T( dx, dy );
-}
-
-/**
- * \fn T getSize( int k, int m, T w, T u )
- *
- * \brief Calculates the final pixel to build MMF.
- *
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- *
- * \return Return the final pixel on the both axis of level k to build MMF.
- */
-T 
-Shape::getSize( int k, int m, T w, T u ){
-  int sx = ((m * u.x) + (w.x * k) - (k * u.x)) / m;
-  int sy = ((m * u.y) + (w.y * k) - (k * u.y)) / m;
-#ifdef DEBUG
-  std::cout << "Size: ( " << sx << ", " << sy << " ) " << std::endl;  
-#endif
-  return T( sx, sy );
 }
 
 /**

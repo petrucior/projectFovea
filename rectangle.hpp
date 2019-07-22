@@ -27,6 +27,7 @@
 #define RECTANGLE_HPP
 
 #include <iostream> //std::cout, std::endl
+#include "shape.hpp" //Shape
 #include <vector> //std::vector
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
@@ -52,17 +53,24 @@ public:
   // Methods
   //
   /**
-   * \fn void defVertices( int m, T w, T u, T f )
+   * \fn Rectangle()
+   *
+   * \brief Constructor default
+   */
+  Rectangle();
+  
+  /**
+   * \fn void defVertices( std::vector< T > boundingBox )
    *
    * \brief Pure virtual method caracterize this class like abstract.
    * This method initialize all vertices of the shape.
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
+   *
+   * \param boundingBox - Vector containing 2 positions with tuple
+   * information the limits of rectangular region ( delta and size )
+   * to create the fovea.
    */
-  void defVertices( int m, T w, T u, T f );
-
+  void defVertices( std::vector< T > boundingbox );
+  
   //
   // It's necessary to make an overwrite in the function testIntersection
   // because this class implement a classic approach of fovea model
@@ -81,27 +89,40 @@ public:
    */
   //bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );
   
+private:
+  //
+  // Attributes
+  //
+  T delta;
+  T size;
+
 };
 
 #endif
 
 /**
- * \fn void defVertices( int m, T w, T u, T f )
+ * \fn Rectangle()
+ *
+ * \brief Constructor default
+ */
+Rectangle:: Rectangle(){
+  // No need to implement!
+}
+  
+
+/**
+ * \fn void defVertices( std::vector< T > boundingBox )
  *
  * \brief Pure virtual method caracterize this class like abstract.
  * This method initialize all vertices of the shape.
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- * \param f - Position (x, y) to build the fovea
+ *
+ * \param boundingBox - Vector containing 2 positions with tuple
+ * information the limits of rectangular region ( delta and size )
+ * to create the fovea.
  */
-void 
-Rectangle::defVertices( int m, T w, T u, T f ){
-#ifdef _OPENMP
-#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
-#endif
-  for ( int k = 0; k < m; k++ )
-    vertices = boundingBox( k, m, w, u, f );
+void defVertices( std::vector< T > boundingbox ){
+  this->delta = boundingBox[0];
+  this->size = boundingBox[1];
 }
 
 /**

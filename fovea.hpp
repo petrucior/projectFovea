@@ -29,6 +29,11 @@
 #define FOVEA_HPP
 
 #include <iostream> //std::cout, std::endl
+#include <vector> //std::vector
+#include "level.hpp" //std::vector< Level >
+#ifdef _OPENMP
+#include <omp.h> //#pragma omp parallel for
+#endif
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -49,23 +54,52 @@ public:
   // Methods
   //
   /**
-   * \fn Fovea( )
+   * \fn Fovea(int m, T w, T u, T f)
    *
    * \brief Constructor default of fovea class
+   *
+   * \param k - Level of fovea
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
    */
-  Fovea();
+  Fovea(int m, T w, T u, T f);
 
 private:
   //
   // Attributes
   //
+  std::vector< Level > levels; ///< List of levels
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
   T f; ///< Position (x, y) to build the fovea
   
+};
+
+/**
+ * \fn Fovea(int m, T w, T u, T f);
+ *
+ * \brief Constructor default of fovea class
+ *
+ * \param k - Level of fovea
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ */
+Fovea::Fovea(int m, T w, T u, T f){
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+  for ( int k = 0; k < m; k++ ){
+    Level l = new Level( k, m, w, u, f );
+    // ...
+  }
 }
 
+
 #endif
+
+
 
 /** @} */ //end of group class.
