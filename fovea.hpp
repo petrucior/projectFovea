@@ -56,7 +56,8 @@ public:
   /**
    * \fn Fovea(int m, T w, T u, T f)
    *
-   * \brief Constructor default of fovea class
+   * \brief Constructor default of fovea class. THis method was 
+   * built 
    *
    * \param k - Level of fovea
    * \param m - Number levels of fovea
@@ -67,6 +68,21 @@ public:
 
 private:
   //
+  // Methods
+  //
+  /**
+   * \fn void checkParameters( int m, T w, T u, T f )
+   *
+   * \brief This method check the parameters to build a fovea
+   *
+   * \param k - Level of fovea
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   */
+  void checkParameters( int m, T w, T u, T f );
+  
+  //
   // Attributes
   //
   std::vector< Level > levels; ///< List of levels
@@ -76,6 +92,9 @@ private:
   T f; ///< Position (x, y) to build the fovea
   
 };
+
+#endif
+
 
 /**
  * \fn Fovea(int m, T w, T u, T f);
@@ -88,18 +107,36 @@ private:
  * \param u - Size of image
  */
 Fovea::Fovea(int m, T w, T u, T f){
+  checkParameters( m, w, u, f );
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
   for ( int k = 0; k < m; k++ ){
     Level l = new Level( k, m, w, u, f );
-    // ...
+    levels.push_back( l );
   }
 }
 
-
-#endif
-
+/**
+ * \fn void checkParameters( int m, T w, T u, T f )
+ *
+ * \brief This method check the parameters to build a fovea
+ *
+ * \param k - Level of fovea
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ */
+void 
+Fovea::checkParameters( int m, T w, T u, T f ){
+  // Verify if there is the minimun one level
+  assert( m >= 1 );
+  // Verify if w is bigger than zero and lower than image size
+  assert( ( w.x > 0 ) && ( w.x < u.x ) );
+  assert( ( w.y > 0 ) && ( w.y < u.y ) );
+  // Verify if u is bigger than zero
+  assert( ( u.x > 0 ) && ( u.y > 0 ) );
+}
 
 
 /** @} */ //end of group class.
