@@ -107,7 +107,7 @@ private:
  * \param u - Size of image
  */
 Fovea::Fovea(int m, T w, T u, T f){
-  checkParameters( m, w, u, f );
+  this->checkParameters( m, w, u, f );
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
