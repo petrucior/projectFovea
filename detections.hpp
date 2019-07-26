@@ -1,5 +1,5 @@
 /**
- * \file detections.h
+ * \file detections.hpp
  * 
  * \brief This file contains the prototype and implementation of strategies
  * to move the foveae.
@@ -8,23 +8,15 @@
  * Petrucio Ricardo Tavares de Medeiros \n
  * Universidade Federal do Rio Grande do Norte \n 
  * Departamento de Computacao e Automacao Industrial \n
- * petrucior at gmail (dot) com
+ * petrucior at ufrn (dot) edu (dot) br
  *
  * \version 0.1
  * \date February 2019
  *
- * \copyright
- * Copyright (C) 2016, Petrúcio Ricardo <petrucior@gmail.com>
- * If you use this software for academic purposes, consider citing the related
- * paper: Rafael Beserra Gomes, Bruno Motta de Carvalho, Luiz Marcos Garcia
- * Gonçalves, Visual attention guided features selection with foveated images,
- * Neurocomputing, Volume 120, 23 November 2013, Pages 34-44, ISSN 0925-2312, 
- * http://dx.doi.org/10.1016/j.neucom.2012.10.033.
- *
  * This file is part of foveatedFeatures software.
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
+ * Foundation, either version 2 of the License, or (at your option) any later
  * version. This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -35,18 +27,27 @@
 #ifndef DETECTIONS_H
 #define DETECTIONS_H
 
-#include <stdlib.h>
-#include <iostream>
-#include <vector>
-#include "statistics.h"
+#include <iostream> // std::cout, std::endl
+#include <vector> // std::vector
+#include "statistics.h" //Statistics
 
 /**
- * \struct Detections
- *
- * \brief Struct of strategies to control the foveae.
+ * \defgroup ProjectFovea Project Fovea
+ * @{
  */
-struct Detections {
-  
+
+/**
+ * \class Detections
+ *
+ * \brief This class implements the Detections TAD to control
+ * the foveae with generic type.
+ *
+ * \tparam T - Generic representation for type cv::Point
+ */
+
+template < typename T > // cv::Point
+class Shape {
+public:
   //
   // Variables
   //
@@ -56,7 +57,7 @@ struct Detections {
   //
 
   /**
-   * \fn cv::Point lastPosition( cv::Point lastPosition )
+   * \fn T lastPosition( T lastPosition )
    *
    * \brief Detection strategy that holds the last position. 
    *
@@ -64,10 +65,10 @@ struct Detections {
    *
    * \return Point estimated through last position
    */
-  cv::Point lastPosition( cv::Point lastPosition );
+  T lastPosition( T lastPosition );
 
   /**
-   * \fn cv::Point nFrames( std::vector< cv::Point > samples )
+   * \fn T nFrames( std::vector< T > samples )
    *
    * \brief Detection strategy that holds the n last frames using MLE, but 
    * is possible to use kalman filter. 
@@ -76,7 +77,7 @@ struct Detections {
    *
    * \return Point estimated through n last position
    */
-  cv::Point nFrames( std::vector< cv::Point > samples );
+  T nFrames( std::vector< T > samples );
 
   /**
    * \fn void disableFovea( bool &fovea )
@@ -99,7 +100,7 @@ struct Detections {
   void increaseGrowthFactor( int &wx, int &wy, float multiplier );
 
   /**
-   * \fn cv::Point saliencyMap( cv::Mat img )
+   * \fn T saliencyMap( cv::Mat img )
    *
    * \brief Detection strategy that use saliency map to control
    * foveae. 
@@ -108,14 +109,14 @@ struct Detections {
    *
    * \return Point estimated through saliency map
    */
-  cv::Point saliencyMap( cv::Mat img );
+  T saliencyMap( cv::Mat img );
   
 };
 
 #endif
 
 /**
- * \fn cv::Point lastPosition( cv::Point lastPosition )
+ * \fn T lastPosition( T lastPosition )
  *
  * \brief Detection strategy that holds the last position. 
  *
@@ -123,13 +124,13 @@ struct Detections {
  *
  * \return Point estimated through last position
  */
-cv::Point
-Detections::lastPosition( cv::Point lastPosition ){
+T
+Detections::lastPosition( T lastPosition ){
   return lastPosition;
 }
 
 /**
- * \fn cv::Point nFrames( std::vector< cv::Point > samples )
+ * \fn T nFrames( std::vector< T > samples )
  *
  * \brief Detection strategy that holds the n last frames using MLE, but 
  * is possible to use kalman filter.
@@ -138,8 +139,8 @@ Detections::lastPosition( cv::Point lastPosition ){
  *
  * \return Point estimated through n last position
  */
-cv::Point
-Detections::nFrames( std::vector< cv::Point > samples ){
+T
+Detections::nFrames( std::vector< T > samples ){
   Statistics statistic = new Statistics();
   return statistic.maximumLikelihoodEstimator( samples );
 }
@@ -173,7 +174,7 @@ Detections::increaseGrowthFactor( int &wx, int &wy, float multiplier ){
 }
 
 /**
- * \fn cv::Point saliencyMap( cv::Mat img )
+ * \fn T saliencyMap( cv::Mat img )
  *
  * \brief Detection strategy that use saliency map to control
  * foveae. 
@@ -182,7 +183,7 @@ Detections::increaseGrowthFactor( int &wx, int &wy, float multiplier ){
  *
  * \return Point estimated through saliency map
  */
-cv::Point
+T
 Detections::saliencyMap( cv::Mat img ){
   cv::Mat saliencyMap;
   Ptr<Saliency> saliencyAlgorithm = Saliency::create("SPECTRAL_RESIDUAL");
@@ -190,7 +191,7 @@ Detections::saliencyMap( cv::Mat img ){
   // SaliencyMap contém o mapa de saliência da imagem passada como argumento
   // a questão é detectar em qual parte do mapa de saliência se encontra o
   // ponto de maior saliência da imagem
-  return cv::Point(0, 0);
+  return T(0, 0);
 }
 
-
+/** @} */ //end of group class.

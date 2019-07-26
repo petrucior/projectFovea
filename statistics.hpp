@@ -1,5 +1,5 @@
 /**
- * \file statistics.h
+ * \file statistics.hpp
  * 
  * \brief This file contains the prototype and implementation of probability
  * calculations and statistics.
@@ -8,23 +8,15 @@
  * Petrucio Ricardo Tavares de Medeiros \n
  * Universidade Federal do Rio Grande do Norte \n 
  * Departamento de Computacao e Automacao Industrial \n
- * petrucior at gmail (dot) com
+ * petrucior at ufrn (dot) edu (dot) br
  *
  * \version 0.1
  * \date January 2019
  *
- * \copyright
- * Copyright (C) 2016, Petrúcio Ricardo <petrucior@gmail.com>
- * If you use this software for academic purposes, consider citing the related
- * paper: Rafael Beserra Gomes, Bruno Motta de Carvalho, Luiz Marcos Garcia
- * Gonçalves, Visual attention guided features selection with foveated images,
- * Neurocomputing, Volume 120, 23 November 2013, Pages 34-44, ISSN 0925-2312, 
- * http://dx.doi.org/10.1016/j.neucom.2012.10.033.
- *
- * This file is part of foveatedFeatures software.
+ * This file is part of projectFovea software.
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
+ * Foundation, either version 2 of the License, or (at your option) any later
  * version. This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -35,17 +27,25 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
-#include <stdlib.h>
-#include <iostream>
-#include <vector>
+#include <iostream> //std::cout, std::endl
+#include <vector> //std::vector
 
 /**
- * \struct Statistics
- *
- * \brief Struct for calculate statistics.
+ * \defgroup ProjectFovea Project Fovea
+ * @{
  */
-struct Statistics {
 
+/**
+ * \class Statistics
+ *
+ * \brief This class implements the Statistics TAD for calculate 
+ * statistics of fovea with generic type.
+ *
+ * \tparam T - Generic representation for type cv::Point
+ */
+template < typename T > // cv::Point
+class Statistics{
+public:  
   //
   // Variables
   //
@@ -53,7 +53,7 @@ struct Statistics {
   //
   // Methods
   //
-
+  
   /**
    * \fn float proportion( int inliers, int outliers )
    *
@@ -108,8 +108,8 @@ struct Statistics {
   void localGradient( float referencePotential, std::vector<float> potentials, int configuration );
 
   /**
-   * \fn cv::Point intersectionLocalGradient( std::vector< cv::Point > positionPotentialVectorA, 
-   *                                     std::vector< cv::Point > positionPotentialVectorB )
+   * \fn T intersectionLocalGradient( std::vector< T > positionPotentialVectorA, 
+   *                                  std::vector< T > positionPotentialVectorB )
    *
    * \brief Computes the intersection of local gradients.
    *
@@ -118,11 +118,11 @@ struct Statistics {
    *
    * \return Point (x, y) that intersect the local gradients.
    */
-  cv::Point intersectionLocalGradient( std::vector< cv::Point > positionPotentialVectorA,
-				       std::vector< cv::Point > positionPotentialVectorB );
+  T intersectionLocalGradient( std::vector< T > positionPotentialVectorA,
+			       std::vector< T > positionPotentialVectorB );
 
   /**
-   * \fn cv::Point maximumLikelihoodEstimator( std::vector< cv::Point > samples )
+   * \fn T maximumLikelihoodEstimator( std::vector< T > samples )
    *
    * \brief Calculate the Maximum Likelihood Estimator (MLE)
    *
@@ -130,10 +130,10 @@ struct Statistics {
    *
    * \return Point estimated through MLE
    */
-  cv::Point maximumLikelihoodEstimator( std::vector< cv::Point > samples );
-
+  T maximumLikelihoodEstimator( std::vector< T > samples );
+  
   /**
-   * \fn cv::Point trilaterationEstimator( std::vector< cv::Point > foveae, std::vector< float > inverseDetectionRate )
+   * \fn T trilaterationEstimator( std::vector< T > foveae, std::vector< float > inverseDetectionRate )
    *
    * \brief Calculate the trilateration Estimator
    *
@@ -142,7 +142,7 @@ struct Statistics {
    *
    * \return Point estimated through trilateration
    */
-  cv::Point trilaterationEstimator( std::vector< cv::Point > foveae, std::vector< float > inverseDetectionRate );
+  T trilaterationEstimator( std::vector< T > foveae, std::vector< float > inverseDetectionRate );
 
   
 };
@@ -228,8 +228,8 @@ Statistics::localGradient( float referencePotential, std::vector<float> potentia
 }
 
 /**
- * \fn cv::Point intersectionLocalGradient( std::vector< cv::Point > positionPotentialVectorA, 
- *                                     std::vector< cv::Point > positionPotentialVectorB )
+ * \fn T intersectionLocalGradient( std::vector< T > positionPotentialVectorA, 
+ *                                  std::vector< T > positionPotentialVectorB )
  *
  * \brief Computes the intersection of local gradients.
  *
@@ -238,9 +238,9 @@ Statistics::localGradient( float referencePotential, std::vector<float> potentia
  *
  * \return Point (x, y) that intersect the local gradients.
  */
-cv::Point
-Statistics::intersectionLocalGradient( std::vector< cv::Point > positionPotentialVectorA,
-				       std::vector< cv::Point > positionPotentialVectorB ){
+T
+Statistics::intersectionLocalGradient( std::vector< T > positionPotentialVectorA,
+				       std::vector< T > positionPotentialVectorB ){
   // Points
   int xa = positionPotentialVectorA[0].x; int ya = positionPotentialVectorA[0].y;
   int xb = positionPotentialVectorA[1].x; int yb = positionPotentialVectorA[1].y;
@@ -248,11 +248,11 @@ Statistics::intersectionLocalGradient( std::vector< cv::Point > positionPotentia
   int xd = positionPotentialVectorB[1].x; int yd = positionPotentialVectorB[1].y;
   float x = ( (xb - ya)*((-(yd - yc)*xc) + ((xd - yc)*yc)) - (xd - yc)*((-(yb - ya)*xa) + ((xb - ya)*ya)) ) / ( ((xd - xc)*(yb - ya)) - ((xb - ya)*(yd - yc)) );
   float y = ( ( ((yd - yc)*x) - ((yd - yc)*xc) + ((xd - yc)*yc) )/(xd - yc) );
-  return cv::Point(x, y);
+  return T(x, y);
 }
 
 /**
- * \fn cv::Point maximumLikelihoodEstimator( std::vector< cv::Point > samples )
+ * \fn T maximumLikelihoodEstimator( std::vector< T > samples )
  *
  * \brief Calculate the Maximum Likelihood Estimator (MLE)
  *
@@ -260,8 +260,8 @@ Statistics::intersectionLocalGradient( std::vector< cv::Point > positionPotentia
  *
  * \return Point estimated through MLE
  */
-cv::Point
-Statistics::maximumLikelihoodEstimator( std::vector< cv::Point > samples ){
+T
+Statistics::maximumLikelihoodEstimator( std::vector< T > samples ){
   float x = 0.0; float y = 0.0;
   for (int i = 0; i < samples.size(); i++){
     x += samples[i].x;
@@ -269,11 +269,11 @@ Statistics::maximumLikelihoodEstimator( std::vector< cv::Point > samples ){
   }
   x /= samples.size();
   y /= samples.size();
-  return cv::Point(x, y);
+  return T(x, y);
 }
   
 /**
- * \fn cv::Point trilaterationEstimator( std::vector< cv::Point > foveae, std::vector< float > inverseDetectionRate )
+ * \fn T trilaterationEstimator( std::vector< T > foveae, std::vector< float > inverseDetectionRate )
  *
  * \brief Calculate the trilateration Estimator
  *
@@ -282,8 +282,8 @@ Statistics::maximumLikelihoodEstimator( std::vector< cv::Point > samples ){
  *
  * \return Point estimated through trilateration
  */
-cv::Point
-Statistics::trilaterationEstimator( std::vector< cv::Point > foveae, std::vector< float > inverseDetectionRate ){
+T
+Statistics::trilaterationEstimator( std::vector< T > foveae, std::vector< float > inverseDetectionRate ){
   // Points
   int x1 = foveae[0].x; int y1 = foveae[0].y;
   int x2 = foveae[1].x; int y2 = foveae[1].y;
@@ -304,5 +304,7 @@ Statistics::trilaterationEstimator( std::vector< cv::Point > foveae, std::vector
   float x = ((c * e) - (b * f)) / d;
   float y = ((a * f) - (c * d)) / d;
 
-  return cv::Point(x, y);
+  return T(x, y);
 }
+
+/** @} */ //end of group class.
