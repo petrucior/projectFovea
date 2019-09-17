@@ -48,25 +48,68 @@
  * \tparam T - Generic representation for type cv::Point
  */
 template < typename T > // cv::Point
-class Shape {
+class Shape {  
+protected:  
+  //
+  // Attributes
+  //
+  std::vector< T > vertices; ///< vertices of shape ( clockwise )
+
 public:
   //
   // Methods
   //
   /**
-   * \fn virtual void defVertices( std::vector< T > boundingBox ) = 0
+   * \fn Shape( std::vector< T > boundingBox )
    *
-   * \brief Pure virtual method caracterize this class like abstract.
+   * \brief Constructor default.
    * This method initialize all vertices of the shape.
    *
    * \param boundingBox - Vector containing 2 positions with tuple
    * information the limits of rectangular region ( delta and size ) 
-   * to create the fovea.
+   * to create the fovea
+   * Format: [ (delta.x, delta.y), (size.x, delta.y), (size.x, size.y), (delta.x, size.y)]
    */
-  virtual void defVertices( std::vector< T > boundingbox ) = 0;
-  
+  Shape( std::vector< T > boundingBox ); //{ this->vertices = boundingBox; }
+
   /**
-   * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
+   * \fn ~Shape()
+   *
+   * \brief Destructor default
+   */
+  ~Shape(); //{ std::vector< T >().swap( this->vertices ); } // Free the memory
+
+  /**
+   * \fn void updateVertices( std::vector< T > shapeVertices )
+   *
+   * \brief Update vertices of shape class.
+   *
+   * \param shapeVertices - all vertices to be updated.
+   */
+  void updateVertices( std::vector< T > shapeVertices );
+
+  /**
+   * \fn virtual void printVertices() = 0
+   *
+   * \brief Pure virtual method caracterize this class like abstract.
+   * This method print all vertices of the shape.
+   */
+  virtual void printVertices() = 0;
+
+  /**
+   * \fn virtual bool intersectionShape( T point )
+   *
+   * \brief This method checks if the shape is intersected by point.
+   *
+   * \param point - Point (x, y) analyzed
+   *
+   * \return True if shape is intersected and false otherwise.
+   */
+  virtual bool intersectionShape( T  point );
+  
+
+  /**
+   * \fn virtual bool intersectionShape( const Shape< T >& shape, std::vector< T >& pointIntersection )
    *
    * \brief This method checks if the shape intersect the region delimited
    * by vertices and return the point of intersection.
@@ -76,13 +119,12 @@ public:
    *
    * \return True if shape intersect and false otherwise.
    */
-  virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection );    
+  virtual bool intersectionShape( const Shape< T >& shape, std::vector< T >& pointIntersection );    
   
-private:
+  //private:
   //
   // Methods
   //
-
   /**
    * \fn bool distance( T vertexA, T vertexB, T point )
    *
@@ -98,18 +140,84 @@ private:
    */
   bool distance( T vertexA, T vertexB, T point );
   
-  
-  //
-  // Attributes
-  //
-  std::vector< T > vertices; ///< vertices of shape
-
 };
 
 #endif
 
 /**
- * \fn virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection )
+ * \fn Shape( std::vector< T > boundingBox )
+ *
+ * \brief Constructor default.
+ * This method initialize all vertices of the shape (clockwise).
+ *
+ * \param boundingBox - Vector containing 2 positions with tuple
+ * information the limits of rectangular region ( delta and size ) 
+ * to create the fovea
+ * Format: [ (delta.x, delta.y), (size.x, delta.y), (size.x, size.y), (delta.x, size.y)]
+ */
+template <typename T>
+Shape< T >::Shape( std::vector< T > boundingBox ){
+  this->vertices = boundingBox;
+}
+
+/**
+ * \fn ~Shape()
+ *
+ * \brief Destructor default
+ */
+template <typename T>
+Shape< T >::~Shape(){
+  std::vector< T >().swap( this->vertices ); // Free the memory
+}
+
+/**
+ * \fn void updateVertices( std::vector< T > shapeVertices )
+ *
+ * \brief Update vertices of shape class.
+ *
+ * \param shapeVertices - all vertices to be updated.
+ */
+template <typename T>
+void 
+Shape< T >::updateVertices( std::vector< T > shapeVertices ){
+  this->vertices = shapeVertices;
+  //for ( int i = 0; i < shapeVertices.size(); i++ )
+  //  std::cout <<  shapeVertices[i].x << ", " << shapeVertices[i].y << std::endl;
+}
+
+/**
+ * \fn virtual bool intersectionShape( T point )
+ *
+ * \brief This method checks if the shape is intersected by point.
+ *
+ * \param point - Point (x, y) analyzed
+ *
+ * \return True if shape is intersected and false otherwise.
+ */
+template <typename T>
+bool
+Shape< T >::intersectionShape( T  point ){
+  T vertexA, vertexB;
+  bool insideStruct = true;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+  for ( int i = 0; (( i < this->vertices.size() ) && ( insideStruct != false )); i++ ){ // Shape vertices iterator
+    vertexA = this->vertices[i];
+    vertexB = this->vertices[0];
+    // Only the last vertex is not updated
+    if ( i < this->vertices.size() - 1 )
+      vertexB = this->vertices[i+1];
+    
+    if ( distance( vertexA, vertexB, point ) == false )
+      insideStruct = false;
+  }
+  return insideStruct;
+  
+}
+
+/**
+ * \fn virtual bool intersectionShape( const Shape< T >& shape, std::vector< T >& pointIntersection )
  *
  * \brief This method checks if the shape intersect the region delimited
  * by vertices and return the point of intersection.
@@ -119,21 +227,23 @@ private:
  *
  * \return True if shape intersect and false otherwise.
  */
-virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersection ){
+template < typename T >
+bool 
+Shape< T >::intersectionShape( const Shape< T >& shape, std::vector< T >& pointIntersection ){
   T vertexShape, vertexA, vertexB;
   bool insideStruct;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
-  for ( int i = 0; i < shape->vertices.size(); i++ ){ // Shape vertices iterator
-    vertexShape = shape->vertices[i];
+  for ( int i = 0; i < shape.vertices.size(); i++ ){ // Shape vertices iterator
+    vertexShape = shape.vertices[i];
     insideStruct = true;
-    for ( int j = 0; (( j < vertices.size() ) && ( insideStruct != false )); j++ ){ // Current shape vertices iterator
-      vertexA = vertices[j];
-      vertexB = vertices[0];
+    for ( int j = 0; (( j < this->vertices.size() ) && ( insideStruct != false )); j++ ){ // Current shape vertices iterator
+      vertexA = this->vertices[j];
+      vertexB = this->vertices[0];
       // Only the last vertex is not updated
-      if ( j < vertices.size() - 1 )
-	vertexB = vertices[j+1];
+      if ( j < this->vertices.size() - 1 )
+	vertexB = this->vertices[j+1];
       
       if ( distance( vertexA, vertexB, vertexShape ) == false )
 	insideStruct &= false;
@@ -142,8 +252,10 @@ virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersectio
     // Insert point of intersection between shapes
     if ( insideStruct == true )
       pointIntersection.push_back( vertexShape );
-  }
     
+  }
+  if ( pointIntersection.size() > 0 ) return true;
+  else return false;
 }
 
 /**
@@ -152,15 +264,16 @@ virtual bool intersectionShape( Shape& shape, std::vector< T >& pointIntersectio
  * \brief Calculates an equation of the line and computes the value of distance
  * between the point and the line.
  *
- * \param vertexA - First vertex to build the line
- * \param vertexB - Second vertex to build the line
+ * \param vertexA - First vertex to build the line ( clockwise )
+ * \param vertexB - Second vertex to build the line ( clockwise )
  * \param point - Point to be analyzed
  *
  * \return Return true if distance is bigger or equal to zero, in other words,
  * the point is up or on the right of the line and false otherwise ( left side ) 
  */
+template <typename T>
 bool 
-Shape::distance( T vertexA, T vertexB, T point ){
+Shape< T >::distance( T vertexA, T vertexB, T point ){
   float a = vertexA.y - vertexB.y;
   float b = vertexB.x - vertexA.x;
   float c = (vertexA.x * vertexB.y) - (vertexB.x * vertexA.y);
@@ -168,5 +281,6 @@ Shape::distance( T vertexA, T vertexB, T point ){
   if ( dist >= 0.0 ) return true;
   return false;
 }
+
 
 /** @} */ //end of group class.

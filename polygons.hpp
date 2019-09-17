@@ -1,7 +1,7 @@
 /**
- * \file rectangle.hpp
+ * \file polygons.hpp
  *
- * \brief This file contains the prototype of shape rectangle of classic approach.
+ * \brief This file contains the prototype of shape polygons.
  *
  * \author 
  * Petrucio Ricardo Tavares de Medeiros \n
@@ -10,7 +10,7 @@
  * petrucior at gmail (dot) com
  *
  * \version 0.1
- * \date June 2019
+ * \date September 2019
  *
  * This file is part of projectFovea software.
  * This program is free software: you can redistribute it and/or modify it under
@@ -23,15 +23,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RECTANGLE_HPP
-#define RECTANGLE_HPP
+#ifndef POLYGONS_HPP
+#define POLYGONS_HPP
 
 #include <iostream> //std::cout, std::endl
 #include "shape.hpp" //Shape
 #include <vector> //std::vector
+#include <math.h> //cos, sin
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
+
+#define PI 3.1415 ///< Defining value to PI
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -39,7 +42,7 @@
  */
 
 /**
- * \class Rectangle
+ * \class Polygons
  *
  * \brief This class implements the Shape TAD to represent structure
  * of fovea.
@@ -47,13 +50,13 @@
  * \tparam T - Generic representation for type cv::Point
  */
 template < typename T > // cv::Point 
-class Rectangle : public Shape< T > {
+class Polygons : public Shape< T > {
 public:
   //
   // Methods
-  //
+  //  
   /**
-   * \fn Rectangle( std::vector< T > boundingBox )
+   * \fn Polygons( std::vector< T > boundingBox, int nVertices )
    *
    * \brief Constructor default.
    * This method initialize all vertices of the shape.
@@ -61,83 +64,66 @@ public:
    * \param boundingBox - Vector containing 2 positions with tuple
    * information the limits of rectangular region ( delta and size )
    * to create the fovea
+   *        nVertices - Number of vertices
    */
-  Rectangle( std::vector< T > boundingBox );
+  Polygons( std::vector< T > boundingBox, int nVertices );
   
   /**
-   * \fn ~Rectangle()
+   * \fn ~Polygons()
    *
    * \brief Destructor default
    */
-  ~Rectangle();
+  ~Polygons();
   
   /**
-   * \fn virtual void printVertices()
+   * \fn void printVertices()
    *
    * \brief Pure virtual method caracterize this class like abstract.
    * This method print all vertices of the shape.
    */
   void printVertices();
-  
-  //
-  // It's necessary to make an overwrite in the function testIntersection
-  // because this class implement a classic approach of fovea model
-  //
-
-  /**
-   * \fn bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection )
-   *
-   * \brief This method checks if the shape intersect the region delimited
-   * by vertices and return the point of intersection.
-   *
-   * \param shape - Shape analyzed
-   * \param pointIntersection - List of positions (x, y) that intersect the shape
-   *
-   * \return True if shape intersect and false otherwise.
-   */
-  //bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection );
-  
-private:
-  //
-  // Attributes
-  //
-  T delta;
-  T size;
-
+    
 };
 
 #endif
 
 /**
- * \fn Rectangle( std::vector< T > boundingBox )
+ * \fn Polygons( std::vector< T > boundingBox, int nVertices )
  *
  * \brief Constructor default.
  * This method initialize all vertices of the shape.
  *
  * \param boundingBox - Vector containing 2 positions with tuple
  * information the limits of rectangular region ( delta and size )
- * to create the fovea.
- * Format: [ (delta.x, delta.y), (size.x, delta.y), (size.x, size.y), (delta.x, size.y)]
+ * to create the fovea
+ *        nVertices - Number of vertices
  */
-template <typename T>
-Rectangle< T >::Rectangle( std::vector< T > boundingBox ) : Shape< T >( boundingBox ){
-  delta = boundingBox[0];
-  size = boundingBox[1];
+template< typename T >
+Polygons< T >:: Polygons( std::vector< T > boundingBox, int nVertices ) : Shape< T >( boundingBox ){
+  T delta = boundingBox[0];
+  T size = boundingBox[1];
   std::vector< T > v;
-  v.push_back( T( delta.x, delta.y) );
-  v.push_back( T( size.x, delta.y) );
-  v.push_back( T( size.x, size.y) );
-  v.push_back( T( delta.x, size.y) );
+  for ( int i = 0; i < nVertices; i++ ){
+    float angle = 2*PI*i/nVertices;
+    //v.push_back( T((int)cos(angle), (int)sin(angle)) );
+    // Coordenada x = ( Sx * (m + 1) + 2Dx )/2, onde m = cos(angle)
+    // Coordenada y = ( Sy * (n + 3) + 2Dy )/2, onde n = sin(angle)
+    // Using conversion between dimensions -1 to 1 (model) to delta and size (image)
+    int m = (int)cos(angle); int n = (int)sin(angle);
+    float x_axis = (size.x + (m + 1) + 2*( delta.x ))/2;
+    float y_axis = (size.y + (n + 3) + 2*( delta.y ))/2;
+    v.push_back( T( x_axis, y_axis ) );
+  }
   this->updateVertices( v );
 }
 
 /**
- * \fn ~Rectangle()
+ * \fn ~Polygons()
  *
  * \brief Destructor default
  */
-template <typename T>
-Rectangle< T >::~Rectangle(){
+template< typename T >
+Polygons< T >::~Polygons(){
   std::vector< T >().swap( this->vertices ); // Free the memory
 }
 
@@ -147,27 +133,11 @@ Rectangle< T >::~Rectangle(){
  * \brief Pure virtual method caracterize this class like abstract.
  * This method print all vertices of the shape.
  */
-template <typename T>
+template< typename T >
 void 
-Rectangle< T >::printVertices(){
-  std::cout << "delta: " << delta << ", size: " << size << std::endl;
+Polygons< T >::printVertices(){
+  for ( int i = 0; i < this->vertices.size(); i++ )
+    std::cout << "(x, y) = (" << this->vertices[i].x << ", " << this->vertices[i].y << ")" << std::endl;
 }
-
-/**
- * \fn bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection )
- *
- * \brief This method checks if the shape intersect the region delimited
- * by vertices and return the point of intersection.
- *
- * \param shape - Shape analyzed
- * \param pointIntersection - List of positions (x, y) that intersect the shape
- *
- * \return True if shape intersect and false otherwise.
- */
-/*bool 
-Rectangle::intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection ){
-  // To do
-}*/
-
 
 /** @} */ //end of group class.

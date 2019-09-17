@@ -147,7 +147,8 @@ private:
  * \param u - Size of image
  * \param f - Position (x, y) to build the fovea
  */
-Level::Level( int k, int m, T w, T u, T f ){
+template <typename T>
+Level< T >::Level( int k, int m, T w, T u, T f ){
   indexLevel = k;
   std::vector< T > _boundingbox = this->boundingBox( k, m, w, u, f );
   shape = new Rectangle( );
@@ -164,7 +165,8 @@ Level::Level( int k, int m, T w, T u, T f ){
  * \param s - Shape pointer that contains an implementation of 
  * abstract class.
  */
-Level::Level( int k, Shape& s ){
+template <typename T>
+Level< T >::Level( int k, Shape& s ){
   indexLevel = k;
   shape = s; // Users needs to implement, for example, dynamic_cast< Rectangle > during the instantiation.
 }
@@ -185,8 +187,9 @@ Level::Level( int k, Shape& s ){
  * \return Vector containing 2 positions with tuple 
  * information the limits of rectangular region ( delta and size ).
  */
+template <typename T>
 std::vector< T > 
-Level::boundingBox( int k, int m, T w, T u, T f ){
+Level< T >::boundingBox( int k, int m, T w, T u, T f ){
   T delta = getDelta( k, m, w, u, f ); ///< Delta is the upper left corner of bounding box
   T size = getSize( k, m, w, u ); ///< Size is the dimension between Delta and bottom right corner of bounding box
   std::vector< T > _boundingBox;  ///< Tuple vector containing delta and size
@@ -208,8 +211,9 @@ Level::boundingBox( int k, int m, T w, T u, T f ){
  *
  * \return Return the initial pixel on the both axis of level k to build MMF.
  */
+template <typename T>
 T 
-Level::getDelta( int k, int m, T w, T u, T f ){
+Level< T >::getDelta( int k, int m, T w, T u, T f ){
   int dx = int( k * ( u.x - w.x + ( 2 * f.x ) ) )/ ( 2 * m );
   int dy = int( k * ( u.y - w.y + ( 2 * f.y ) ) )/ ( 2 * m );
 #ifdef DEBUG
@@ -230,8 +234,9 @@ Level::getDelta( int k, int m, T w, T u, T f ){
  *
  * \return Return the final pixel on the both axis of level k to build MMF.
  */
+template <typename T>
 T 
-Level::getSize( int k, int m, T w, T u ){
+Level< T >::getSize( int k, int m, T w, T u ){
   int sx = ((m * u.x) + (w.x * k) - (k * u.x)) / m;
   int sy = ((m * u.y) + (w.y * k) - (k * u.y)) / m;
 #ifdef DEBUG
