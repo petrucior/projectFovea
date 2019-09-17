@@ -15,10 +15,10 @@ int main(){
   r.printVertices();
   
   // Testing distance function ( It is necessary to add vertices in clockwise )
-  Point vA = Point( 0, 0 );
+  /*Point vA = Point( 0, 0 );
   Point vB = Point( 10, 0 );
   Point p = Point( 5, 5 );
-  std::cout << r.distance( vA, vB, p ) << std::endl;
+  std::cout << r.distance( vA, vB, p ) << std::endl;*/
   
   // Testing intersectionShape with point
   Point point = Point(3, 2);

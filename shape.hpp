@@ -121,7 +121,7 @@ public:
    */
   virtual bool intersectionShape( const Shape< T >& shape, std::vector< T >& pointIntersection );    
   
-  //private:
+private:
   //
   // Methods
   //
