@@ -30,8 +30,9 @@
 #include <vector> //std::vector
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-//#include "shape.hpp" //Shape
+#include "shape.hpp" //Shape
 #include "rectangle.hpp" // Shape< T >::Rectangle
+#include "polygons.hpp" // Shape< T >::Polygons
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -162,6 +163,7 @@ Level< T >::Level( int k, int m, T w, T u, T f ){
   indexLevel = k;
   std::vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
+  //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
   shape = r;
 }
 

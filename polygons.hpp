@@ -27,7 +27,7 @@
 #define POLYGONS_HPP
 
 #include <iostream> //std::cout, std::endl
-#include "shape.hpp" //Shape
+//#include "shape.hpp" //Shape
 #include <vector> //std::vector
 #include <math.h> //cos, sin
 #ifdef _OPENMP

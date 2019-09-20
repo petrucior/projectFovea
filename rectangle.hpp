@@ -27,7 +27,7 @@
 #define RECTANGLE_HPP
 
 #include <iostream> //std::cout, std::endl
-#include "shape.hpp" //Shape
+//#include "shape.hpp" //Shape
 #include <vector> //std::vector
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for

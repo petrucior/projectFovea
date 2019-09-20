@@ -76,7 +76,7 @@ testlevel: $(OBJS)
 #
 # Regra de compilação do arquivo objeto testlevel.o
 #
-testlevel.o: testlevel.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/level.hpp
+testlevel.o: testlevel.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp
 	$(CC) $(CFLAGS) testlevel.cpp -o testlevel.o
 
 #
