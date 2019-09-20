@@ -10,12 +10,12 @@ CC= g++
 #
 # A variável CFLAGS indica que opção de compilação queremos
 #
-CFLAGS= -Wall -pedantic -ansi -g -c `pkg-config --cflags --libs opencv`
+CFLAGS= -Wall -pedantic -ansi -g -c `pkg-config --cflags opencv`
 
 #
 # A variável LFLAGS indica que opção de compilação queremos
 #
-LFLAGS= -Wall -g
+LFLAGS= -Wall -g 
 
 #
 # A variável DIR indica o diretório dos arquivos de cabeçalho do projeto
@@ -30,18 +30,18 @@ INCS= -I../ -I/usr/local/include/opencv2 -I/usr/local/include
 #
 # A variável LIBS indica o caminho das bibliotecas e as bibliotecas usadas na ligação
 #
-LIBS=
+LIBS= `pkg-config --libs opencv`
 
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= testrectangle.o #testpolygons.o 
+OBJS= testlevel.o #testrectangle.o testpolygons.o testlevel.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: testrectangle #testpolygons 
+all: testlevel #testrectangle testpolygons testlevel
 
 #
 # Regra de compilação e ligação do executáveis
@@ -68,6 +68,18 @@ testpolygons.o: testpolygons.cpp $(DIR)/shape.hpp $(DIR)/polygons.hpp
 	$(CC) $(CFLAGS) testpolygons.cpp -o testpolygons.o
 
 #
+# Regra de compilação e ligação do executáveis
+# 
+testlevel: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o testlevel $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto testlevel.o
+#
+testlevel.o: testlevel.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/level.hpp
+	$(CC) $(CFLAGS) testlevel.cpp -o testlevel.o
+
+#
 # Regra que elimina arquivos intermediários
 # 
 clean:
@@ -77,5 +89,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons
+	rm -f *.o *.cpp~ testrectangular testpolygons testlevel
 

@@ -95,6 +95,15 @@ public:
    * This method print all vertices of the shape.
    */
   virtual void printVertices() = 0;
+  
+  /**
+   * \fn virtual std::vector< T > getVertices()
+   *
+   * \brief This function informs the vertices of shape
+   *
+   * \return Return the shape constructed by level
+   */
+  virtual std::vector< T > getVertices();
 
   /**
    * \fn virtual bool intersectionShape( T point )
@@ -183,6 +192,19 @@ Shape< T >::updateVertices( std::vector< T > shapeVertices ){
   this->vertices = shapeVertices;
   //for ( int i = 0; i < shapeVertices.size(); i++ )
   //  std::cout <<  shapeVertices[i].x << ", " << shapeVertices[i].y << std::endl;
+}
+
+/**
+ * \fn virtual std::vector< T > getVertices()
+ *
+ * \brief This function informs the vertices of shape
+ *
+ * \return Return the shape constructed by level
+ */
+template <typename T>
+std::vector< T > 
+Shape< T >::getVertices(){
+  return this->vertices;
 }
 
 /**

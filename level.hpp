@@ -28,7 +28,10 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
-#include "shape.hpp" //Shape
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+//#include "shape.hpp" //Shape
+#include "rectangle.hpp" // Shape< T >::Rectangle
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -63,18 +66,18 @@ public:
    * \param f - Position (x, y) to build the fovea
    */
   Level( int k, int m, T w, T u, T f );
-
+  
   /**
-   * \fn Level( int k, Shape& s )
+   * \fn cv::Mat getLevel( cv::Mat img )
    *
-   * \brief Constructor for Level class which will create 
-   * a level of type Shape.
+   * \brief Method responsable to create an image with 
+   * with level dimension
    *
-   * \param k - Level of fovea
-   * \param s - Shape pointer that contains an implementation of 
-   * abstract class.
+   * \param img - Image will be foveated
+   *
+   * \return Image that represent the level
    */
-  Level( int k, Shape& s );
+  cv::Mat getLevel( cv::Mat img );
   
   /**
    * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )
@@ -111,7 +114,7 @@ private:
    * \return Return the initial pixel on the both axis of level k to build MMF.
    */
   T getDelta( int k, int m, T w, T u, T f );
-
+  
   /**
    * \fn T getSize( int k, int m, T w, T u )
    *
@@ -125,11 +128,11 @@ private:
    * \return Return the final pixel on the both axis of level k to build MMF.
    */
   T getSize( int k, int m, T w, T u );
-
+  
   //
   // Attributes
   //
-  Shape* shape; ///< Shape of level
+  Shape< T >* shape; ///< Shape of level
   int indexLevel; ///< Index of level
 };
 
@@ -150,27 +153,31 @@ private:
 template <typename T>
 Level< T >::Level( int k, int m, T w, T u, T f ){
   indexLevel = k;
-  std::vector< T > _boundingbox = this->boundingBox( k, m, w, u, f );
-  shape = new Rectangle( );
-  shape.defVertices( _boundingbox );
+  std::vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
+  Rectangle< T > *r = new Rectangle< T >( _boundingBox );
+  shape = r;
 }
 
+
 /**
- * \fn Level( Shape& s )
+ * \fn cv::Mat getLevel( cv::Mat img )
  *
- * \brief Constructor for Level class which will create 
- * a level of type Shape.
+ * \brief Method responsable to create an image with 
+ * with level dimension
  *
- * \param k - Level of fovea
- * \param s - Shape pointer that contains an implementation of 
- * abstract class.
+ * \param img - Image will be foveated
+ *
+ * \return Image that represent the level
  */
 template <typename T>
-Level< T >::Level( int k, Shape& s ){
-  indexLevel = k;
-  shape = s; // Users needs to implement, for example, dynamic_cast< Rectangle > during the instantiation.
+cv::Mat
+Level< T >::getLevel( cv::Mat img ){
+  // It's necessary cut the image depending of vertices him
+  std::vector< T > boundingBox = shape->getVertices();
+  cv::Rect roi(boundingBox[0].x, boundingBox[0].y, boundingBox[1].x, boundingBox[1].y);
+  cv::Mat croppedImage = img( roi );
+  return croppedImage;
 }
-   
 
 /**
  * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )

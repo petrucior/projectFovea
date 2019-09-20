@@ -79,6 +79,15 @@ public:
    */
   void printVertices();
   
+  /**
+   * \fn virtual std::vector< T > getVertices()
+   *
+   * \brief This function informs the vertices of shape
+   *
+   * \return Return the shape constructed by level
+   */
+  std::vector< T > getVertices();
+  
   //
   // It's necessary to make an overwrite in the function testIntersection
   // because this class implement a classic approach of fovea model
@@ -151,6 +160,22 @@ template <typename T>
 void 
 Rectangle< T >::printVertices(){
   std::cout << "delta: " << delta << ", size: " << size << std::endl;
+}
+
+/**
+ * \fn virtual std::vector< T > getVertices()
+ *
+ * \brief This function informs the vertices of shape
+ *
+ * \return Return the shape constructed by level
+ */
+template <typename T>
+std::vector< T >
+Rectangle< T >::getVertices(){
+  std::vector< T > boundingBox;
+  boundingBox.push_back( delta );
+  boundingBox.push_back( size );
+  return boundingBox;
 }
 
 /**
