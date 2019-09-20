@@ -66,6 +66,13 @@ public:
    * \param f - Position (x, y) to build the fovea
    */
   Level( int k, int m, T w, T u, T f );
+
+  /**
+   * \fn ~Level()
+   *
+   * \brief Default destructor class
+   */
+  ~Level();
   
   /**
    * \fn cv::Mat getLevel( cv::Mat img )
@@ -158,6 +165,15 @@ Level< T >::Level( int k, int m, T w, T u, T f ){
   shape = r;
 }
 
+/**
+ * \fn ~Level()
+ *
+ * \brief Default destructor class
+ */
+template <typename T>
+Level< T >::~Level(){
+  // It does not need to be implemented
+}
 
 /**
  * \fn cv::Mat getLevel( cv::Mat img )
