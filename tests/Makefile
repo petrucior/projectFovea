@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= testlevel.o #testrectangle.o testpolygons.o testlevel.o
+OBJS= testfovea.o #testrectangle.o testpolygons.o testlevel.o testfovea.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: testlevel #testrectangle testpolygons testlevel
+all: testfovea #testrectangle testpolygons testlevel testfovea
 
 #
 # Regra de compilação e ligação do executáveis
@@ -80,6 +80,18 @@ testlevel.o: testlevel.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons
 	$(CC) $(CFLAGS) testlevel.cpp -o testlevel.o
 
 #
+# Regra de compilação e ligação do executáveis
+# 
+testfovea: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o testfovea $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto testfovea.o
+#
+testfovea.o: testfovea.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/fovea.hpp
+	$(CC) $(CFLAGS) testfovea.cpp -o testfovea.o
+
+#
 # Regra que elimina arquivos intermediários
 # 
 clean:
@@ -89,5 +101,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons testlevel
+	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea
 
