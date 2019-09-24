@@ -35,7 +35,7 @@
 //#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "level.hpp" //std::vector< Level >
-#include "foveatedLevel.hpp"
+#include "feature.hpp"
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
@@ -273,7 +273,8 @@ Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
   if ( code == MRMF ){
     std::cout << "MRMF actived" << std::endl;
     //int feature = _KAZE_;
-    FoveatedLevel< cv::Point, int > activedMRMF( img, levels, feature );
+    Feature< cv::Point, int > activedMRMF( img, levels, feature );
+    activedMRMF.show( img, levels );
   }
   if ( code == MMF ){
     std::cout << "MMF actived" << std::endl;

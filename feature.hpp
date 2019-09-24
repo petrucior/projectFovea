@@ -1,14 +1,14 @@
 /**
  * \file feature.hpp
  *
- * \brief This file contains the prototype of feature TAD, responsable to
- * define extraction and computation features in the fovea.
+ * \brief This file contains the prototype of feature extraction classic by level
+ * and changing the code feature.
  *
- * \author
+ * \author 
  * Petrucio Ricardo Tavares de Medeiros \n
- * Universidade Federal do Rio Grande do Norte \n 
+ * Universidade Federal do Rio Grande do Norte \n
  * Departamento de Computacao e Automacao Industrial \n
- * petrucior at ufrn (dot) edu (dot) br
+ * petrucior at gmail (dot) com
  *
  * \version 0.1
  * \date September 2019
@@ -29,6 +29,11 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+//#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/features2d/features2d.hpp"
+//#include "opencv2/xfeatures2d/nonfree.hpp"
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
@@ -38,29 +43,36 @@
  * @{
  */
 
+// Setting feature
+#define _ORB_ 0
+#define _KAZE_ 1
+#define _SURF_ 2
+
 /**
  * \class Feature
  *
- * \brief This class implements the Feature TAD to represent feature
- * of fovea with generic types ( feature and levels ).
+ * \brief This class implements the Feature TAD to extract and compute features.
  *
  * \tparam T - Generic representation for type cv::Point
  * \tparam K - Generic representation for type cv::ORB, cv::SURF
  */
 template < typename T, typename K > // cv::Point / cv::Ptr<ORB>, cv::Ptr<SURF>
-class Feature {  
+class Feature {
 public:
   //
   // Methods
   //
   /**
-   * \fn Feature()
+   * \fn Feature( cv::Mat img, std::vector< Level< T > > levels, int method )
    *
    * \brief Constructor default.
    *
+   * \param img - Image to be foveated
+   * \param levels - Fovea levels
+   * \param method - Feature specification configured (see settings features)
    */
-  Feature();
-  
+  Feature(cv::Mat img, std::vector< Level< T > > levels, int method );
+    
   /**
    * \fn ~Feature()
    *
@@ -69,34 +81,109 @@ public:
   ~Feature();
   
   /**
-   * \fn virtual void show() = 0;
+   * \fn void show( cv::Mat img, std::vector< Level< T > > levels )
    *
-   * \brief Pure virtual method caracterize this class like abstract.
+   * \brief Display the multiresolution structure 
+   * 
+   * \param img - Image to be foveated
+   * \param levels - Fovea levels
    */
-  virtual void show() = 0;
+  void show( cv::Mat img, std::vector< Level< T > > levels );
     
+private:
+  //
+  // Attributes
+  //
+  std::vector< std::vector< cv::KeyPoint > > keypoints; ///< Contains all keypoints of levels
+  std::vector< cv::Mat > descriptors; ///< Contains all descriptors of levels
+  std::vector< float > inliersRate; ///< Relation of inliers with position of fovea by level
+  
 };
 
 #endif
 
 /**
- * \fn Feature()
+ * \fn Feature( cv::Mat img, std::vector< Level< T > > levels, int method )
  *
  * \brief Constructor default.
+ *
+ * \param img - Image to be foveated
+ * \param levels - Fovea levels
+ * \param method - Feature specification configured (see settings features)
  */
 template <typename T, typename K>
-Feature< T, K >::Feature(){ 
-  // No need to implement this method
+Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int method ){
+  cv::Ptr<cv::FeatureDetector> detector;
+  cv::Ptr<cv::DescriptorExtractor> descriptor;
+  switch ( method ){
+  case _ORB_:
+    std::cout << "ORB feature actived" << std::endl;
+    detector = cv::ORB::create();
+    descriptor = cv::ORB::create();
+    break;
+  case _KAZE_:
+    std::cout << "KAZE feature actived" << std::endl;
+    detector = cv::KAZE::create();
+    descriptor = cv::KAZE::create();
+    break;
+    //case _SURF_:
+    //detector = cv::xfeatures2d::SURF::create(400);
+    //descriptor = cv::xfeatures2d::SURF::create(400);
+    //break;
+  default:
+    std::cout << "Feature wasn't configured" << std::endl;
+    break;
+  }
+  std::vector< cv::KeyPoint > kp;
+  cv::Mat dp, output;
+  for ( int i = 0; i < levels.size(); i++ ){
+    cv::Mat level = levels[i].getLevel( img );
+    int64 t = cv::getTickCount();
+    detector->detect ( level, kp );
+    t = cv::getTickCount() - t;
+    std::cout << "Feature extraction = " << t*1000/cv::getTickFrequency() << " ms, ";
+    t = cv::getTickCount();
+    descriptor->compute ( level, kp, dp );
+    t = cv::getTickCount() - t;
+    std::cout << " Feature description = " << t*1000/cv::getTickFrequency() << " ms" << std::endl;
+    keypoints.push_back( kp );
+    descriptors.push_back( dp );
+  }
+  std::vector< cv::KeyPoint >().swap( kp ); // free the memory
 }
-
+    
 /**
- * \fn ~FoveatedLevel()
+ * \fn ~Feature()
  *
  * \brief Destructor default
  */
 template <typename T, typename K>
 Feature< T, K >::~Feature(){
-  // No need to implement this method!
+  // free the memory
+  std::vector< std::vector< cv::KeyPoint > >().swap( keypoints );
+  std::vector< float >().swap( inliersRate );
+  std::vector< cv::Mat >().swap( descriptors );
 }
+  
+/**
+ * \fn void show( cv::Mat img, std::vector< Level< T > > levels )
+ *
+ * \brief Pure virtual method caracterize this class like abstract.
+ * 
+ * \param img - Image to be foveated
+ * \param levels - Fovea levels
+ */
+template <typename T, typename K>
+void 
+Feature< T, K >::show( cv::Mat img, std::vector< Level< T > > levels ){
+  cv::Mat output;
+  for ( int i = 0; i < levels.size(); i++ ){
+    cv::Mat level = levels[i].getLevel( img );
+    cv::drawKeypoints( level, keypoints[i], output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
+    cv::imshow( "keypoints", output);
+    cv::waitKey( 0 );
+  }
+}  
+  
 
 /** @} */ //end of group class.

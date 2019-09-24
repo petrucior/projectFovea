@@ -13,8 +13,9 @@ int main( int argc, char** argv ){
   std::cout << argv[1] << std::endl;
   Mat img = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
   //Fovea< Point > f( img, 4, Point(30, 30), Point( 0, 0 ) );
-  Fovea< Point > f( 4, Point(40, 40), Point( img.cols, img.rows ), Point( 0, 0 ) );
-  f.foveatedFeatures( img, _KAZE_, MRMF );
+  Fovea< Point > f( 4, Point(100, 100), Point( img.cols, img.rows ), Point( 0, 0 ) );
+  f.foveatedFeatures( img, _ORB_, MRMF );
+  //f.foveatedFeatures( img, _KAZE_, MRMF );
   //img = l.get( img );
   //imshow( "image", img );
   //waitKey( 0 );
