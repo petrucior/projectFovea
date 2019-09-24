@@ -88,7 +88,7 @@ testfovea: $(OBJS)
 #
 # Regra de compilação do arquivo objeto testfovea.o
 #
-testfovea.o: testfovea.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/fovea.hpp
+testfovea.o: testfovea.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/foveatedLevel.hpp $(DIR)/fovea.hpp
 	$(CC) $(CFLAGS) testfovea.cpp -o testfovea.o
 
 #

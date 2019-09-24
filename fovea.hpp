@@ -35,6 +35,7 @@
 //#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "level.hpp" //std::vector< Level >
+#include "foveatedLevel.hpp"
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
@@ -117,7 +118,7 @@ public:
 
   /**
    * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
-   * \fn bool computeAndExtractFeatures( cv::Mat img, Feature feature, int code )
+   * \fn bool computeAndExtractFeatures( cv::Mat img, Feature< T > feature, int code )
    *
    * \brief This method compute and extract features 
    * of foveated structure using MRMF or MMF.
@@ -130,8 +131,8 @@ public:
    * \return True if was done computed and extracted
    * features and False otherwise.
    */
-  bool foveatedFeatures( cv::Mat img, /*Feature feature,*/ int code );
-    
+  bool foveatedFeatures( cv::Mat img, int feature, int code );
+  
 private:
   //
   // Methods
@@ -268,30 +269,14 @@ Fovea< T >::updateFovea(int m, T w, T u, T f){
  */
 template <typename T>
 bool 
-Fovea< T >::foveatedFeatures( cv::Mat img, /*Feature feature,*/ int code ){
-  std::vector< cv::KeyPoint > kp;
-  cv::Mat dp, output;
-  cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create();
-  cv::Ptr<cv::DescriptorExtractor> descriptor = cv::ORB::create();
-  switch ( code ){
-  case MRMF:
+Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
+  if ( code == MRMF ){
     std::cout << "MRMF actived" << std::endl;
-    for ( int i = 0; i < levels.size(); i++ ){
-      cv::Mat level = levels[i].getLevel( img );
-      //cv::imshow( "level", level );
-      //cv::waitKey( 0 );
-      detector->detect ( level, kp );
-      descriptor->compute ( level, kp, dp );
-      cv::drawKeypoints( level, kp, output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
-      cv::imshow( "keypoints", output);
-      cv::waitKey( 0 );
-    }
-    break;
-  case MMF:
+    //int feature = _KAZE_;
+    FoveatedLevel< cv::Point, int > activedMRMF( img, levels, feature );
+  }
+  if ( code == MMF ){
     std::cout << "MMF actived" << std::endl;
-    break;
-  default:
-    std::cout << "Code unknown" << std::endl;
   }
   return true;
 } 

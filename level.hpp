@@ -30,6 +30,7 @@
 #include <vector> //std::vector
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 #include "shape.hpp" //Shape
 #include "rectangle.hpp" // Shape< T >::Rectangle
 #include "polygons.hpp" // Shape< T >::Polygons
@@ -142,6 +143,8 @@ private:
   //
   Shape< T >* shape; ///< Shape of level
   int indexLevel; ///< Index of level
+  T dimW; ///< Dimension of multiresolution
+  
 };
 
 #endif
@@ -161,6 +164,7 @@ private:
 template <typename T>
 Level< T >::Level( int k, int m, T w, T u, T f ){
   indexLevel = k;
+  dimW = w;
   std::vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
   //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
@@ -194,6 +198,7 @@ Level< T >::getLevel( cv::Mat img ){
   std::vector< T > boundingBox = shape->getVertices();
   cv::Rect roi(boundingBox[0].x, boundingBox[0].y, boundingBox[1].x, boundingBox[1].y);
   cv::Mat croppedImage = img( roi );
+  cv::resize(croppedImage, croppedImage, cv::Size(dimW.x, dimW.y), 0, 0, cv::INTER_AREA);
   return croppedImage;
 }
 
