@@ -177,11 +177,16 @@ template <typename T, typename K>
 void 
 Feature< T, K >::show( cv::Mat img, std::vector< Level< T > > levels ){
   cv::Mat output;
-  for ( int i = 0; i < levels.size(); i++ ){
+  /*for ( int i = 0; i < levels.size(); i++ ){
     cv::Mat level = levels[i].getLevel( img );
     cv::drawKeypoints( level, keypoints[i], output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
     cv::imshow( "keypoints", output);
     cv::waitKey( 0 );
+  }*/
+  for (int i = levels.size() - 1; i < levels.size(); i++ ){
+    cv::Mat level = levels[i].getLevel( img );
+    cv::drawKeypoints( level, keypoints[i], output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
+    cv::imshow( "keypoints", output);
   }
 }  
   

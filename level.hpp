@@ -68,14 +68,27 @@ public:
    * \param f - Position (x, y) to build the fovea
    */
   Level( int k, int m, T w, T u, T f );
-
+  
   /**
    * \fn ~Level()
    *
    * \brief Default destructor class
    */
   ~Level();
-  
+
+  /**
+   * \fn void updateLevel( int m, T w, T u, T f )
+   *
+   * \brief Default constructor for Level class which will create 
+   * a level of Rectangle shape.
+   *
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
+   */
+  void updateLevel( int m, T w, T u, T f );
+    
   /**
    * \fn cv::Mat getLevel( cv::Mat img )
    *
@@ -137,6 +150,22 @@ private:
    * \return Return the final pixel on the both axis of level k to build MMF.
    */
   T getSize( int k, int m, T w, T u );
+
+  /**
+   * \fn T mapLevel2Image( int k, int m, T w, T u, T f, T px )
+   *
+   * \brief Calculates the position of pixel on the level to image.
+   *
+   * \param k - Level of fovea
+   *        m - Number levels of fovea
+   *        w - Size of levels
+   *        u - Size of image
+   *        f - Position (x, y) of the fovea
+   *        px - Pixel (x, y) that we want to map.
+   *
+   * \return Return the position of pixel on the both axis to image.
+   */
+  T mapLevel2Image( int k, int m, T w, T u, T f, T px );
   
   //
   // Attributes
@@ -144,7 +173,6 @@ private:
   Shape< T >* shape; ///< Shape of level
   int indexLevel; ///< Index of level
   T dimW; ///< Dimension of multiresolution
-  
 };
 
 #endif
@@ -179,6 +207,25 @@ Level< T >::Level( int k, int m, T w, T u, T f ){
 template <typename T>
 Level< T >::~Level(){
   // It does not need to be implemented
+}
+
+/**
+ * \fn void updateLevel( int m, T w, T u, T f )
+ *
+ * \brief This method update the parameters of level
+ *
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
+ */
+template <typename T>
+void
+Level< T >::updateLevel( int m, T w, T u, T f ){
+  std::vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
+  Rectangle< T > *r = new Rectangle< T >( _boundingBox );
+  //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
+  shape = r;
 }
 
 /**
@@ -273,6 +320,32 @@ Level< T >::getSize( int k, int m, T w, T u ){
   std::cout << "Size: ( " << sx << ", " << sy << " ) " << std::endl;  
 #endif
   return T( sx, sy );
+}
+
+
+/**
+ * \fn T mapLevel2Image( int k, int m, T w, T u, T f, T px )
+ *
+ * \brief Calculates the position of pixel on the level to image.
+ *
+ * \param k - Level of fovea
+ *        m - Number levels of fovea
+ *        w - Size of levels
+ *        u - Size of image
+ *        f - Position (x, y) of the fovea
+ *        px - Pixel (x, y) that we want to map.
+ *
+ * \return Return the position of pixel on the both axis to image.
+ */
+template <typename T>
+T
+Level< T >::mapLevel2Image( int k, int m, T w, T u, T f, T px ){
+  int _px = ( (k * w.x) * (u.x - w.x) + (2 * k * w.x * f.x) + (2 * px.x) * ( (m * u.x) - (k * u.x) + (k * w.x) ) )/ (2 * m * w.x);
+  int _py = ( (k * w.y) * (u.y - w.y) + (2 * k * w.y * f.y) + (2 * px.y) * ( (m * u.y) - (k * u.y) + (k * w.y) ) )/ (2 * m * w.y);
+#ifdef DEBUG
+  std::cout << "Map: ( " << _px << ", " << _py << " ) " << std::endl;  
+#endif
+  return T( _px, _py );
 }
 
 

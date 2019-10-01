@@ -99,6 +99,24 @@ public:
    * \brief Destructor default of fovea class.
    */
   ~Fovea();
+
+  /**
+   * \fn inline void fixFovea() 
+   *
+   * \brief Fix the fovea position: if fovea is outsite
+   * image domain, snap it to the closest valid position 
+   * independently for each coordinate
+   */
+  inline void fixFovea();
+  
+  /**
+   * \fn void setFovea( T px )
+   *
+   * \brief Convert image points to axis fovea.
+   *
+   * \param px - Image points ( x, y ) 
+   */
+  void setFovea( T px );
   
   /**
    * \fn void updateFovea(int m, T w, T u, T f)
@@ -114,7 +132,7 @@ public:
    * \param u - Size of image
    * \param f - Position (x, y) of the fovea
    */
-  void updateFovea(int m, T w, T u, T f);
+  void updateFovea(T f);
 
   /**
    * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
@@ -222,6 +240,37 @@ Fovea< T >::~Fovea(){
 }
 
 /**
+ * \fn inline void fixFovea() 
+ *
+ * \brief Fix the fovea position: if fovea is outsite
+ * image domain, snap it to the closest valid position 
+ * independently for each coordinate
+ */
+template <typename T>
+inline void 
+Fovea< T >::fixFovea(){
+  f.x = MIN((u.x - w.x)/2, f.x);
+  f.x = MAX((w.x - u.x)/2, f.x);
+  f.y = MIN((u.y - w.y)/2, f.y);
+  f.y = MAX((w.y - u.y)/2, f.y);
+}  
+
+/**
+ * \fn inline void setFovea( T px )
+ *
+ * \brief Convert image points to axis fovea.
+ *
+ * \param px - Image points ( x, y ) 
+ */
+template <typename T>
+void
+Fovea< T >::setFovea( T px ){
+  f.x = px.x - (u.x/2);
+  f.y = px.y - (u.y/2);
+  fixFovea();
+}
+
+/**
  * \fn void updateFovea(int m, T w, T u, T f)
  *
  * \brief This method update the fovea structure
@@ -237,19 +286,19 @@ Fovea< T >::~Fovea(){
  */
 template <typename T>
 void 
-Fovea< T >::updateFovea(int m, T w, T u, T f){
-  this->checkParameters( m, w, u, f );
-  if ( levels.size() > 0 ){
+Fovea< T >::updateFovea(T f){
+  setFovea( f );
+  this->checkParameters( m, w, u, this->f );
+  /*if ( levels.size() > 0 ){
     // cleaning vector levels, but conserving the first level
     levels.erase( levels.begin() + 1, levels.end() );
     levels.shrink_to_fit();
-  }
+  }*/
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
-  for ( int k = levels.size(); k < m; k++ ){
-    Level< T > l( k, m, w, u, f );
-    levels.push_back( l );
+  for ( int k = 0; k < m; k++ ){
+    levels[k].updateLevel( m, w, u, this->f );
   }
 }
 
@@ -302,6 +351,11 @@ Fovea< T >::checkParameters( int m, T w, T u, T f ){
   assert( ( w.y > 0 ) && ( w.y < u.y ) );
   // Verify if u is bigger than zero
   assert( ( u.x > 0 ) && ( u.y > 0 ) );
+  // Keeping values
+  this->m = m;
+  this->w = w;
+  this->u = u;
+  this->f = f;
 }
 
 

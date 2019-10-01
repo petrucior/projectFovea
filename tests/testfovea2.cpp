@@ -9,11 +9,9 @@
 using namespace cv;
 
 static void on_mouse(int event, int x, int y, int flags, void *_fovea) {
-  if ( event == EVENT_MOUSEMOVE ){
-    Fovea< Point > *fovea = (Fovea< Point > *) _fovea;
-    fovea->updateFovea( Point(x, y ) );
-    //std::cout << "( " << x << ", " << y << " )" << std::endl;
-  }
+  Fovea< Point > *fovea = (Fovea< Point > *) _fovea;
+  fovea->updateFovea( Point(x, y ));
+  std::cout << "atualiza" << std::endl;
 }
 
 int main( int argc, char** argv ){
@@ -22,20 +20,12 @@ int main( int argc, char** argv ){
   std::cout << argv[1] << std::endl;
   Mat img = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
   //Fovea< Point > f( img, 4, Point(30, 30), Point( 0, 0 ) );
-  Fovea< Point > *f = new Fovea< Point >( 4, Point(60, 60), Point( img.cols, img.rows ), Point( 0, 0 ) );
+  Fovea< Point > *f = new Fovea< Point >( 4, Point(100, 100), Point( img.cols, img.rows ), Point( 0, 0 ) );
   //f.foveatedFeatures( img, _ORB_, MRMF );
-  //f->foveatedFeatures( img, _KAZE_, MRMF );
+  f->foveatedFeatures( img, _KAZE_, MRMF );
   //img = l.get( img );
-  namedWindow("image", 1);
-  while ( true ){
-    setMouseCallback( "image", on_mouse, f );
-    imshow("image", img );
-    char key = waitKey( 0 );
-    if ( key == 'q' ) break;
-    if ( key == 'u' ){
-      f->foveatedFeatures( img, _KAZE_, MRMF );
-    }
-  }
+  //imshow( "image", img );
+  //waitKey( 0 );
     
 
   return 0;
