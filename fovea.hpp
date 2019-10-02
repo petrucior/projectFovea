@@ -133,7 +133,18 @@ public:
    * \param f - Position (x, y) of the fovea
    */
   void updateFovea(T f);
-
+  
+  /**
+   * \fn cv::Mat foveatedImage( cv::Mat img )
+   *
+   * \brief This function builds the focused image.
+   *
+   * \param img - Image to be foveated
+   *
+   * \return Image foveated created by levels
+   */
+  cv::Mat foveatedImage( cv::Mat img );
+  
   /**
    * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
    * \fn bool computeAndExtractFeatures( cv::Mat img, Feature< T > feature, int code )
@@ -166,11 +177,28 @@ private:
    * \param u - Size of image
    */
   void checkParameters( int m, T w, T u, T f );
+
+  /**
+   * \fn T mapLevel2Image( int k, int m, T w, T u, T f, T px )
+   *
+   * \brief Calculates the position of pixel on the level to image.
+   *
+   * \param k - Level of fovea
+   *        m - Number levels of fovea
+   *        w - Size of levels
+   *        u - Size of image
+   *        f - Position (x, y) of the fovea
+   *        px - Pixel (x, y) that we want to map.
+   *
+   * \return Return the position of pixel on the both axis to image.
+   */
+  T mapLevel2Image( int k, int m, T w, T u, T f, T px );
   
   //
   // Attributes
   //
   std::vector< Level< T > > levels; ///< List of levels
+  Feature< T, int >* features = NULL; ///< Features
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
@@ -289,11 +317,6 @@ void
 Fovea< T >::updateFovea(T f){
   setFovea( f );
   this->checkParameters( m, w, u, this->f );
-  /*if ( levels.size() > 0 ){
-    // cleaning vector levels, but conserving the first level
-    levels.erase( levels.begin() + 1, levels.end() );
-    levels.shrink_to_fit();
-  }*/
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
@@ -301,6 +324,64 @@ Fovea< T >::updateFovea(T f){
     levels[k].updateLevel( m, w, u, this->f );
   }
 }
+
+/**
+ * \fn cv::Mat foveatedImage( cv::Mat img )
+ *
+ * \brief This function builds the focused image.
+ *
+ * \param img - Image to be foveated
+ *
+ * \return Image foveated created by levels
+ */
+template <typename T>
+cv::Mat 
+Fovea< T >::foveatedImage( cv::Mat img ){
+  cv::Mat imgFoveated = img.clone();
+  std::vector< cv::KeyPoint > kp;
+  std::vector< std::vector< cv::KeyPoint > > keypoints;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->m+1) // Schedule(static, m+1) keeps the order
+#endif
+  for ( int k = 0; k < levels.size(); k++ ){ // Levels
+    cv::Mat imgLevel = levels[k].getLevel( img );
+    if ( features != NULL ){
+      kp = features->getKeyPoints( k );
+      for ( int i = 0; i < kp.size(); i++ ){
+	cv::Point2f kpPos = mapLevel2Image( k, this->m, this->w, this->u, this->f, cv::Point2f( kp[i].pt.x, kp[i].pt.y ) );
+	kp[i].pt.x = kpPos.x;
+	kp[i].pt.y = kpPos.y;
+      }
+      keypoints.push_back( kp );
+    }
+    // Mapping levels to foveated image
+    T initial = mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ); 
+    T final = mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) );
+#ifdef DEBUG
+    std::cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << std::endl;
+    std::cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << std::endl;
+#endif
+    cv::Rect roi = cv::Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
+    if ( k < m ){ // Copying levels to foveated image
+      resize( imgLevel, imgLevel, cv::Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
+      imgLevel.copyTo( imgFoveated( roi ) );
+    }
+    else
+      imgLevel.copyTo( imgFoveated( roi ) );
+      
+    // Paint rectangle in each level
+    cv::rectangle(imgFoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), cv::Scalar(255, 255, 255));
+
+  }
+  
+  if ( keypoints.size() != 0 ){
+    for ( int i = 0; i < keypoints.size(); i++ )
+      cv::drawKeypoints( imgFoveated, keypoints[i], imgFoveated, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
+  }
+  
+  features = NULL;
+  return imgFoveated;
+}  
 
 /**
  * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
@@ -317,19 +398,21 @@ Fovea< T >::updateFovea(T f){
  * features and False otherwise.
  */
 template <typename T>
-bool 
+bool
 Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
   if ( code == MRMF ){
     std::cout << "MRMF actived" << std::endl;
     //int feature = _KAZE_;
-    Feature< cv::Point, int > activedMRMF( img, levels, feature );
-    activedMRMF.show( img, levels );
+    features = new Feature< T, int >( img, levels, feature );
+#ifdef DEBUG
+    features->show( img, levels );
+#endif
   }
   if ( code == MMF ){
     std::cout << "MMF actived" << std::endl;
   }
   return true;
-} 
+}
 
 /**
  * \fn void checkParameters( int m, T w, T u, T f )
@@ -356,6 +439,31 @@ Fovea< T >::checkParameters( int m, T w, T u, T f ){
   this->w = w;
   this->u = u;
   this->f = f;
+}
+
+/**
+ * \fn T mapLevel2Image( int k, int m, T w, T u, T f, T px )
+ *
+ * \brief Calculates the position of pixel on the level to image.
+ *
+ * \param k - Level of fovea
+ *        m - Number levels of fovea
+ *        w - Size of levels
+ *        u - Size of image
+ *        f - Position (x, y) of the fovea
+ *        px - Pixel (x, y) that we want to map.
+ *
+ * \return Return the position of pixel on the both axis to image.
+ */
+template <typename T>
+T
+Fovea< T >::mapLevel2Image( int k, int m, T w, T u, T f, T px ){
+  int _px = ( (k * w.x) * (u.x - w.x) + (2 * k * w.x * f.x) + (2 * px.x) * ( (m * u.x) - (k * u.x) + (k * w.x) ) )/ (2 * m * w.x);
+  int _py = ( (k * w.y) * (u.y - w.y) + (2 * k * w.y * f.y) + (2 * px.y) * ( (m * u.y) - (k * u.y) + (k * w.y) ) )/ (2 * m * w.y);
+#ifdef DEBUG
+  std::cout << "Map: ( " << _px << ", " << _py << " ) " << std::endl;  
+#endif
+  return T( _px, _py );
 }
 
 

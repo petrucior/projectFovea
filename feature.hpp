@@ -89,7 +89,29 @@ public:
    * \param levels - Fovea levels
    */
   void show( cv::Mat img, std::vector< Level< T > > levels );
-    
+  
+  /**
+   * \fn std::vector< cv::KeyPoint > getKeyPoints( int k );
+   *
+   * \brief This method have function to return keypoints.
+   * 
+   * \param k - Level of multiresolution that is solicited
+   *
+   * \return Return keypoints of level k requested.
+   */
+  std::vector< cv::KeyPoint > getKeyPoints( int k );
+  
+  /**
+   * \fn cv::Mat getDescriptors( int k );
+   *
+   * \brief This method have function to return descriptors.
+   * 
+   * \param k - Level of multiresolution that is solicited
+   *
+   * \return Return descriptors of level k requested.
+   */
+  cv::Mat getDescriptors( int k );
+  
 private:
   //
   // Attributes
@@ -189,6 +211,35 @@ Feature< T, K >::show( cv::Mat img, std::vector< Level< T > > levels ){
     cv::imshow( "keypoints", output);
   }
 }  
-  
+
+/**
+ * \fn std::vector< cv::KeyPoint > getKeyPoints( int k );
+ *
+ * \brief This method have function to return keypoints.
+ * 
+ * \param k - Level of multiresolution that is solicited
+ *
+ * \return Return keypoints of level k requested.
+ */
+template <typename T, typename K>
+std::vector< cv::KeyPoint > 
+Feature< T, K >::getKeyPoints( int k ){
+  return this->keypoints[k];
+}
+
+/**
+ * \fn cv::Mat getDescriptors( int k );
+ *
+ * \brief This method have function to return descriptors.
+ * 
+ * \param k - Level of multiresolution that is solicited
+ *
+ * \return Return descriptors of level k requested.
+ */
+template <typename T, typename K>
+cv::Mat
+Feature< T, K >::getDescriptors( int k ){
+  return this->descriptors[k];
+}
 
 /** @} */ //end of group class.

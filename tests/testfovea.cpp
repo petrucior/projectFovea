@@ -22,14 +22,21 @@ int main( int argc, char** argv ){
   std::cout << argv[1] << std::endl;
   Mat img = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
   //Fovea< Point > f( img, 4, Point(30, 30), Point( 0, 0 ) );
-  Fovea< Point > *f = new Fovea< Point >( 4, Point(60, 60), Point( img.cols, img.rows ), Point( 0, 0 ) );
+  // Configuration to _KAZE_
+  //Fovea< Point > *f = new Fovea< Point >( 4, Point(60, 60), Point( img.cols, img.rows ), Point( 0, 0 ) );
+  // Configuration to _ORB_
+  Fovea< Point > *f = new Fovea< Point >( 4, Point(80, 80), Point( img.cols, img.rows ), Point( 0, 0 ) );
   //f.foveatedFeatures( img, _ORB_, MRMF );
   //f->foveatedFeatures( img, _KAZE_, MRMF );
   //img = l.get( img );
   namedWindow("image", 1);
+  Mat foveated;
   while ( true ){
     setMouseCallback( "image", on_mouse, f );
-    imshow("image", img );
+    foveated = f->foveatedImage( img );
+    f->foveatedFeatures( img, _ORB_, MRMF );
+    //f->foveatedFeatures( img, _KAZE_, MRMF );
+    imshow("image", foveated );
     char key = waitKey( 0 );
     if ( key == 'q' ) break;
     if ( key == 'u' ){
