@@ -174,7 +174,7 @@ public:
   Level< T > getLevelFromFovea( int k );
 
   /**
-   * \fn std::vector< T > getMapLevel2ImageFoveaByLevel( int k )
+   * \fn std::vector< T > getMapLevel2Image( int k )
    *
    * \brief This method calculates the position of pixel on the 
    * level to image by level
@@ -183,7 +183,7 @@ public:
    *
    * \return Vector containing the boundingBox to map of level
    */
-  std::vector< T > getMapLevel2ImageFoveaByLevel( int k );
+  std::vector< T > getMapLevel2Image( int k );
   
 private:
   //
@@ -453,7 +453,7 @@ Fovea< T >::getLevelFromFovea( int k ){
 }
 
 /**
- * \fn std::vector< T > getMapLevel2ImageFoveaByLevel( int k )
+ * \fn std::vector< T > getMapLevel2Image( int k )
  *
  * \brief This method calculates the position of pixel on the 
  * level to image by level
@@ -464,7 +464,7 @@ Fovea< T >::getLevelFromFovea( int k ){
  */
 template <typename T>
 std::vector< T > 
-Fovea< T >::getMapLevel2ImageFoveaByLevel( int k ){
+Fovea< T >::getMapLevel2Image( int k ){
   std::vector< T > mapImage;
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ) );
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) ) );

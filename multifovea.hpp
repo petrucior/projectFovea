@@ -134,10 +134,7 @@ private:
   std::vector< Fovea< T >* > foveas; ///< Pointers to foveas
   // Parameters
   int m; ///< Number levels of fovea
-  T w; ///< Size of levels
-  T u; ///< Size of image
-  T f; ///< Position (x, y) to build the fovea
-  
+      
 };
 
 #endif
@@ -160,6 +157,8 @@ private:
  */
 template <typename T>
 Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mode){
+  // Keeping value of quantity levels
+  this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
   case REEXECUTION:
@@ -185,11 +184,6 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
     std::cout << "There was not configured the mode" << std::endl;
     break;
   }
-  // Keeping values
-  this->m = m;
-  this->w = w;
-  this->u = u;
-  this->f = f;
 }
 
 
@@ -211,6 +205,8 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
  */
 template <typename T>
 Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
+  // Keeping value of quantity levels
+  this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
   case REEXECUTION:
@@ -236,11 +232,6 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
     std::cout << "There was not configured the mode" << std::endl;
     break;
   }
-  // Keeping values
-  this->m = m;
-  this->w = w;
-  this->u = u;
-  this->f = f;
 }
 
 
@@ -283,7 +274,7 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
       Level< T > level = (this->foveas[focus])->getLevelFromFovea( k );
       cv::Mat imgLevel = level.getLevel( img );
       // Mapping levels to foveated image
-      std::vector< T > mapLevel2Image = (foveas[focus])->getMapLevel2ImageFoveaByLevel( k );
+      std::vector< T > mapLevel2Image = (foveas[focus])->getMapLevel2Image( k );
       T initial = mapLevel2Image[0];
       T final = mapLevel2Image[1];
 #ifdef DEBUG
