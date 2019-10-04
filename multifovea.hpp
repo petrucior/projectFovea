@@ -34,9 +34,9 @@
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
+//#include "level.hpp" //std::vector< Level >
+//#include "feature.hpp"
 #include "fovea.hpp"
-#include "level.hpp" //std::vector< Level >
-#include "feature.hpp"
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
@@ -111,6 +111,17 @@ public:
    * \brief Destructor default of multifovea class.
    */
   ~Multifovea();
+
+  /**
+   * \fn cv::Mat multifoveatedImage( cv::Mat img )
+   *
+   * \brief This function builds an image with multiples focus.
+   *
+   * \param img - Image to be multifoveated
+   *
+   * \return Image multifoveated created by multiples focus
+   */
+  cv::Mat multifoveatedImage( cv::Mat img );
   
 private:
   //
@@ -121,7 +132,12 @@ private:
   // Attributes
   //
   std::vector< Fovea< T >* > foveas; ///< Pointers to foveas
-
+  // Parameters
+  int m; ///< Number levels of fovea
+  T w; ///< Size of levels
+  T u; ///< Size of image
+  T f; ///< Position (x, y) to build the fovea
+  
 };
 
 #endif
@@ -148,6 +164,9 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
   switch ( mode ){
   case REEXECUTION:
     std::cout << "reexecution approach" << std::endl;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
     for ( int f = 0; f < fs.size(); f++ ){
       fovea = new Fovea< T >( img, m, w, fs[f] );
       foveas.push_back( fovea );
@@ -166,7 +185,11 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
     std::cout << "There was not configured the mode" << std::endl;
     break;
   }
-
+  // Keeping values
+  this->m = m;
+  this->w = w;
+  this->u = u;
+  this->f = f;
 }
 
 
@@ -192,6 +215,9 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
   switch ( mode ){
   case REEXECUTION:
     std::cout << "reexecution approach" << std::endl;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
     for ( int f = 0; f < fs.size(); f++ ){
       fovea = new Fovea< T >( m, w, u, fs[f] );
       foveas.push_back( fovea );
@@ -210,7 +236,11 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
     std::cout << "There was not configured the mode" << std::endl;
     break;
   }
-  
+  // Keeping values
+  this->m = m;
+  this->w = w;
+  this->u = u;
+  this->f = f;
 }
 
 
@@ -222,6 +252,66 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
 template <typename T>
 Multifovea< T >::~Multifovea(){
   std::vector< Fovea< T > >().swap( this->foveas ); // Free the memory
+}
+
+/**
+ * \fn cv::Mat multifoveatedImage( cv::Mat img )
+ *
+ * \brief This function builds an image with multiples focus.
+ *
+ * \param img - Image to be multifoveated
+ *
+ * \return Image multifoveated created by multiples focus
+ */
+template <typename T>
+cv::Mat 
+Multifovea< T >::multifoveatedImage( cv::Mat img ){
+  std::vector<cv::Scalar> colors;
+  srand (time(NULL)); // Initialize random seed
+  for (int i = 0; i < foveas.size(); i++){
+    int r = rand() % 256; // 0 - 255
+    int g = rand() % 256; // 0 - 255
+    int b = rand() % 256; // 0 - 255
+    colors.push_back(cv::Scalar(b, g, r));
+  }
+  cv::Mat imgMultifoveated = img.clone();
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
+#endif
+  for ( int k =  0; k < this->m; k++ ){ // Levels
+    for ( int focus = 0; focus < this->foveas.size(); focus++ ){ // foveas
+      Level< T > level = (this->foveas[focus])->getLevelFromFovea( k );
+      cv::Mat imgLevel = level.getLevel( img );
+      // Mapping levels to foveated image
+      std::vector< T > mapLevel2Image = (foveas[focus])->getMapLevel2ImageFoveaByLevel( k );
+      T initial = mapLevel2Image[0];
+      T final = mapLevel2Image[1];
+#ifdef DEBUG
+      std::cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << std::endl;
+      std::cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << std::endl;
+#endif
+      cv::Rect roi = cv::Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
+      if ( k < m ){ // Copying levels to foveated image
+	resize( imgLevel, imgLevel, cv::Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
+	imgLevel.copyTo( imgMultifoveated( roi ) );
+      }
+      else
+	imgLevel.copyTo( imgMultifoveated( roi ) );
+      
+      //
+      // Text and rectangles
+      //
+      /*
+      char buffer[50];
+      sprintf(buffer, "Fovea %d", focus);
+      putText(imgMultifoveated, buffer, T(10, (10*focus)+10), cv::FONT_HERSHEY_SIMPLEX, 0.25, colors[focus], 1, 1);
+      // Paint rectangle in each level
+      cv::rectangle(imgMultifoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), colors[focus]);
+      */
+    }
+  }
+  
+  return imgMultifoveated;
 }
 
 /** @} */ //end of group class.

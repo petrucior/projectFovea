@@ -161,6 +161,29 @@ public:
    * features and False otherwise.
    */
   bool foveatedFeatures( cv::Mat img, int feature, int code );
+
+  /**
+   * \fn Level< T > getLevelFromFovea( int k )
+   *
+   * \brief This method return levels from fovea
+   *
+   * \param k - Index for indicate which level will be returned
+   *
+   * \return Levels from fovea
+   */
+  Level< T > getLevelFromFovea( int k );
+
+  /**
+   * \fn std::vector< T > getMapLevel2ImageFoveaByLevel( int k )
+   *
+   * \brief This method calculates the position of pixel on the 
+   * level to image by level
+   *
+   * \param k - level of fovea
+   *
+   * \return Vector containing the boundingBox to map of level
+   */
+  std::vector< T > getMapLevel2ImageFoveaByLevel( int k );
   
 private:
   //
@@ -412,6 +435,40 @@ Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
     std::cout << "MMF actived" << std::endl;
   }
   return true;
+}
+
+/**
+ * \fn Level< T > getLevelFromFovea( int k )
+ *
+ * \brief This method return levels from fovea
+ *
+ * \param k - Index for indicate which level will be returned
+ *
+ * \return Levels from fovea
+ */
+template <typename T>
+Level< T > 
+Fovea< T >::getLevelFromFovea( int k ){
+  return levels[k];
+}
+
+/**
+ * \fn std::vector< T > getMapLevel2ImageFoveaByLevel( int k )
+ *
+ * \brief This method calculates the position of pixel on the 
+ * level to image by level
+ *
+ * \param k - level of fovea
+ *
+ * \return Vector containing the boundingBox to map of level
+ */
+template <typename T>
+std::vector< T > 
+Fovea< T >::getMapLevel2ImageFoveaByLevel( int k ){
+  std::vector< T > mapImage;
+  mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ) );
+  mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) ) );
+  return mapImage;
 }
 
 /**
