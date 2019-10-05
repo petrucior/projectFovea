@@ -353,8 +353,6 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
     colors.push_back(cv::Scalar(b, g, r));
   }
   cv::Mat imgMultifoveated = img.clone();
-  std::vector< std::vector< cv::KeyPoint > > kp;
-  std::vector< std::vector< cv::KeyPoint > > keypoints;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif

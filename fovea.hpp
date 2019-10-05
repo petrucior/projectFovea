@@ -40,6 +40,7 @@
 #include <omp.h> //#pragma omp parallel for
 #endif
 
+// Settings fovea
 #define MRMF 0 ///< Identify the use of MRMF method
 #define MMF 1 ///< Identify the use of MMF method
 
@@ -187,17 +188,15 @@ public:
    * \return Vector containing the boundingBox to map of level
    */
   std::vector< T > getMapLevel2Image( int k );
-  
+
   /**
-   * \fn std::vector< std::vector< cv::KeyPoint > > getFeatures( int k )
+   * \fn Feature< T, int >* getFeatures()
    *
-   * \brief This method return the pointer features
+   * \brief This method return pointer to features
    *
-   * \param k - level of fovea
-   *
-   * \return A pointer with features extracted by fovea
+   * \return Pointer from Features
    */
-  std::vector< std::vector< cv::KeyPoint > > getFeatures( int k );
+   Feature< T, int >* getFeatures();
   
 private:
   //
@@ -490,29 +489,16 @@ Fovea< T >::getMapLevel2Image( int k ){
 }
 
 /**
- * \fn std::vector< std::vector< cv::KeyPoint > > getFeatures( int k )
+ * \fn Feature< T, int >* getFeatures()
  *
- * \brief This method return the features
+ * \brief This method return pointer to features
  *
- * \param k - level of fovea
- *
- * \return Features associed the level k
+ * \return Pointer from Features
  */
 template <typename T>
-std::vector< std::vector< cv::KeyPoint > >
-Fovea< T >::getFeatures( int k ){
-  std::vector< cv::KeyPoint > kp;
-  std::vector< std::vector< cv::KeyPoint > > keypoints;
-  if ( this->features != NULL ){
-    kp = this->features->getKeyPoints( k );
-      for ( int i = 0; i < kp.size(); i++ ){
-	cv::Point2f kpPos = mapLevel2Image( k, this->m, this->w, this->u, this->f, cv::Point2f( kp[i].pt.x, kp[i].pt.y ) );
-	kp[i].pt.x = kpPos.x;
-	kp[i].pt.y = kpPos.y;
-      }
-      keypoints.push_back( kp );
-  }
-  return keypoints;
+Feature< T, int >* 
+Fovea< T >::getFeatures(){
+  return features;
 }
 
 /**
