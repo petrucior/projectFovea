@@ -33,7 +33,7 @@ int main( int argc, char** argv ){
   Mat foveated;
   while ( true ){
     setMouseCallback( "image", on_mouse, f );
-    foveated = f->foveatedImage( img );
+    foveated = f->foveatedImage( img, cv::Scalar(255, 255, 255) );
     f->foveatedFeatures( img, _ORB_, MRMF );
     //f->foveatedFeatures( img, _KAZE_, MRMF );
     imshow("image", foveated );

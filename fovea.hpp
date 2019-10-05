@@ -135,27 +135,30 @@ public:
   void updateFovea(T f);
   
   /**
-   * \fn cv::Mat foveatedImage( cv::Mat img )
+   * \fn cv::Mat foveatedImage( cv::Mat img, cv::Scalar color )
    *
    * \brief This function builds the focused image.
    *
    * \param img - Image to be foveated
+   * \param color - Color to paint levels
    *
    * \return Image foveated created by levels
    */
-  cv::Mat foveatedImage( cv::Mat img );
+  cv::Mat foveatedImage( cv::Mat img, cv::Scalar color );
   
   /**
-   * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
-   * \fn bool computeAndExtractFeatures( cv::Mat img, Feature< T > feature, int code )
+   * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
    *
    * \brief This method compute and extract features 
    * of foveated structure using MRMF or MMF.
    *
    * \param img - Image to be foveated
+   * \param feature - This feature indicates which 
+   * method feature will be choose to be extracted. 
+   * ( see feature.hpp in setting feature )
    * \param code - This code indicates which method
    * to foveation will be used. If code is zero, then
-   * MRMF is chosen, otherwise MMF.
+   * MRMF is chosen, otherwise MMF. ( see fovea.hp )
    *
    * \return True if was done computed and extracted
    * features and False otherwise.
@@ -184,6 +187,17 @@ public:
    * \return Vector containing the boundingBox to map of level
    */
   std::vector< T > getMapLevel2Image( int k );
+  
+  /**
+   * \fn std::vector< std::vector< cv::KeyPoint > > getFeatures( int k )
+   *
+   * \brief This method return the pointer features
+   *
+   * \param k - level of fovea
+   *
+   * \return A pointer with features extracted by fovea
+   */
+  std::vector< std::vector< cv::KeyPoint > > getFeatures( int k );
   
 private:
   //
@@ -349,17 +363,18 @@ Fovea< T >::updateFovea(T f){
 }
 
 /**
- * \fn cv::Mat foveatedImage( cv::Mat img )
+ * \fn cv::Mat foveatedImage( cv::Mat img, cv::Scalar color )
  *
  * \brief This function builds the focused image.
  *
  * \param img - Image to be foveated
+ * \param color - Color to paint levels
  *
  * \return Image foveated created by levels
  */
 template <typename T>
 cv::Mat 
-Fovea< T >::foveatedImage( cv::Mat img ){
+Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
   cv::Mat imgFoveated = img.clone();
   std::vector< cv::KeyPoint > kp;
   std::vector< std::vector< cv::KeyPoint > > keypoints;
@@ -393,7 +408,7 @@ Fovea< T >::foveatedImage( cv::Mat img ){
       imgLevel.copyTo( imgFoveated( roi ) );
       
     // Paint rectangle in each level
-    cv::rectangle(imgFoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), cv::Scalar(255, 255, 255));
+    cv::rectangle(imgFoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), color);
 
   }
   
@@ -407,15 +422,18 @@ Fovea< T >::foveatedImage( cv::Mat img ){
 }  
 
 /**
- * \fn bool foveatedFeatures( cv::Mat img, Feature feature, int code )
+ * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
  *
  * \brief This method compute and extract features 
  * of foveated structure using MRMF or MMF.
  *
  * \param img - Image to be foveated
+ * \param feature - This feature indicates which 
+ * method feature will be choose to be extracted. 
+ * ( see feature.hpp in setting feature )
  * \param code - This code indicates which method
  * to foveation will be used. If code is zero, then
- * MRMF is chosen, otherwise MMF.
+ * MRMF is chosen, otherwise MMF. ( see fovea.hp )
  *
  * \return True if was done computed and extracted
  * features and False otherwise.
@@ -469,6 +487,32 @@ Fovea< T >::getMapLevel2Image( int k ){
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ) );
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) ) );
   return mapImage;
+}
+
+/**
+ * \fn std::vector< std::vector< cv::KeyPoint > > getFeatures( int k )
+ *
+ * \brief This method return the features
+ *
+ * \param k - level of fovea
+ *
+ * \return Features associed the level k
+ */
+template <typename T>
+std::vector< std::vector< cv::KeyPoint > >
+Fovea< T >::getFeatures( int k ){
+  std::vector< cv::KeyPoint > kp;
+  std::vector< std::vector< cv::KeyPoint > > keypoints;
+  if ( this->features != NULL ){
+    kp = this->features->getKeyPoints( k );
+      for ( int i = 0; i < kp.size(); i++ ){
+	cv::Point2f kpPos = mapLevel2Image( k, this->m, this->w, this->u, this->f, cv::Point2f( kp[i].pt.x, kp[i].pt.y ) );
+	kp[i].pt.x = kpPos.x;
+	kp[i].pt.y = kpPos.y;
+      }
+      keypoints.push_back( kp );
+  }
+  return keypoints;
 }
 
 /**

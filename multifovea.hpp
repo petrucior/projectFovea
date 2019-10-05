@@ -113,6 +113,38 @@ public:
   ~Multifovea();
 
   /**
+   * \fn void updateMultifovea(std::vector< T > fs)
+   *
+   * \brief This method update the foveas structure
+   * and can be thought in update only what need to 
+   * be changed, in other words, the update occors
+   * only in shape of level. 
+   * It is necessary to be implemented!
+   *
+   * \param fs - Vector with positions (x, y) of the foveas
+   */
+  void updateMultifovea(std::vector< T > fs);
+
+  /**
+   * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+   *
+   * \brief This method compute and extract features
+   * of foveated structures using MRMF or MMF.
+   *
+   * \param img - Image to be foveated
+   * \param feature - This feature indicates which 
+   * method feature will be choose to be extracted. 
+   * ( see feature.hpp in setting feature )
+   * \param code - This code indicates which method
+   * to foveation will be used. If code is zero, then
+   * MRMF is chosen, otherwise MMF. ( see fovea.hp )
+   *
+   * \return True if was done computed and extracted
+   * features and False otherwise.
+   */
+  bool foveatedFeatures( cv::Mat img, int feature, int code );
+  
+  /**
    * \fn cv::Mat multifoveatedImage( cv::Mat img )
    *
    * \brief This function builds an image with multiples focus.
@@ -122,6 +154,18 @@ public:
    * \return Image multifoveated created by multiples focus
    */
   cv::Mat multifoveatedImage( cv::Mat img );
+  
+  /**
+   * \fn cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors )
+   *
+   * \brief This function builds multiples images foveated to different focus
+   *
+   * \param img - Image to be multifoveated
+   * \param colors - Colors to paint levels
+   *
+   * \return Show the extraction feature in each fovea
+   */
+  cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors );
   
 private:
   //
@@ -246,6 +290,49 @@ Multifovea< T >::~Multifovea(){
 }
 
 /**
+ * \fn void updateMultifovea(std::vector< T > fs)
+ *
+ * \brief This method update the foveas structures
+ * and can be thought in update only what need to 
+ * be changed, in other words, the update occors
+ * only in shape of level. 
+ * It is necessary to be implemented!
+ *
+ * \param fs - Vector with positions (x, y) of the foveas
+ */
+template <typename T>
+void 
+Multifovea< T >::updateMultifovea( std::vector< T > fs){
+  for ( int f = 0; f < foveas.size(); f++ )
+    (this->foveas[f])->updateFovea( fs[f] );
+}
+
+/**
+ * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+ *
+ * \brief This method compute and extract features
+ * of foveated structures using MRMF or MMF.
+ *
+ * \param img - Image to be foveated
+ * \param feature - This feature indicates which 
+ * method feature will be choose to be extracted. 
+ * ( see feature.hpp in setting feature )
+ * \param code - This code indicates which method
+ * to foveation will be used. If code is zero, then
+ * MRMF is chosen, otherwise MMF. ( see fovea.hp )
+ *
+ * \return True if was done computed and extracted
+ * features and False otherwise.
+ */
+template <typename T>
+bool
+Multifovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
+  for ( int f = 0; f < foveas.size(); f++ )
+    (this->foveas[f])->foveatedFeatures( img, feature, code );
+  return true;
+}
+
+/**
  * \fn cv::Mat multifoveatedImage( cv::Mat img )
  *
  * \brief This function builds an image with multiples focus.
@@ -266,6 +353,8 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
     colors.push_back(cv::Scalar(b, g, r));
   }
   cv::Mat imgMultifoveated = img.clone();
+  std::vector< std::vector< cv::KeyPoint > > kp;
+  std::vector< std::vector< cv::KeyPoint > > keypoints;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
@@ -289,20 +378,63 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
       else
 	imgLevel.copyTo( imgMultifoveated( roi ) );
       
-      //
-      // Text and rectangles
-      //
-      /*
-      char buffer[50];
-      sprintf(buffer, "Fovea %d", focus);
-      putText(imgMultifoveated, buffer, T(10, (10*focus)+10), cv::FONT_HERSHEY_SIMPLEX, 0.25, colors[focus], 1, 1);
       // Paint rectangle in each level
       cv::rectangle(imgMultifoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), colors[focus]);
-      */
+     
     }
   }
   
   return imgMultifoveated;
+}
+
+
+/**
+ * \fn cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors )
+ *
+ * \brief This function builds multiples images foveated to different focus
+ *
+ * \param img - Image to be multifoveated
+ * \param colors - Colors to paint levels
+ *
+ * \return Show the extraction feature in each fovea
+ * 
+ * \note This method isn't showing +4 foveas. It's necessary modify the display!
+ */
+template <typename T>
+cv::Mat 
+Multifovea< T >::multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors ){
+  /*
+    Mat a, Mat b, Mat dst // a,b loaded
+    cv::hconcat(a, b, dst) // horizontal
+    cv::vconcat(a, b, dst) // vertical
+   */
+  cv::Mat imageFoveated, output, suboutput;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
+#endif
+  for ( int focus = 0; focus < this->foveas.size(); focus++ ){
+    /*if ( focus == 0 && focus % 4 == 0 )
+      suboutput = output;
+    else{
+      if ( focus > 0 && focus % 4 == 0 )
+	cv::vconcat( suboutput, output, suboutput );
+    }*/
+    
+    imageFoveated = (foveas[focus])->foveatedImage( img, colors[focus] );
+    if ( focus % 4 == 0 )
+      output = imageFoveated;
+    else
+      cv::hconcat(output, imageFoveated, output);
+    
+    char buffer[50];
+    sprintf(buffer, "Fovea %d", focus);
+    putText(output, buffer, T(10, (10*focus)+10), cv::FONT_HERSHEY_SIMPLEX, 0.25, colors[focus], 1, 1);
+    
+  }
+  /*if ( foveas.size() > 4 ){
+    output = suboutput;
+  }*/
+  return output;
 }
 
 /** @} */ //end of group class.
