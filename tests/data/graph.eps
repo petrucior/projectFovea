@@ -1,0 +1,8163 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: data/graph.eps
+%%Creator: gnuplot 5.2 patchlevel 7
+%%CreationDate: Thu Nov  7 18:42:55 2019
+%%DocumentFonts: (atend)
+%%BoundingBox: 50 50 410 302
+%%EndComments
+%%BeginProlog
+/gnudict 256 dict def
+gnudict begin
+%
+% The following true/false flags may be edited by hand if desired.
+% The unit line width and grayscale image gamma correction may also be changed.
+%
+/Color false def
+/Blacktext false def
+/Solid false def
+/Dashlength 1 def
+/Landscape false def
+/Level1 false def
+/Level3 false def
+/Rounded false def
+/ClipToBoundingBox false def
+/SuppressPDFMark false def
+/TransparentPatterns false def
+/gnulinewidth 5.000 def
+/userlinewidth gnulinewidth def
+/Gamma 1.0 def
+/BackgroundColor {-1.000 -1.000 -1.000} def
+%
+/vshift -46 def
+/dl1 {
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
+  Rounded { currentlinewidth 0.75 mul sub dup 0 le { pop 0.01 } if } if
+} def
+/dl2 {
+  10.0 Dashlength userlinewidth gnulinewidth div mul mul mul
+  Rounded { currentlinewidth 0.75 mul add } if
+} def
+/hpt_ 31.5 def
+/vpt_ 31.5 def
+/hpt hpt_ def
+/vpt vpt_ def
+/doclip {
+  ClipToBoundingBox {
+    newpath 50 50 moveto 410 50 lineto 410 302 lineto 50 302 lineto closepath
+    clip
+  } if
+} def
+%
+% Gnuplot Prolog Version 5.2 (Dec 2017)
+%
+%/SuppressPDFMark true def
+%
+/M {moveto} bind def
+/L {lineto} bind def
+/R {rmoveto} bind def
+/V {rlineto} bind def
+/N {newpath moveto} bind def
+/Z {closepath} bind def
+/C {setrgbcolor} bind def
+/f {rlineto fill} bind def
+/g {setgray} bind def
+/Gshow {show} def   % May be redefined later in the file to support UTF-8
+/vpt2 vpt 2 mul def
+/hpt2 hpt 2 mul def
+/Lshow {currentpoint stroke M 0 vshift R 
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
+/Rshow {currentpoint stroke M dup stringwidth pop neg vshift R
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
+/Cshow {currentpoint stroke M dup stringwidth pop -2 div vshift R 
+	Blacktext {gsave 0 setgray textshow grestore} {textshow} ifelse} def
+/UP {dup vpt_ mul /vpt exch def hpt_ mul /hpt exch def
+  /hpt2 hpt 2 mul def /vpt2 vpt 2 mul def} def
+/DL {Color {setrgbcolor Solid {pop []} if 0 setdash}
+ {pop pop pop 0 setgray Solid {pop []} if 0 setdash} ifelse} def
+/BL {stroke userlinewidth 2 mul setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+/AL {stroke userlinewidth 2 div setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+/UL {dup gnulinewidth mul /userlinewidth exch def
+	dup 1 lt {pop 1} if 10 mul /udl exch def} def
+/PL {stroke userlinewidth setlinewidth
+	Rounded {1 setlinejoin 1 setlinecap} if} def
+3.8 setmiterlimit
+% Classic Line colors (version 5.0)
+/LCw {1 1 1} def
+/LCb {0 0 0} def
+/LCa {0 0 0} def
+/LC0 {1 0 0} def
+/LC1 {0 1 0} def
+/LC2 {0 0 1} def
+/LC3 {1 0 1} def
+/LC4 {0 1 1} def
+/LC5 {1 1 0} def
+/LC6 {0 0 0} def
+/LC7 {1 0.3 0} def
+/LC8 {0.5 0.5 0.5} def
+% Default dash patterns (version 5.0)
+/LTB {BL [] LCb DL} def
+/LTw {PL [] 1 setgray} def
+/LTb {PL [] LCb DL} def
+/LTa {AL [1 udl mul 2 udl mul] 0 setdash LCa setrgbcolor} def
+/LT0 {PL [] LC0 DL} def
+/LT1 {PL [2 dl1 3 dl2] LC1 DL} def
+/LT2 {PL [1 dl1 1.5 dl2] LC2 DL} def
+/LT3 {PL [6 dl1 2 dl2 1 dl1 2 dl2] LC3 DL} def
+/LT4 {PL [1 dl1 2 dl2 6 dl1 2 dl2 1 dl1 2 dl2] LC4 DL} def
+/LT5 {PL [4 dl1 2 dl2] LC5 DL} def
+/LT6 {PL [1.5 dl1 1.5 dl2 1.5 dl1 1.5 dl2 1.5 dl1 6 dl2] LC6 DL} def
+/LT7 {PL [3 dl1 3 dl2 1 dl1 3 dl2] LC7 DL} def
+/LT8 {PL [2 dl1 2 dl2 2 dl1 6 dl2] LC8 DL} def
+/SL {[] 0 setdash} def
+/Pnt {stroke [] 0 setdash gsave 1 setlinecap M 0 0 V stroke grestore} def
+/Dia {stroke [] 0 setdash 2 copy vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke
+  Pnt} def
+/Pls {stroke [] 0 setdash vpt sub M 0 vpt2 V
+  currentpoint stroke M
+  hpt neg vpt neg R hpt2 0 V stroke
+ } def
+/Box {stroke [] 0 setdash 2 copy exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke
+  Pnt} def
+/Crs {stroke [] 0 setdash exch hpt sub exch vpt add M
+  hpt2 vpt2 neg V currentpoint stroke M
+  hpt2 neg 0 R hpt2 vpt2 V stroke} def
+/TriU {stroke [] 0 setdash 2 copy vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke
+  Pnt} def
+/Star {2 copy Pls Crs} def
+/BoxF {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath fill} def
+/TriUF {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath fill} def
+/TriD {stroke [] 0 setdash 2 copy vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath stroke
+  Pnt} def
+/TriDF {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath fill} def
+/DiaF {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath fill} def
+/Pent {stroke [] 0 setdash 2 copy gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath stroke grestore Pnt} def
+/PentF {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath fill grestore} def
+/Circle {stroke [] 0 setdash 2 copy
+  hpt 0 360 arc stroke Pnt} def
+/CircleF {stroke [] 0 setdash hpt 0 360 arc fill} def
+/C0 {BL [] 0 setdash 2 copy moveto vpt 90 450 arc} bind def
+/C1 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C2 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C3 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C4 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 180 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C5 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc
+	2 copy moveto
+	2 copy vpt 180 270 arc closepath fill
+	vpt 0 360 arc} bind def
+/C6 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C7 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 270 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C8 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 270 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C9 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 270 450 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C10 {BL [] 0 setdash 2 copy 2 copy moveto vpt 270 360 arc closepath fill
+	2 copy moveto
+	2 copy vpt 90 180 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C11 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 180 arc closepath fill
+	2 copy moveto
+	2 copy vpt 270 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C12 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 180 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C13 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 0 90 arc closepath fill
+	2 copy moveto
+	2 copy vpt 180 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/C14 {BL [] 0 setdash 2 copy moveto
+	2 copy vpt 90 360 arc closepath fill
+	vpt 0 360 arc} bind def
+/C15 {BL [] 0 setdash 2 copy vpt 0 360 arc closepath fill
+	vpt 0 360 arc closepath} bind def
+/Rec {newpath 4 2 roll moveto 1 index 0 rlineto 0 exch rlineto
+	neg 0 rlineto closepath} bind def
+/Square {dup Rec} bind def
+/Bsquare {vpt sub exch vpt sub exch vpt2 Square} bind def
+/S0 {BL [] 0 setdash 2 copy moveto 0 vpt rlineto BL Bsquare} bind def
+/S1 {BL [] 0 setdash 2 copy vpt Square fill Bsquare} bind def
+/S2 {BL [] 0 setdash 2 copy exch vpt sub exch vpt Square fill Bsquare} bind def
+/S3 {BL [] 0 setdash 2 copy exch vpt sub exch vpt2 vpt Rec fill Bsquare} bind def
+/S4 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt Square fill Bsquare} bind def
+/S5 {BL [] 0 setdash 2 copy 2 copy vpt Square fill
+	exch vpt sub exch vpt sub vpt Square fill Bsquare} bind def
+/S6 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec fill Bsquare} bind def
+/S7 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt vpt2 Rec fill
+	2 copy vpt Square fill Bsquare} bind def
+/S8 {BL [] 0 setdash 2 copy vpt sub vpt Square fill Bsquare} bind def
+/S9 {BL [] 0 setdash 2 copy vpt sub vpt vpt2 Rec fill Bsquare} bind def
+/S10 {BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt sub exch vpt Square fill
+	Bsquare} bind def
+/S11 {BL [] 0 setdash 2 copy vpt sub vpt Square fill 2 copy exch vpt sub exch vpt2 vpt Rec fill
+	Bsquare} bind def
+/S12 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill Bsquare} bind def
+/S13 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill
+	2 copy vpt Square fill Bsquare} bind def
+/S14 {BL [] 0 setdash 2 copy exch vpt sub exch vpt sub vpt2 vpt Rec fill
+	2 copy exch vpt sub exch vpt Square fill Bsquare} bind def
+/S15 {BL [] 0 setdash 2 copy Bsquare fill Bsquare} bind def
+/D0 {gsave translate 45 rotate 0 0 S0 stroke grestore} bind def
+/D1 {gsave translate 45 rotate 0 0 S1 stroke grestore} bind def
+/D2 {gsave translate 45 rotate 0 0 S2 stroke grestore} bind def
+/D3 {gsave translate 45 rotate 0 0 S3 stroke grestore} bind def
+/D4 {gsave translate 45 rotate 0 0 S4 stroke grestore} bind def
+/D5 {gsave translate 45 rotate 0 0 S5 stroke grestore} bind def
+/D6 {gsave translate 45 rotate 0 0 S6 stroke grestore} bind def
+/D7 {gsave translate 45 rotate 0 0 S7 stroke grestore} bind def
+/D8 {gsave translate 45 rotate 0 0 S8 stroke grestore} bind def
+/D9 {gsave translate 45 rotate 0 0 S9 stroke grestore} bind def
+/D10 {gsave translate 45 rotate 0 0 S10 stroke grestore} bind def
+/D11 {gsave translate 45 rotate 0 0 S11 stroke grestore} bind def
+/D12 {gsave translate 45 rotate 0 0 S12 stroke grestore} bind def
+/D13 {gsave translate 45 rotate 0 0 S13 stroke grestore} bind def
+/D14 {gsave translate 45 rotate 0 0 S14 stroke grestore} bind def
+/D15 {gsave translate 45 rotate 0 0 S15 stroke grestore} bind def
+/DiaE {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V closepath stroke} def
+/BoxE {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V closepath stroke} def
+/TriUE {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V closepath stroke} def
+/TriDE {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V closepath stroke} def
+/PentE {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  closepath stroke grestore} def
+/CircE {stroke [] 0 setdash 
+  hpt 0 360 arc stroke} def
+/Opaque {gsave closepath 1 setgray fill grestore 0 setgray closepath} def
+/DiaW {stroke [] 0 setdash vpt add M
+  hpt neg vpt neg V hpt vpt neg V
+  hpt vpt V hpt neg vpt V Opaque stroke} def
+/BoxW {stroke [] 0 setdash exch hpt sub exch vpt add M
+  0 vpt2 neg V hpt2 0 V 0 vpt2 V
+  hpt2 neg 0 V Opaque stroke} def
+/TriUW {stroke [] 0 setdash vpt 1.12 mul add M
+  hpt neg vpt -1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt 1.62 mul V Opaque stroke} def
+/TriDW {stroke [] 0 setdash vpt 1.12 mul sub M
+  hpt neg vpt 1.62 mul V
+  hpt 2 mul 0 V
+  hpt neg vpt -1.62 mul V Opaque stroke} def
+/PentW {stroke [] 0 setdash gsave
+  translate 0 hpt M 4 {72 rotate 0 hpt L} repeat
+  Opaque stroke grestore} def
+/CircW {stroke [] 0 setdash 
+  hpt 0 360 arc Opaque stroke} def
+/BoxFill {gsave Rec 1 setgray fill grestore} def
+/Density {
+  /Fillden exch def
+  currentrgbcolor
+  /ColB exch def /ColG exch def /ColR exch def
+  /ColR ColR Fillden mul Fillden sub 1 add def
+  /ColG ColG Fillden mul Fillden sub 1 add def
+  /ColB ColB Fillden mul Fillden sub 1 add def
+  ColR ColG ColB setrgbcolor} def
+/BoxColFill {gsave Rec PolyFill} def
+/PolyFill {gsave Density fill grestore grestore} def
+/h {rlineto rlineto rlineto closepath gsave fill grestore stroke} bind def
+%
+% PostScript Level 1 Pattern Fill routine for rectangles
+% Usage: x y w h s a XX PatternFill
+%	x,y = lower left corner of box to be filled
+%	w,h = width and height of box
+%	  a = angle in degrees between lines and x-axis
+%	 XX = 0/1 for no/yes cross-hatch
+%
+/PatternFill {gsave /PFa [ 9 2 roll ] def
+  PFa 0 get PFa 2 get 2 div add PFa 1 get PFa 3 get 2 div add translate
+  PFa 2 get -2 div PFa 3 get -2 div PFa 2 get PFa 3 get Rec
+  TransparentPatterns {} {gsave 1 setgray fill grestore} ifelse
+  clip
+  currentlinewidth 0.5 mul setlinewidth
+  /PFs PFa 2 get dup mul PFa 3 get dup mul add sqrt def
+  0 0 M PFa 5 get rotate PFs -2 div dup translate
+  0 1 PFs PFa 4 get div 1 add floor cvi
+	{PFa 4 get mul 0 M 0 PFs V} for
+  0 PFa 6 get ne {
+	0 1 PFs PFa 4 get div 1 add floor cvi
+	{PFa 4 get mul 0 2 1 roll M PFs 0 V} for
+ } if
+  stroke grestore} def
+%
+/languagelevel where
+ {pop languagelevel} {1} ifelse
+dup 2 lt
+	{/InterpretLevel1 true def
+	 /InterpretLevel3 false def}
+	{/InterpretLevel1 Level1 def
+	 2 gt
+	    {/InterpretLevel3 Level3 def}
+	    {/InterpretLevel3 false def}
+	 ifelse }
+ ifelse
+%
+% PostScript level 2 pattern fill definitions
+%
+/Level2PatternFill {
+/Tile8x8 {/PaintType 2 /PatternType 1 /TilingType 1 /BBox [0 0 8 8] /XStep 8 /YStep 8}
+	bind def
+/KeepColor {currentrgbcolor [/Pattern /DeviceRGB] setcolorspace} bind def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 8 8 L 0 8 M 8 0 L stroke} 
+>> matrix makepattern
+/Pat1 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 8 8 L 0 8 M 8 0 L stroke
+	0 4 M 4 8 L 8 4 L 4 0 L 0 4 L stroke}
+>> matrix makepattern
+/Pat2 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 0 M 0 8 L
+	8 8 L 8 0 L 0 0 L fill}
+>> matrix makepattern
+/Pat3 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -4 8 M 8 -4 L
+	0 12 M 12 0 L stroke}
+>> matrix makepattern
+/Pat4 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -4 0 M 8 12 L
+	0 -4 M 12 8 L stroke}
+>> matrix makepattern
+/Pat5 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -2 8 M 4 -4 L
+	0 12 M 8 -4 L 4 12 M 10 0 L stroke}
+>> matrix makepattern
+/Pat6 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop -2 0 M 4 12 L
+	0 -4 M 8 12 L 4 -4 M 10 8 L stroke}
+>> matrix makepattern
+/Pat7 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 8 -2 M -4 4 L
+	12 0 M -4 8 L 12 4 M 0 10 L stroke}
+>> matrix makepattern
+/Pat8 exch def
+<< Tile8x8
+ /PaintProc {0.5 setlinewidth pop 0 -2 M 12 4 L
+	-4 0 M 12 8 L -4 4 M 8 10 L stroke}
+>> matrix makepattern
+/Pat9 exch def
+/Pattern1 {PatternBgnd KeepColor Pat1 setpattern} bind def
+/Pattern2 {PatternBgnd KeepColor Pat2 setpattern} bind def
+/Pattern3 {PatternBgnd KeepColor Pat3 setpattern} bind def
+/Pattern4 {PatternBgnd KeepColor Landscape {Pat5} {Pat4} ifelse setpattern} bind def
+/Pattern5 {PatternBgnd KeepColor Landscape {Pat4} {Pat5} ifelse setpattern} bind def
+/Pattern6 {PatternBgnd KeepColor Landscape {Pat9} {Pat6} ifelse setpattern} bind def
+/Pattern7 {PatternBgnd KeepColor Landscape {Pat8} {Pat7} ifelse setpattern} bind def
+} def
+%
+%
+%End of PostScript Level 2 code
+%
+/PatternBgnd {
+  TransparentPatterns {} {gsave 1 setgray fill grestore} ifelse
+} def
+%
+% Substitute for Level 2 pattern fill codes with
+% grayscale if Level 2 support is not selected.
+%
+/Level1PatternFill {
+/Pattern1 {0.250 Density} bind def
+/Pattern2 {0.500 Density} bind def
+/Pattern3 {0.750 Density} bind def
+/Pattern4 {0.125 Density} bind def
+/Pattern5 {0.375 Density} bind def
+/Pattern6 {0.625 Density} bind def
+/Pattern7 {0.875 Density} bind def
+} def
+%
+% Now test for support of Level 2 code
+%
+Level1 {Level1PatternFill} {Level2PatternFill} ifelse
+%
+/Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0] makefont
+dup length dict begin {1 index /FID eq {pop pop} {def} ifelse} forall
+currentdict end definefont pop
+%
+/Metrics {ExtendTextBox Gswidth} def
+/Lwidth {currentpoint stroke M 0 vshift R Metrics} def
+/Rwidth {currentpoint stroke M dup stringwidth pop neg vshift R Metrics} def
+/Cwidth {currentpoint stroke M dup stringwidth pop -2 div vshift R Metrics} def
+/GLwidth {currentpoint stroke M 0 vshift R {ExtendTextBox} forall} def
+/GRwidth {currentpoint stroke M dup Gwidth vshift R {ExtendTextBox} forall} def
+/GCwidth {currentpoint stroke M dup Gwidth 2 div vshift R {ExtendTextBox} forall} def
+/GLwidth2 {0 Gwidth AddGlyphWidth} def
+/GRwidth2 {Gwidth -1 mul 0 AddGlyphWidth} def
+/GCwidth2 {Gwidth 2 div dup -1 mul AddGlyphWidth} def
+/AddGlyphWidth { dup TBx2 gt {userdict /TBx2 3 -1 roll put} {pop} ifelse
+                 dup TBx1 lt {userdict /TBx1 3 -1 roll put} {pop} ifelse } def
+/MFshow {
+   { dup 5 get 3 ge
+     { 5 get 3 eq {gsave} {grestore} ifelse }
+     {dup dup 0 get findfont exch 1 get scalefont setfont
+     [ currentpoint ] exch dup 2 get 0 exch R dup 5 get 2 ne {dup dup 6
+     get exch 4 get {textshow} {Metrics pop 0 R} ifelse }if dup 5 get 0 eq
+     {dup 3 get {2 get neg 0 exch R pop} {pop aload pop M} ifelse} {dup 5
+     get 1 eq {dup 2 get exch dup 3 get exch 6 get Gswidth pop -2 div
+     dup 0 R} {dup 6 get Gswidth pop -2 div 0 R 6 get
+     textshow 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
+     pop aload pop M} ifelse }ifelse }ifelse }
+     ifelse }
+   forall} def
+/Gswidth {dup type /stringtype eq {stringwidth} {pop (n) stringwidth} ifelse} def
+/MFwidth {0 exch { dup 5 get 3 ge { 5 get 3 eq { 0 } { pop } ifelse }
+ {dup 3 get{dup dup 0 get findfont exch 1 get scalefont setfont
+     6 get Gswidth pop add} {pop} ifelse} ifelse} forall} def
+/MLshow { currentpoint stroke M
+  0 exch R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MRshow { currentpoint stroke M
+  exch dup MFwidth neg 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MCshow { currentpoint stroke M
+  exch dup MFwidth -2 div 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/XYsave    { [( ) 1 2 true false 3 ()] } bind def
+/XYrestore { [( ) 1 2 true false 4 ()] } bind def
+Level1 SuppressPDFMark or 
+{} {
+/SDict 10 dict def
+systemdict /pdfmark known not {
+  userdict /pdfmark systemdict /cleartomark get put
+} if
+SDict begin [
+  /Title (data/graph.eps)
+  /Subject (gnuplot plot)
+  /Creator (gnuplot 5.2 patchlevel 7)
+%  /Producer (gnuplot)
+%  /Keywords ()
+  /CreationDate (Thu Nov  7 18:42:55 2019)
+  /DOCINFO pdfmark
+end
+} ifelse
+%
+% Support for boxed text - Ethan A Merritt Sep 2016
+%
+/InitTextBox { userdict /TBy2 3 -1 roll put userdict /TBx2 3 -1 roll put
+           userdict /TBy1 3 -1 roll put userdict /TBx1 3 -1 roll put
+	   /Boxing true def } def
+/ExtendTextBox { dup type /stringtype eq
+    { Boxing { gsave dup false charpath pathbbox
+      dup TBy2 gt {userdict /TBy2 3 -1 roll put} {pop} ifelse
+      dup TBx2 gt {userdict /TBx2 3 -1 roll put} {pop} ifelse
+      dup TBy1 lt {userdict /TBy1 3 -1 roll put} {pop} ifelse
+      dup TBx1 lt {userdict /TBx1 3 -1 roll put} {pop} ifelse
+      grestore } if }
+    {} ifelse} def
+/PopTextBox { newpath TBx1 TBxmargin sub TBy1 TBymargin sub M
+               TBx1 TBxmargin sub TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy2 TBymargin add L
+	       TBx2 TBxmargin add TBy1 TBymargin sub L closepath } def
+/DrawTextBox { PopTextBox stroke /Boxing false def} def
+/FillTextBox { gsave PopTextBox fill grestore /Boxing false def} def
+0 0 0 0 InitTextBox
+/TBxmargin 20 def
+/TBymargin 20 def
+/Boxing false def
+/textshow { ExtendTextBox Gshow } def
+%
+end
+%%EndProlog
+%%Page: 1 1
+gnudict begin
+gsave
+doclip
+50 50 translate
+0.050 0.050 scale
+0 setgray
+newpath
+(Helvetica) findfont 140 scalefont setfont
+BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 7200.00 5040.00 BoxColFill} if
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UP
+% Begin plot #1
+1.000 UL
+LTb
+LCb setrgbcolor
+2494 2994 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+2634 3008 M
+-83 16 V
+stroke
+LTb
+LCb setrgbcolor
+2604 2971 M
+19 12 V
+stroke
+LTb
+LCb setrgbcolor
+2604 2971 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+2438 2962 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+2547 2940 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+2618 2968 M
+-14 3 V
+stroke
+LTb
+LCb setrgbcolor
+2547 2940 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+2381 2901 M
+57 61 V
+stroke
+LTb
+LCb setrgbcolor
+2603 2928 M
+-56 12 V
+stroke
+LTb
+LCb setrgbcolor
+2491 2909 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+2325 2903 M
+56 -2 V
+stroke
+LTb
+LCb setrgbcolor
+2491 2909 M
+-110 -8 V
+stroke
+LTb
+LCb setrgbcolor
+3372 2906 M
+-106 17 V
+stroke
+LTb
+LCb setrgbcolor
+3481 2892 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+3315 2874 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+2434 2883 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+2587 2889 M
+-96 20 V
+stroke
+LTb
+LCb setrgbcolor
+3315 2874 M
+-32 6 V
+stroke
+LTb
+LCb setrgbcolor
+2434 2883 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+2308 2897 M
+17 6 V
+stroke
+LTb
+LCb setrgbcolor
+3590 2869 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3425 2856 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+2543 2860 M
+41 19 V
+stroke
+LTb
+LCb setrgbcolor
+3291 2861 M
+24 13 V
+stroke
+LTb
+LCb setrgbcolor
+3425 2856 M
+-110 18 V
+stroke
+LTb
+LCb setrgbcolor
+2543 2860 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+2378 2858 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+3534 2837 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+3698 2844 M
+-108 25 V
+stroke
+LTb
+LCb setrgbcolor
+3368 2824 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+3534 2837 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2378 2858 M
+-46 10 V
+stroke
+LTb
+LCb setrgbcolor
+2487 2835 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+2574 2853 M
+-31 7 V
+stroke
+LTb
+LCb setrgbcolor
+3642 2817 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+3808 2835 M
+-110 9 V
+stroke
+LTb
+LCb setrgbcolor
+3368 2824 M
+-67 11 V
+stroke
+LTb
+LCb setrgbcolor
+3642 2817 M
+-108 20 V
+stroke
+LTb
+LCb setrgbcolor
+3477 2805 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+2487 2835 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+2350 2846 M
+28 12 V
+stroke
+LTb
+LCb setrgbcolor
+3477 2805 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+3317 2797 M
+51 27 V
+stroke
+LTb
+LCb setrgbcolor
+3917 2812 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3751 2800 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+2431 2811 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+2561 2819 M
+-74 16 V
+stroke
+LTb
+LCb setrgbcolor
+3751 2800 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+3587 2786 M
+55 31 V
+stroke
+LTb
+LCb setrgbcolor
+4026 2759 M
+-109 53 V
+stroke
+LTb
+LCb setrgbcolor
+3860 2778 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+3587 2786 M
+-110 19 V
+stroke
+LTb
+LCb setrgbcolor
+3421 2775 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+2431 2811 M
+-62 13 V
+stroke
+LTb
+LCb setrgbcolor
+2540 2787 M
+11 5 V
+stroke
+LTb
+LCb setrgbcolor
+4135 2765 M
+-109 -6 V
+stroke
+LTb
+LCb setrgbcolor
+3970 2752 M
+56 7 V
+stroke
+LTb
+LCb setrgbcolor
+3860 2778 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3695 2768 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+3421 2775 M
+-102 17 V
+stroke
+LTb
+LCb setrgbcolor
+3530 2755 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+3695 2768 M
+-108 18 V
+stroke
+LTb
+LCb setrgbcolor
+2393 2796 M
+38 15 V
+stroke
+LTb
+LCb setrgbcolor
+2540 2787 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3804 2747 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+3970 2752 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+3530 2755 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3364 2744 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+4079 2730 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+4245 2739 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+2548 2786 M
+-8 1 V
+stroke
+LTb
+LCb setrgbcolor
+2483 2759 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+3804 2747 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+3638 2739 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+3364 2744 M
+-27 5 V
+stroke
+LTb
+LCb setrgbcolor
+3913 2722 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+4079 2730 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3638 2739 M
+-108 16 V
+stroke
+LTb
+LCb setrgbcolor
+3474 2722 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+2483 2759 M
+-76 20 V
+stroke
+LTb
+LCb setrgbcolor
+4188 2705 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+4354 2686 M
+-109 53 V
+stroke
+LTb
+LCb setrgbcolor
+3913 2722 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3748 2717 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3474 2722 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3345 2735 M
+19 9 V
+stroke
+LTb
+LCb setrgbcolor
+4463 2688 M
+-109 -2 V
+stroke
+LTb
+LCb setrgbcolor
+4297 2676 M
+57 10 V
+stroke
+LTb
+LCb setrgbcolor
+4188 2705 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4022 2698 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+2535 2752 M
+-52 7 V
+stroke
+LTb
+LCb setrgbcolor
+2439 2748 M
+44 11 V
+stroke
+LTb
+LCb setrgbcolor
+3748 2717 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3583 2709 M
+55 30 V
+stroke
+LTb
+LCb setrgbcolor
+3857 2691 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+4022 2698 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3417 2702 M
+57 20 V
+stroke
+LTb
+LCb setrgbcolor
+3583 2709 M
+-109 13 V
+stroke
+LTb
+LCb setrgbcolor
+4297 2676 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4132 2672 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+3857 2691 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3691 2688 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+4407 2654 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4572 2665 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3417 2702 M
+-57 9 V
+stroke
+LTb
+LCb setrgbcolor
+4132 2672 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+3966 2668 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+4407 2654 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+4241 2645 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+3691 2688 M
+-108 21 V
+stroke
+LTb
+LCb setrgbcolor
+3526 2686 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+2526 2729 M
+-79 13 V
+stroke
+LTb
+LCb setrgbcolor
+3800 2651 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3966 2668 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4516 2629 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4681 2632 M
+-109 33 V
+stroke
+LTb
+LCb setrgbcolor
+3526 2686 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+3376 2686 M
+41 16 V
+stroke
+LTb
+LCb setrgbcolor
+4075 2642 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+4241 2645 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4516 2629 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4350 2621 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3635 2665 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+3800 2651 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+4625 2603 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+4791 2614 M
+-110 18 V
+stroke
+LTb
+LCb setrgbcolor
+3910 2638 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+4075 2642 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+2480 2716 M
+45 9 V
+stroke
+LTb
+LCb setrgbcolor
+4184 2613 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+4350 2621 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3635 2665 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+3470 2664 M
+56 22 V
+stroke
+LTb
+LCb setrgbcolor
+3910 2638 M
+-110 13 V
+stroke
+LTb
+LCb setrgbcolor
+3744 2637 M
+56 14 V
+stroke
+LTb
+LCb setrgbcolor
+4459 2596 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4625 2603 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4184 2613 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4019 2612 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+4734 2582 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+4900 2594 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3470 2664 M
+-89 13 V
+stroke
+LTb
+LCb setrgbcolor
+4294 2590 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+4459 2596 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3579 2643 M
+56 22 V
+stroke
+LTb
+LCb setrgbcolor
+3744 2637 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4734 2582 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4569 2572 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+3853 2614 M
+57 24 V
+stroke
+LTb
+LCb setrgbcolor
+4019 2612 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4294 2590 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+4128 2574 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+2511 2709 M
+-30 6 V
+stroke
+LTb
+LCb setrgbcolor
+4843 2559 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+5009 2568 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4569 2572 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4403 2566 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3414 2643 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+3579 2643 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+3853 2614 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3688 2617 M
+56 20 V
+stroke
+LTb
+LCb setrgbcolor
+4843 2559 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4678 2549 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4128 2574 M
+-109 38 V
+stroke
+LTb
+LCb setrgbcolor
+3962 2587 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+4237 2559 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+4403 2566 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3414 2643 M
+-12 2 V
+stroke
+LTb
+LCb setrgbcolor
+4953 2535 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5118 2544 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4678 2549 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4512 2540 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+3523 2622 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+3688 2617 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4072 2557 M
+56 17 V
+stroke
+LTb
+LCb setrgbcolor
+4237 2559 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+3962 2587 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3797 2591 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+4787 2526 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4953 2535 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4512 2540 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4346 2534 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+5228 2527 M
+-110 17 V
+stroke
+LTb
+LCb setrgbcolor
+5062 2512 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+3523 2622 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+3405 2640 M
+9 3 V
+stroke
+LTb
+LCb setrgbcolor
+4621 2516 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4787 2526 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3631 2595 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+3797 2591 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4072 2557 M
+-110 30 V
+stroke
+LTb
+LCb setrgbcolor
+3906 2563 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+4346 2534 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4181 2533 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+5062 2512 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4896 2502 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4621 2516 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4456 2505 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+3466 2603 M
+57 19 V
+stroke
+LTb
+LCb setrgbcolor
+3631 2595 M
+-108 27 V
+stroke
+LTb
+LCb setrgbcolor
+5171 2491 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+5337 2504 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3740 2570 M
+57 21 V
+stroke
+LTb
+LCb setrgbcolor
+3906 2563 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4896 2502 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4731 2493 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4015 2533 M
+57 24 V
+stroke
+LTb
+LCb setrgbcolor
+4181 2533 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4290 2507 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4456 2505 M
+-110 29 V
+stroke
+LTb
+LCb setrgbcolor
+5171 2491 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+5005 2479 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4565 2483 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4731 2493 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+3466 2603 M
+-39 8 V
+stroke
+LTb
+LCb setrgbcolor
+3576 2568 M
+55 27 V
+stroke
+LTb
+LCb setrgbcolor
+3740 2570 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+5280 2469 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+5446 2471 M
+-109 33 V
+stroke
+LTb
+LCb setrgbcolor
+3850 2540 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+4015 2533 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+1926 2775 M
+-109 11 V
+stroke
+LTb
+LCb setrgbcolor
+1761 2732 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+1874 3214 M
+-57 -428 V
+stroke
+LTb
+LCb setrgbcolor
+5005 2479 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4840 2469 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4290 2507 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4124 2507 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+4399 2480 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+4565 2483 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+5280 2469 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+5115 2458 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4840 2469 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4674 2461 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+3576 2568 M
+-110 35 V
+stroke
+LTb
+LCb setrgbcolor
+3436 2597 M
+30 6 V
+stroke
+LTb
+LCb setrgbcolor
+5390 2446 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+5555 2464 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+3850 2540 M
+-110 30 V
+stroke
+LTb
+LCb setrgbcolor
+3684 2549 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+3959 2508 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+4124 2507 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4399 2480 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4234 2480 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4949 2446 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5115 2458 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+1870 2720 M
+56 55 V
+stroke
+LTb
+LCb setrgbcolor
+1983 2970 M
+-57 -195 V
+stroke
+LTb
+LCb setrgbcolor
+2036 2758 M
+-110 17 V
+stroke
+LTb
+LCb setrgbcolor
+4509 2456 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4674 2461 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+1870 2720 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+1704 2688 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+5224 2436 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5390 2446 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+3519 2562 M
+57 6 V
+stroke
+LTb
+LCb setrgbcolor
+3684 2549 M
+-108 19 V
+stroke
+LTb
+LCb setrgbcolor
+4949 2446 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4783 2436 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3959 2508 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3793 2517 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+4068 2481 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4234 2480 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+4509 2456 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4343 2453 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+5499 2428 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+5664 2444 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+5224 2436 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+5058 2425 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4618 2433 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+4783 2436 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+1874 3214 M
+109 -244 V
+stroke
+LTb
+LCb setrgbcolor
+2092 2940 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+2092 2940 M
+-56 -182 V
+stroke
+LTb
+LCb setrgbcolor
+1979 2705 M
+57 53 V
+stroke
+LTb
+LCb setrgbcolor
+2145 2738 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+5717 2389 M
+57 -68 V
+stroke
+LTb
+LCb setrgbcolor
+5715 2387 M
+59 -66 V
+stroke
+LTb
+LCb setrgbcolor
+1979 2705 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+1814 2687 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5333 2414 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+5499 2428 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+3902 2477 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+4068 2481 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3793 2517 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3627 2535 M
+57 14 V
+stroke
+LTb
+LCb setrgbcolor
+4893 2412 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+5058 2425 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1814 2687 M
+-110 1 V
+stroke
+LTb
+LCb setrgbcolor
+1648 2665 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+3519 2562 M
+-71 20 V
+stroke
+LTb
+LCb setrgbcolor
+4343 2453 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4177 2454 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+4618 2433 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4452 2429 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+5608 2409 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+5717 2389 M
+-53 55 V
+stroke
+LTb
+LCb setrgbcolor
+5333 2414 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+5167 2403 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+2201 3028 M
+-109 -88 V
+stroke
+LTb
+LCb setrgbcolor
+4893 2412 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4727 2408 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+2254 2716 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+2088 2688 M
+57 50 V
+stroke
+LTb
+LCb setrgbcolor
+2201 3028 M
+-56 -290 V
+stroke
+LTb
+LCb setrgbcolor
+3902 2477 M
+-109 40 V
+stroke
+LTb
+LCb setrgbcolor
+3737 2501 M
+56 16 V
+stroke
+LTb
+LCb setrgbcolor
+4012 2456 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+4177 2454 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3627 2535 M
+-108 27 V
+stroke
+LTb
+LCb setrgbcolor
+3465 2559 M
+54 3 V
+stroke
+LTb
+LCb setrgbcolor
+5442 2395 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+5608 2409 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+1923 2674 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+2088 2688 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+4286 2426 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+4452 2429 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+5002 2393 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+5167 2403 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+4561 2405 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+4727 2408 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+1757 2671 M
+57 16 V
+stroke
+LTb
+LCb setrgbcolor
+1923 2674 M
+-109 13 V
+stroke
+LTb
+LCb setrgbcolor
+5442 2395 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+5277 2380 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+3846 2463 M
+56 14 V
+stroke
+LTb
+LCb setrgbcolor
+4012 2456 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+4836 2384 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+5002 2393 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2420 2764 M
+79 -63 V
+stroke
+LTb
+LCb setrgbcolor
+2363 2686 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+2311 2893 M
+-57 -177 V
+stroke
+LTb
+LCb setrgbcolor
+2198 2676 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+4121 2428 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4286 2426 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+2363 2686 M
+57 78 V
+stroke
+LTb
+LCb setrgbcolor
+2311 2893 M
+109 -129 V
+stroke
+LTb
+LCb setrgbcolor
+1757 2671 M
+-109 -6 V
+stroke
+LTb
+LCb setrgbcolor
+1592 2659 M
+56 6 V
+stroke
+LTb
+LCb setrgbcolor
+3737 2501 M
+-110 34 V
+stroke
+LTb
+LCb setrgbcolor
+3572 2526 M
+55 9 V
+stroke
+LTb
+LCb setrgbcolor
+4396 2401 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+4561 2405 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+5552 2375 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+5717 2389 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+5277 2380 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+5111 2369 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+2198 2676 M
+-110 12 V
+stroke
+LTb
+LCb setrgbcolor
+2032 2654 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4671 2380 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+4836 2384 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+5552 2375 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+5386 2362 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+2201 3028 M
+110 -135 V
+stroke
+LTb
+LCb setrgbcolor
+3955 2436 M
+57 20 V
+stroke
+LTb
+LCb setrgbcolor
+4121 2428 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+1866 2658 M
+57 16 V
+stroke
+LTb
+LCb setrgbcolor
+2032 2654 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4945 2363 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+5111 2369 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+2307 2664 M
+56 22 V
+stroke
+LTb
+LCb setrgbcolor
+2447 2666 M
+-84 20 V
+stroke
+LTb
+LCb setrgbcolor
+3680 2489 M
+57 12 V
+stroke
+LTb
+LCb setrgbcolor
+3846 2463 M
+-109 38 V
+stroke
+LTb
+LCb setrgbcolor
+4230 2397 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+4396 2401 M
+-110 25 V
+stroke
+LTb
+LCb setrgbcolor
+4671 2380 M
+-110 25 V
+stroke
+LTb
+LCb setrgbcolor
+4505 2377 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+3572 2526 M
+-106 32 V
+stroke
+LTb
+LCb setrgbcolor
+5386 2362 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+5661 2357 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+5220 2342 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+2307 2664 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+2141 2651 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+4945 2363 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4780 2356 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+1701 2642 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+1866 2658 M
+-109 13 V
+stroke
+LTb
+LCb setrgbcolor
+3790 2450 M
+56 13 V
+stroke
+LTb
+LCb setrgbcolor
+3955 2436 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4064 2406 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+4230 2397 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+5495 2342 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+5661 2357 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+5055 2341 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+5220 2342 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+1976 2637 M
+56 17 V
+stroke
+LTb
+LCb setrgbcolor
+2141 2651 M
+-109 3 V
+stroke
+LTb
+LCb setrgbcolor
+4505 2377 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4339 2373 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+1535 2566 M
+57 93 V
+stroke
+LTb
+LCb setrgbcolor
+1701 2642 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+3516 2523 M
+56 3 V
+stroke
+LTb
+LCb setrgbcolor
+3680 2489 M
+-108 37 V
+stroke
+LTb
+LCb setrgbcolor
+4780 2356 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4614 2351 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+5330 2329 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5495 2342 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+5055 2341 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+4889 2334 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+4174 2375 M
+56 22 V
+stroke
+LTb
+LCb setrgbcolor
+4339 2373 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3899 2418 M
+56 18 V
+stroke
+LTb
+LCb setrgbcolor
+4064 2406 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+2251 2645 M
+56 19 V
+stroke
+LTb
+LCb setrgbcolor
+2416 2656 M
+-109 8 V
+stroke
+LTb
+LCb setrgbcolor
+1479 2498 M
+56 68 V
+stroke
+LTb
+LCb setrgbcolor
+1644 2551 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+1810 2627 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+1976 2637 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+5164 2317 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+5330 2329 M
+-110 13 V
+stroke
+LTb
+LCb setrgbcolor
+3790 2450 M
+-110 39 V
+stroke
+LTb
+LCb setrgbcolor
+3624 2482 M
+56 7 V
+stroke
+LTb
+LCb setrgbcolor
+4448 2349 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+4614 2351 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+5604 2323 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+4889 2334 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+4723 2327 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+1644 2551 M
+57 91 V
+stroke
+LTb
+LCb setrgbcolor
+1810 2627 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+2251 2645 M
+-110 6 V
+stroke
+LTb
+LCb setrgbcolor
+2085 2633 M
+56 18 V
+stroke
+LTb
+LCb setrgbcolor
+3516 2523 M
+-33 11 V
+stroke
+LTb
+LCb setrgbcolor
+5439 2309 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+5604 2323 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4174 2375 M
+-110 31 V
+stroke
+LTb
+LCb setrgbcolor
+4008 2387 M
+56 19 V
+stroke
+LTb
+LCb setrgbcolor
+4998 2312 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+5164 2317 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4448 2349 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4283 2349 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+3899 2418 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3733 2438 M
+57 12 V
+stroke
+LTb
+LCb setrgbcolor
+1588 2486 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+1422 2430 M
+57 68 V
+stroke
+LTb
+LCb setrgbcolor
+2085 2633 M
+-109 4 V
+stroke
+LTb
+LCb setrgbcolor
+1919 2614 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+1588 2486 M
+56 65 V
+stroke
+LTb
+LCb setrgbcolor
+1754 2534 M
+-110 17 V
+stroke
+LTb
+LCb setrgbcolor
+4558 2322 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+4723 2327 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+5273 2299 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+5439 2309 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4998 2312 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+4833 2305 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+3489 2527 M
+27 -4 V
+stroke
+LTb
+LCb setrgbcolor
+3624 2482 M
+-108 41 V
+stroke
+LTb
+LCb setrgbcolor
+1919 2614 M
+-109 13 V
+stroke
+LTb
+LCb setrgbcolor
+1754 2534 M
+56 93 V
+stroke
+LTb
+LCb setrgbcolor
+4117 2355 M
+57 20 V
+stroke
+LTb
+LCb setrgbcolor
+4283 2349 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3842 2403 M
+57 15 V
+stroke
+LTb
+LCb setrgbcolor
+4008 2387 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+5548 2268 M
+56 55 V
+stroke
+LTb
+LCb setrgbcolor
+2360 2643 M
+-109 2 V
+stroke
+LTb
+LCb setrgbcolor
+2194 2622 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+5107 2289 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+5273 2299 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+4392 2324 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+4558 2322 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+1366 2406 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+1532 2432 M
+-110 -2 V
+stroke
+LTb
+LCb setrgbcolor
+4667 2297 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+4833 2305 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3733 2438 M
+-109 44 V
+stroke
+LTb
+LCb setrgbcolor
+3568 2481 M
+56 1 V
+stroke
+LTb
+LCb setrgbcolor
+1532 2432 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+1697 2468 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1697 2468 M
+57 66 V
+stroke
+LTb
+LCb setrgbcolor
+1863 2516 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+5548 2268 M
+-109 41 V
+stroke
+LTb
+LCb setrgbcolor
+5382 2280 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+2194 2622 M
+-109 11 V
+stroke
+LTb
+LCb setrgbcolor
+2028 2597 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+4942 2282 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+5107 2289 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3952 2369 M
+56 18 V
+stroke
+LTb
+LCb setrgbcolor
+4117 2355 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+4392 2324 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4226 2327 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+2028 2597 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+1863 2516 M
+56 98 V
+stroke
+LTb
+LCb setrgbcolor
+4501 2297 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+4667 2297 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3677 2424 M
+56 14 V
+stroke
+LTb
+LCb setrgbcolor
+3842 2403 M
+-109 35 V
+stroke
+LTb
+LCb setrgbcolor
+5217 2270 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+5382 2280 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+5492 2259 M
+56 9 V
+stroke
+LTb
+LCb setrgbcolor
+2440 2660 M
+-80 -17 V
+stroke
+LTb
+LCb setrgbcolor
+2303 2615 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+4776 2276 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+4942 2282 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+1641 2414 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+1806 2446 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+1972 2504 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+1806 2446 M
+57 70 V
+stroke
+LTb
+LCb setrgbcolor
+1641 2414 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1475 2387 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+4061 2335 M
+56 20 V
+stroke
+LTb
+LCb setrgbcolor
+4226 2327 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+5217 2270 M
+-110 19 V
+stroke
+LTb
+LCb setrgbcolor
+5051 2259 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+2303 2615 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+2138 2575 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+4336 2301 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+4501 2297 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3952 2369 M
+-110 34 V
+stroke
+LTb
+LCb setrgbcolor
+3786 2391 M
+56 12 V
+stroke
+LTb
+LCb setrgbcolor
+3568 2481 M
+-66 30 V
+stroke
+LTb
+LCb setrgbcolor
+4776 2276 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4610 2272 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+1475 2387 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+1309 2364 M
+57 42 V
+stroke
+LTb
+LCb setrgbcolor
+1972 2504 M
+56 93 V
+stroke
+LTb
+LCb setrgbcolor
+2138 2575 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+5326 2250 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+5492 2259 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+5051 2259 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4885 2252 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+1750 2386 M
+56 60 V
+stroke
+LTb
+LCb setrgbcolor
+1916 2436 M
+-110 10 V
+stroke
+LTb
+LCb setrgbcolor
+3677 2424 M
+-109 57 V
+stroke
+LTb
+LCb setrgbcolor
+3519 2497 M
+49 -16 V
+stroke
+LTb
+LCb setrgbcolor
+4336 2301 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+4170 2306 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+3895 2354 M
+57 15 V
+stroke
+LTb
+LCb setrgbcolor
+4061 2335 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+2081 2493 M
+-109 11 V
+stroke
+LTb
+LCb setrgbcolor
+1916 2436 M
+56 68 V
+stroke
+LTb
+LCb setrgbcolor
+1750 2386 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+1584 2367 M
+57 47 V
+stroke
+LTb
+LCb setrgbcolor
+4445 2273 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+4610 2272 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+5160 2240 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+5326 2250 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3786 2391 M
+-109 33 V
+stroke
+LTb
+LCb setrgbcolor
+3620 2431 M
+57 -7 V
+stroke
+LTb
+LCb setrgbcolor
+4885 2252 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4720 2250 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+2413 2642 M
+-110 -27 V
+stroke
+LTb
+LCb setrgbcolor
+2247 2560 M
+56 55 V
+stroke
+LTb
+LCb setrgbcolor
+1419 2342 M
+56 45 V
+stroke
+LTb
+LCb setrgbcolor
+1584 2367 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+2081 2493 M
+57 82 V
+stroke
+LTb
+LCb setrgbcolor
+2247 2560 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+5435 2232 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+5160 2240 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4995 2226 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+1419 2342 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+1253 2318 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+4170 2306 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4004 2315 M
+57 20 V
+stroke
+LTb
+LCb setrgbcolor
+4445 2273 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4279 2278 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+1859 2379 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+1694 2345 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4554 2248 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+4720 2250 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+1859 2379 M
+57 57 V
+stroke
+LTb
+LCb setrgbcolor
+2025 2424 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+3729 2389 M
+57 2 V
+stroke
+LTb
+LCb setrgbcolor
+3895 2354 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+5269 2221 M
+57 29 V
+stroke
+LTb
+LCb setrgbcolor
+5435 2232 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+2025 2424 M
+56 69 V
+stroke
+LTb
+LCb setrgbcolor
+2190 2484 M
+-109 9 V
+stroke
+LTb
+LCb setrgbcolor
+4829 2226 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4995 2226 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+1528 2321 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+1694 2345 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+2190 2484 M
+57 76 V
+stroke
+LTb
+LCb setrgbcolor
+2356 2573 M
+-109 -13 V
+stroke
+LTb
+LCb setrgbcolor
+4114 2285 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+4279 2278 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+5104 2210 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+5269 2221 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+1528 2321 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1362 2299 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+4554 2248 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4388 2250 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+4004 2315 M
+-109 39 V
+stroke
+LTb
+LCb setrgbcolor
+3839 2346 M
+56 8 V
+stroke
+LTb
+LCb setrgbcolor
+4829 2226 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4663 2224 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+1362 2299 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+1197 2242 M
+56 76 V
+stroke
+LTb
+LCb setrgbcolor
+2356 2573 M
+57 69 V
+stroke
+LTb
+LCb setrgbcolor
+2522 2716 M
+-109 -74 V
+stroke
+LTb
+LCb setrgbcolor
+2134 2412 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+1968 2368 M
+57 56 V
+stroke
+LTb
+LCb setrgbcolor
+5379 2201 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+1968 2368 M
+-109 11 V
+stroke
+LTb
+LCb setrgbcolor
+1803 2331 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+5104 2210 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+4938 2201 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+3620 2431 M
+-91 58 V
+stroke
+LTb
+LCb setrgbcolor
+1803 2331 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+1637 2300 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+2300 2491 M
+-110 -7 V
+stroke
+LTb
+LCb setrgbcolor
+2134 2412 M
+56 72 V
+stroke
+LTb
+LCb setrgbcolor
+3565 2459 M
+55 -28 V
+stroke
+LTb
+LCb setrgbcolor
+3729 2389 M
+-109 42 V
+stroke
+LTb
+LCb setrgbcolor
+3948 2303 M
+56 12 V
+stroke
+LTb
+LCb setrgbcolor
+4114 2285 M
+-110 30 V
+stroke
+LTb
+LCb setrgbcolor
+4388 2250 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4223 2257 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+4498 2223 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+4663 2224 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+5379 2201 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+5213 2190 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+1637 2300 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1471 2278 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+1306 2257 M
+-109 -15 V
+stroke
+LTb
+LCb setrgbcolor
+1140 2242 M
+57 0 V
+stroke
+LTb
+LCb setrgbcolor
+4773 2200 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4938 2201 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+2465 2612 M
+-109 -39 V
+stroke
+LTb
+LCb setrgbcolor
+2300 2491 M
+56 82 V
+stroke
+LTb
+LCb setrgbcolor
+1306 2257 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+1471 2278 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+3673 2398 M
+56 -9 V
+stroke
+LTb
+LCb setrgbcolor
+3839 2346 M
+-110 43 V
+stroke
+LTb
+LCb setrgbcolor
+5047 2183 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+5213 2190 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+2078 2354 M
+56 58 V
+stroke
+LTb
+LCb setrgbcolor
+2243 2412 M
+-109 0 V
+stroke
+LTb
+LCb setrgbcolor
+2078 2354 M
+-110 14 V
+stroke
+LTb
+LCb setrgbcolor
+1912 2316 M
+56 52 V
+stroke
+LTb
+LCb setrgbcolor
+4223 2257 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4057 2270 M
+57 15 V
+stroke
+LTb
+LCb setrgbcolor
+4498 2223 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+4332 2226 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+1746 2284 M
+57 47 V
+stroke
+LTb
+LCb setrgbcolor
+1912 2316 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+4773 2200 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4607 2199 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+1581 2254 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+1746 2284 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+5322 2160 M
+57 41 V
+stroke
+LTb
+LCb setrgbcolor
+3782 2346 M
+57 0 V
+stroke
+LTb
+LCb setrgbcolor
+3948 2303 M
+-109 43 V
+stroke
+LTb
+LCb setrgbcolor
+2243 2412 M
+57 79 V
+stroke
+LTb
+LCb setrgbcolor
+2409 2517 M
+-109 -26 V
+stroke
+LTb
+LCb setrgbcolor
+4882 2176 M
+56 25 V
+stroke
+LTb
+LCb setrgbcolor
+5047 2183 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1415 2236 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+1581 2254 M
+-110 24 V
+stroke
+LTb
+LCb setrgbcolor
+4332 2226 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+4166 2239 M
+57 18 V
+stroke
+LTb
+LCb setrgbcolor
+5322 2160 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+5157 2163 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4607 2199 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4441 2198 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+3891 2299 M
+57 4 V
+stroke
+LTb
+LCb setrgbcolor
+4057 2270 M
+-109 33 V
+stroke
+LTb
+LCb setrgbcolor
+2021 2302 M
+57 52 V
+stroke
+LTb
+LCb setrgbcolor
+2187 2366 M
+-109 -12 V
+stroke
+LTb
+LCb setrgbcolor
+1249 2222 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+1415 2236 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1856 2268 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+2021 2302 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+4716 2174 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+4882 2176 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+2631 3003 M
+2522 2716 L
+stroke
+LTb
+LCb setrgbcolor
+2465 2612 M
+57 104 V
+stroke
+LTb
+LCb setrgbcolor
+2352 2422 M
+-109 -10 V
+stroke
+LTb
+LCb setrgbcolor
+2187 2366 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+1690 2238 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+1856 2268 M
+-110 16 V
+stroke
+LTb
+LCb setrgbcolor
+5157 2163 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+4991 2156 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+3508 2500 M
+57 -41 V
+stroke
+LTb
+LCb setrgbcolor
+3497 2515 M
+68 -56 V
+stroke
+LTb
+LCb setrgbcolor
+3673 2398 M
+-108 61 V
+stroke
+LTb
+LCb setrgbcolor
+1249 2222 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+1084 2209 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+2409 2517 M
+56 95 V
+stroke
+LTb
+LCb setrgbcolor
+2575 2696 M
+-110 -84 V
+stroke
+LTb
+LCb setrgbcolor
+1690 2238 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+1524 2204 M
+57 50 V
+stroke
+LTb
+LCb setrgbcolor
+4276 2207 M
+56 19 V
+stroke
+LTb
+LCb setrgbcolor
+4441 2198 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+5266 2141 M
+56 19 V
+stroke
+LTb
+LCb setrgbcolor
+4166 2239 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+4001 2260 M
+56 10 V
+stroke
+LTb
+LCb setrgbcolor
+4716 2174 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4550 2174 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+3617 2416 M
+56 -18 V
+stroke
+LTb
+LCb setrgbcolor
+3782 2346 M
+-109 52 V
+stroke
+LTb
+LCb setrgbcolor
+1524 2204 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+1359 2200 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4991 2156 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4825 2150 M
+57 26 V
+stroke
+LTb
+LCb setrgbcolor
+2352 2422 M
+57 95 V
+stroke
+LTb
+LCb setrgbcolor
+2518 2595 M
+-109 -78 V
+stroke
+LTb
+LCb setrgbcolor
+1965 2252 M
+56 50 V
+stroke
+LTb
+LCb setrgbcolor
+2130 2295 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+3891 2299 M
+-109 47 V
+stroke
+LTb
+LCb setrgbcolor
+3726 2351 M
+56 -5 V
+stroke
+LTb
+LCb setrgbcolor
+1799 2222 M
+57 46 V
+stroke
+LTb
+LCb setrgbcolor
+1965 2252 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+5100 2136 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+5266 2141 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+2296 2387 M
+-109 -21 V
+stroke
+LTb
+LCb setrgbcolor
+2130 2295 M
+57 71 V
+stroke
+LTb
+LCb setrgbcolor
+1359 2200 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+1193 2186 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4550 2174 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4385 2177 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+4276 2207 M
+-110 32 V
+stroke
+LTb
+LCb setrgbcolor
+4110 2225 M
+56 14 V
+stroke
+LTb
+LCb setrgbcolor
+2296 2387 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+2462 2434 M
+-110 -12 V
+stroke
+LTb
+LCb setrgbcolor
+1799 2222 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+1633 2195 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+4825 2150 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4660 2148 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+1633 2195 M
+-109 9 V
+stroke
+LTb
+LCb setrgbcolor
+1468 2176 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+4001 2260 M
+-110 39 V
+stroke
+LTb
+LCb setrgbcolor
+3835 2295 M
+56 4 V
+stroke
+LTb
+LCb setrgbcolor
+1193 2186 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+1027 2172 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+4935 2130 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+5100 2136 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4219 2191 M
+57 16 V
+stroke
+LTb
+LCb setrgbcolor
+4385 2177 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+2240 2292 M
+-110 3 V
+stroke
+LTb
+LCb setrgbcolor
+2074 2241 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+5209 2117 M
+57 24 V
+stroke
+LTb
+LCb setrgbcolor
+2074 2241 M
+-109 11 V
+stroke
+LTb
+LCb setrgbcolor
+1908 2204 M
+57 48 V
+stroke
+LTb
+LCb setrgbcolor
+1468 2176 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+1302 2164 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+4494 2153 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+4660 2148 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+1080 2120 M
+971 1987 L
+stroke
+LTb
+LCb setrgbcolor
+1027 2172 M
+971 1987 L
+stroke
+LTb
+LCb setrgbcolor
+3944 2251 M
+57 9 V
+stroke
+LTb
+LCb setrgbcolor
+4110 2225 M
+-109 35 V
+stroke
+LTb
+LCb setrgbcolor
+4769 2121 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+4935 2130 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+1743 2179 M
+56 43 V
+stroke
+LTb
+LCb setrgbcolor
+1908 2204 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1137 2152 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+1302 2164 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+1743 2179 M
+-110 16 V
+stroke
+LTb
+LCb setrgbcolor
+1577 2159 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+5044 2110 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+5209 2117 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2240 2292 M
+56 95 V
+stroke
+LTb
+LCb setrgbcolor
+2405 2353 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+2405 2353 M
+57 81 V
+stroke
+LTb
+LCb setrgbcolor
+2518 2595 M
+-56 -161 V
+stroke
+LTb
+LCb setrgbcolor
+2571 2441 M
+-109 -7 V
+stroke
+LTb
+LCb setrgbcolor
+3508 2500 M
+109 -84 V
+stroke
+LTb
+LCb setrgbcolor
+3561 2417 M
+56 -1 V
+stroke
+LTb
+LCb setrgbcolor
+3726 2351 M
+-109 65 V
+stroke
+LTb
+LCb setrgbcolor
+3452 2515 M
+56 -15 V
+stroke
+LTb
+LCb setrgbcolor
+3399 2648 M
+109 -148 V
+stroke
+LTb
+LCb setrgbcolor
+2631 3003 M
+-56 -307 V
+stroke
+LTb
+LCb setrgbcolor
+2684 2786 M
+-109 -90 V
+stroke
+LTb
+LCb setrgbcolor
+2518 2595 M
+57 101 V
+stroke
+LTb
+LCb setrgbcolor
+4328 2160 M
+57 17 V
+stroke
+LTb
+LCb setrgbcolor
+4494 2153 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4769 2121 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4603 2126 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+4219 2191 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+4054 2212 M
+56 13 V
+stroke
+LTb
+LCb setrgbcolor
+1577 2159 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+1411 2141 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+3835 2295 M
+-109 56 V
+stroke
+LTb
+LCb setrgbcolor
+3669 2342 M
+57 9 V
+stroke
+LTb
+LCb setrgbcolor
+1137 2152 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+2018 2191 M
+56 50 V
+stroke
+LTb
+LCb setrgbcolor
+2183 2233 M
+-109 8 V
+stroke
+LTb
+LCb setrgbcolor
+2627 2608 M
+-109 -13 V
+stroke
+LTb
+LCb setrgbcolor
+2183 2233 M
+57 59 V
+stroke
+LTb
+LCb setrgbcolor
+2349 2284 M
+-109 8 V
+stroke
+LTb
+LCb setrgbcolor
+5044 2110 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4878 2103 M
+57 27 V
+stroke
+LTb
+LCb setrgbcolor
+2018 2191 M
+-110 13 V
+stroke
+LTb
+LCb setrgbcolor
+1852 2157 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+2349 2284 M
+56 69 V
+stroke
+LTb
+LCb setrgbcolor
+2515 2344 M
+-110 9 V
+stroke
+LTb
+LCb setrgbcolor
+3779 2277 M
+56 18 V
+stroke
+LTb
+LCb setrgbcolor
+3944 2251 M
+-109 44 V
+stroke
+LTb
+LCb setrgbcolor
+1411 2141 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+1246 2130 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+1852 2157 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+1686 2141 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+5153 2090 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4438 2133 M
+56 20 V
+stroke
+LTb
+LCb setrgbcolor
+4603 2126 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4328 2160 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+4163 2175 M
+56 16 V
+stroke
+LTb
+LCb setrgbcolor
+3338 2747 M
+61 -99 V
+stroke
+LTb
+LCb setrgbcolor
+3343 2734 M
+56 -86 V
+stroke
+LTb
+LCb setrgbcolor
+4712 2098 M
+57 23 V
+stroke
+LTb
+LCb setrgbcolor
+4878 2103 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1686 2141 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+1521 2123 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+1080 2120 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+1246 2130 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3888 2231 M
+56 20 V
+stroke
+LTb
+LCb setrgbcolor
+4054 2212 M
+-110 39 V
+stroke
+LTb
+LCb setrgbcolor
+2680 2457 M
+-109 -16 V
+stroke
+LTb
+LCb setrgbcolor
+2515 2344 M
+56 97 V
+stroke
+LTb
+LCb setrgbcolor
+2627 2608 M
+-56 -167 V
+stroke
+LTb
+LCb setrgbcolor
+5153 2090 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4987 2082 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+2292 2223 M
+-109 10 V
+stroke
+LTb
+LCb setrgbcolor
+2127 2181 M
+56 52 V
+stroke
+LTb
+LCb setrgbcolor
+1961 2143 M
+57 48 V
+stroke
+LTb
+LCb setrgbcolor
+2127 2181 M
+-109 10 V
+stroke
+LTb
+LCb setrgbcolor
+2458 2278 M
+-109 6 V
+stroke
+LTb
+LCb setrgbcolor
+2292 2223 M
+57 61 V
+stroke
+LTb
+LCb setrgbcolor
+1355 2105 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+1521 2123 M
+-110 18 V
+stroke
+LTb
+LCb setrgbcolor
+4272 2141 M
+56 19 V
+stroke
+LTb
+LCb setrgbcolor
+4438 2133 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+1796 2122 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+1961 2143 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+2458 2278 M
+57 66 V
+stroke
+LTb
+LCb setrgbcolor
+2624 2353 M
+-109 -9 V
+stroke
+LTb
+LCb setrgbcolor
+4712 2098 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4547 2105 M
+56 21 V
+stroke
+LTb
+LCb setrgbcolor
+2737 2665 M
+-110 -57 V
+stroke
+LTb
+LCb setrgbcolor
+2684 2786 M
+-57 -178 V
+stroke
+LTb
+LCb setrgbcolor
+3505 2371 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+3669 2342 M
+-108 75 V
+stroke
+LTb
+LCb setrgbcolor
+3452 2515 M
+109 -98 V
+stroke
+LTb
+LCb setrgbcolor
+3997 2191 M
+57 21 V
+stroke
+LTb
+LCb setrgbcolor
+4163 2175 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+4987 2082 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4822 2079 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+3779 2277 M
+-110 65 V
+stroke
+LTb
+LCb setrgbcolor
+3613 2301 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+1355 2105 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+1189 2099 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+3343 2734 M
+109 -219 V
+stroke
+LTb
+LCb setrgbcolor
+3396 2453 M
+56 62 V
+stroke
+LTb
+LCb setrgbcolor
+1796 2122 M
+-110 19 V
+stroke
+LTb
+LCb setrgbcolor
+1630 2104 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+3722 2238 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+3888 2231 M
+-109 46 V
+stroke
+LTb
+LCb setrgbcolor
+5097 2055 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+4381 2113 M
+57 20 V
+stroke
+LTb
+LCb setrgbcolor
+4547 2105 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+2740 3244 M
+-56 -458 V
+stroke
+LTb
+LCb setrgbcolor
+2793 2935 M
+2684 2786 L
+stroke
+LTb
+LCb setrgbcolor
+2236 2169 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+2402 2214 M
+-110 9 V
+stroke
+LTb
+LCb setrgbcolor
+1630 2104 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+1464 2088 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+4656 2078 M
+56 20 V
+stroke
+LTb
+LCb setrgbcolor
+4822 2079 M
+-110 19 V
+stroke
+LTb
+LCb setrgbcolor
+2740 3244 M
+2631 3003 L
+stroke
+LTb
+LCb setrgbcolor
+4272 2141 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+4106 2150 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+2236 2169 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+2070 2135 M
+57 46 V
+stroke
+LTb
+LCb setrgbcolor
+1189 2099 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+2402 2214 M
+56 64 V
+stroke
+LTb
+LCb setrgbcolor
+2567 2279 M
+-109 -1 V
+stroke
+LTb
+LCb setrgbcolor
+2737 2665 M
+-57 -208 V
+stroke
+LTb
+LCb setrgbcolor
+2789 2438 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2624 2353 M
+56 104 V
+stroke
+LTb
+LCb setrgbcolor
+1905 2106 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+2070 2135 M
+-109 8 V
+stroke
+LTb
+LCb setrgbcolor
+3831 2194 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+3997 2191 M
+-109 40 V
+stroke
+LTb
+LCb setrgbcolor
+4931 2058 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+5097 2055 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+1464 2088 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+1299 2058 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+1905 2106 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+1739 2085 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+3286 2621 M
+110 -168 V
+stroke
+LTb
+LCb setrgbcolor
+3505 2371 M
+-109 82 V
+stroke
+LTb
+LCb setrgbcolor
+3339 2373 M
+57 80 V
+stroke
+LTb
+LCb setrgbcolor
+2567 2279 M
+57 74 V
+stroke
+LTb
+LCb setrgbcolor
+2733 2346 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+3448 2302 M
+57 69 V
+stroke
+LTb
+LCb setrgbcolor
+3613 2301 M
+-108 70 V
+stroke
+LTb
+LCb setrgbcolor
+4216 2115 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4381 2113 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+3558 2243 M
+55 58 V
+stroke
+LTb
+LCb setrgbcolor
+3722 2238 M
+-109 63 V
+stroke
+LTb
+LCb setrgbcolor
+4490 2084 M
+57 21 V
+stroke
+LTb
+LCb setrgbcolor
+4656 2078 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4106 2150 M
+-109 41 V
+stroke
+LTb
+LCb setrgbcolor
+3941 2155 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+1573 2070 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+1739 2085 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4765 2057 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+4931 2058 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1299 2058 M
+-110 41 V
+stroke
+LTb
+LCb setrgbcolor
+3666 2190 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+3831 2194 M
+-109 44 V
+stroke
+LTb
+LCb setrgbcolor
+2345 2157 M
+57 57 V
+stroke
+LTb
+LCb setrgbcolor
+2511 2207 M
+-109 7 V
+stroke
+LTb
+LCb setrgbcolor
+2345 2157 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+2180 2120 M
+56 49 V
+stroke
+LTb
+LCb setrgbcolor
+2733 2346 M
+56 92 V
+stroke
+LTb
+LCb setrgbcolor
+2846 2618 M
+-57 -180 V
+stroke
+LTb
+LCb setrgbcolor
+2899 2385 M
+-110 53 V
+stroke
+LTb
+LCb setrgbcolor
+5040 2033 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+2014 2093 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+2180 2120 M
+-110 15 V
+stroke
+LTb
+LCb setrgbcolor
+3230 2481 M
+109 -108 V
+stroke
+LTb
+LCb setrgbcolor
+3448 2302 M
+-109 71 V
+stroke
+LTb
+LCb setrgbcolor
+3283 2282 M
+56 91 V
+stroke
+LTb
+LCb setrgbcolor
+2846 2618 M
+-109 47 V
+stroke
+LTb
+LCb setrgbcolor
+2793 2935 M
+-56 -270 V
+stroke
+LTb
+LCb setrgbcolor
+2511 2207 M
+56 72 V
+stroke
+LTb
+LCb setrgbcolor
+2677 2283 M
+-110 -4 V
+stroke
+LTb
+LCb setrgbcolor
+1408 2055 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+1573 2070 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+3558 2243 M
+-110 59 V
+stroke
+LTb
+LCb setrgbcolor
+3392 2227 M
+56 75 V
+stroke
+LTb
+LCb setrgbcolor
+2014 2093 M
+-109 13 V
+stroke
+LTb
+LCb setrgbcolor
+1848 2068 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+3234 3002 M
+109 -268 V
+stroke
+LTb
+LCb setrgbcolor
+3286 2621 M
+57 113 V
+stroke
+LTb
+LCb setrgbcolor
+2842 2282 M
+57 103 V
+stroke
+LTb
+LCb setrgbcolor
+2955 2555 M
+-56 -170 V
+stroke
+LTb
+LCb setrgbcolor
+3008 2326 M
+-109 59 V
+stroke
+LTb
+LCb setrgbcolor
+4216 2115 M
+-110 35 V
+stroke
+LTb
+LCb setrgbcolor
+4050 2115 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+4325 2087 M
+56 26 V
+stroke
+LTb
+LCb setrgbcolor
+4490 2084 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4600 2056 M
+56 22 V
+stroke
+LTb
+LCb setrgbcolor
+4765 2057 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+1408 2055 M
+-109 3 V
+stroke
+LTb
+LCb setrgbcolor
+3173 2358 M
+57 123 V
+stroke
+LTb
+LCb setrgbcolor
+3121 2617 M
+109 -136 V
+stroke
+LTb
+LCb setrgbcolor
+3286 2621 M
+-56 -140 V
+stroke
+LTb
+LCb setrgbcolor
+3775 2148 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+3941 2155 M
+-110 39 V
+stroke
+LTb
+LCb setrgbcolor
+2677 2283 M
+56 63 V
+stroke
+LTb
+LCb setrgbcolor
+2842 2282 M
+-109 64 V
+stroke
+LTb
+LCb setrgbcolor
+3283 2282 M
+-110 76 V
+stroke
+LTb
+LCb setrgbcolor
+3064 2445 M
+109 -87 V
+stroke
+LTb
+LCb setrgbcolor
+3117 2263 M
+56 95 V
+stroke
+LTb
+LCb setrgbcolor
+3121 2617 M
+-57 -172 V
+stroke
+LTb
+LCb setrgbcolor
+2955 2555 M
+109 -110 V
+stroke
+LTb
+LCb setrgbcolor
+3008 2326 M
+56 119 V
+stroke
+LTb
+LCb setrgbcolor
+3177 2796 M
+109 -175 V
+stroke
+LTb
+LCb setrgbcolor
+3666 2190 M
+-108 53 V
+stroke
+LTb
+LCb setrgbcolor
+3501 2178 M
+57 65 V
+stroke
+LTb
+LCb setrgbcolor
+3226 2200 M
+57 82 V
+stroke
+LTb
+LCb setrgbcolor
+3392 2227 M
+-109 55 V
+stroke
+LTb
+LCb setrgbcolor
+2902 2969 M
+-56 -351 V
+stroke
+LTb
+LCb setrgbcolor
+2955 2555 M
+-109 63 V
+stroke
+LTb
+LCb setrgbcolor
+4875 2035 M
+56 23 V
+stroke
+LTb
+LCb setrgbcolor
+5040 2033 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+1683 2049 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+1848 2068 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+3117 2263 M
+-109 63 V
+stroke
+LTb
+LCb setrgbcolor
+2951 2245 M
+57 81 V
+stroke
+LTb
+LCb setrgbcolor
+2786 2230 M
+56 52 V
+stroke
+LTb
+LCb setrgbcolor
+2951 2245 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+2289 2103 M
+56 54 V
+stroke
+LTb
+LCb setrgbcolor
+2454 2149 M
+-109 8 V
+stroke
+LTb
+LCb setrgbcolor
+3011 2947 M
+-56 -392 V
+stroke
+LTb
+LCb setrgbcolor
+2454 2149 M
+57 58 V
+stroke
+LTb
+LCb setrgbcolor
+2620 2192 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+3061 2192 M
+56 71 V
+stroke
+LTb
+LCb setrgbcolor
+3226 2200 M
+-109 63 V
+stroke
+LTb
+LCb setrgbcolor
+3501 2178 M
+-109 49 V
+stroke
+LTb
+LCb setrgbcolor
+3336 2159 M
+56 68 V
+stroke
+LTb
+LCb setrgbcolor
+3775 2148 M
+-109 42 V
+stroke
+LTb
+LCb setrgbcolor
+3609 2133 M
+57 57 V
+stroke
+LTb
+LCb setrgbcolor
+4325 2087 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4159 2080 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+2289 2103 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+2123 2079 M
+57 41 V
+stroke
+LTb
+LCb setrgbcolor
+4050 2115 M
+-109 40 V
+stroke
+LTb
+LCb setrgbcolor
+3884 2111 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+1683 2049 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+1517 2039 M
+56 31 V
+stroke
+LTb
+LCb setrgbcolor
+4600 2056 M
+-110 28 V
+stroke
+LTb
+LCb setrgbcolor
+4434 2056 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+3011 2947 M
+110 -330 V
+stroke
+LTb
+LCb setrgbcolor
+3177 2796 M
+-56 -179 V
+stroke
+LTb
+LCb setrgbcolor
+4709 2033 M
+56 24 V
+stroke
+LTb
+LCb setrgbcolor
+4875 2035 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3170 2131 M
+56 69 V
+stroke
+LTb
+LCb setrgbcolor
+3336 2159 M
+-110 41 V
+stroke
+LTb
+LCb setrgbcolor
+2123 2079 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+1958 2054 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3061 2192 M
+-110 53 V
+stroke
+LTb
+LCb setrgbcolor
+2895 2183 M
+56 62 V
+stroke
+LTb
+LCb setrgbcolor
+2620 2192 M
+57 91 V
+stroke
+LTb
+LCb setrgbcolor
+2786 2230 M
+-109 53 V
+stroke
+LTb
+LCb setrgbcolor
+4984 2015 M
+56 18 V
+stroke
+LTb
+LCb setrgbcolor
+3445 2117 M
+56 61 V
+stroke
+LTb
+LCb setrgbcolor
+3609 2133 M
+-108 45 V
+stroke
+LTb
+LCb setrgbcolor
+1517 2039 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+1958 2054 M
+-110 14 V
+stroke
+LTb
+LCb setrgbcolor
+1792 2032 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+3884 2111 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+3719 2095 M
+56 53 V
+stroke
+LTb
+LCb setrgbcolor
+4159 2080 M
+-109 35 V
+stroke
+LTb
+LCb setrgbcolor
+3993 2074 M
+57 41 V
+stroke
+LTb
+LCb setrgbcolor
+4434 2056 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+4268 2053 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+3004 2136 M
+57 56 V
+stroke
+LTb
+LCb setrgbcolor
+3170 2131 M
+-109 61 V
+stroke
+LTb
+LCb setrgbcolor
+2895 2183 M
+-109 47 V
+stroke
+LTb
+LCb setrgbcolor
+2729 2160 M
+57 70 V
+stroke
+LTb
+LCb setrgbcolor
+3068 3330 M
+109 -534 V
+stroke
+LTb
+LCb setrgbcolor
+3234 3002 M
+-57 -206 V
+stroke
+LTb
+LCb setrgbcolor
+3445 2117 M
+-109 42 V
+stroke
+LTb
+LCb setrgbcolor
+3279 2102 M
+57 57 V
+stroke
+LTb
+LCb setrgbcolor
+4543 2026 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+4709 2033 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+2729 2160 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+2564 2133 M
+56 59 V
+stroke
+LTb
+LCb setrgbcolor
+2232 2064 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+2398 2101 M
+-109 2 V
+stroke
+LTb
+LCb setrgbcolor
+2564 2133 M
+-110 16 V
+stroke
+LTb
+LCb setrgbcolor
+2398 2101 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+1626 2012 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+1792 2032 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+3554 2076 M
+55 57 V
+stroke
+LTb
+LCb setrgbcolor
+3719 2095 M
+-110 38 V
+stroke
+LTb
+LCb setrgbcolor
+2849 3203 M
+-56 -268 V
+stroke
+LTb
+LCb setrgbcolor
+2902 2969 M
+-109 -34 V
+stroke
+LTb
+LCb setrgbcolor
+3279 2102 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+3113 2089 M
+57 42 V
+stroke
+LTb
+LCb setrgbcolor
+4984 2015 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4818 2011 M
+57 24 V
+stroke
+LTb
+LCb setrgbcolor
+3015 3284 M
+-95 -70 V
+stroke
+LTb
+LCb setrgbcolor
+3828 2061 M
+56 50 V
+stroke
+LTb
+LCb setrgbcolor
+3993 2074 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+2067 2039 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+2232 2064 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+3004 2136 M
+-109 47 V
+stroke
+LTb
+LCb setrgbcolor
+2839 2125 M
+56 58 V
+stroke
+LTb
+LCb setrgbcolor
+4268 2053 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4103 2042 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+3554 2076 M
+-109 41 V
+stroke
+LTb
+LCb setrgbcolor
+3388 2065 M
+57 52 V
+stroke
+LTb
+LCb setrgbcolor
+1626 2012 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4543 2026 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+4378 2022 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+2067 2039 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+1901 2018 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+2726 2157 M
+3 3 V
+stroke
+LTb
+LCb setrgbcolor
+2839 2125 M
+-110 35 V
+stroke
+LTb
+LCb setrgbcolor
+3828 2061 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+3662 2043 M
+57 52 V
+stroke
+LTb
+LCb setrgbcolor
+4652 2005 M
+57 28 V
+stroke
+LTb
+LCb setrgbcolor
+4818 2011 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+2948 2083 M
+56 53 V
+stroke
+LTb
+LCb setrgbcolor
+3113 2089 M
+-109 47 V
+stroke
+LTb
+LCb setrgbcolor
+3388 2065 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+3223 2054 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+3124 3406 M
+110 -404 V
+stroke
+LTb
+LCb setrgbcolor
+1735 1997 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+1901 2018 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+2664 2108 M
+-100 25 V
+stroke
+LTb
+LCb setrgbcolor
+2507 2089 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+3937 2027 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+4103 2042 M
+-110 32 V
+stroke
+LTb
+LCb setrgbcolor
+4927 1990 M
+57 25 V
+stroke
+LTb
+LCb setrgbcolor
+3498 2024 M
+56 52 V
+stroke
+LTb
+LCb setrgbcolor
+3662 2043 M
+-108 33 V
+stroke
+LTb
+LCb setrgbcolor
+2507 2089 M
+-109 12 V
+stroke
+LTb
+LCb setrgbcolor
+2342 2053 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+4378 2022 M
+-110 31 V
+stroke
+LTb
+LCb setrgbcolor
+4212 2014 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+2176 2023 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+2342 2053 M
+-110 11 V
+stroke
+LTb
+LCb setrgbcolor
+1735 1997 M
+-109 15 V
+stroke
+LTb
+LCb setrgbcolor
+4652 2005 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4487 1991 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+2948 2083 M
+-109 42 V
+stroke
+LTb
+LCb setrgbcolor
+2782 2082 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+3223 2054 M
+-110 35 V
+stroke
+LTb
+LCb setrgbcolor
+3057 2041 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+3771 2012 M
+57 49 V
+stroke
+LTb
+LCb setrgbcolor
+3937 2027 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+2849 3203 M
+-109 41 V
+stroke
+LTb
+LCb setrgbcolor
+2176 2023 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+2010 2001 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+3332 2019 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+3498 2024 M
+-110 41 V
+stroke
+LTb
+LCb setrgbcolor
+4762 1983 M
+56 28 V
+stroke
+LTb
+LCb setrgbcolor
+4927 1990 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4212 2014 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+4046 1997 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+2959 3220 M
+-57 -251 V
+stroke
+LTb
+LCb setrgbcolor
+3011 2947 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3606 1995 M
+56 48 V
+stroke
+LTb
+LCb setrgbcolor
+3771 2012 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+1845 1986 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+2010 2001 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+4321 1985 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+4487 1991 M
+-109 31 V
+stroke
+LTb
+LCb setrgbcolor
+2891 2037 M
+57 46 V
+stroke
+LTb
+LCb setrgbcolor
+3057 2041 M
+-109 42 V
+stroke
+LTb
+LCb setrgbcolor
+2959 3220 M
+-110 -17 V
+stroke
+LTb
+LCb setrgbcolor
+3332 2019 M
+-109 35 V
+stroke
+LTb
+LCb setrgbcolor
+3166 2007 M
+57 47 V
+stroke
+LTb
+LCb setrgbcolor
+4046 1997 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+3881 1980 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+2616 2071 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+2451 2036 M
+56 53 V
+stroke
+LTb
+LCb setrgbcolor
+3606 1995 M
+-108 29 V
+stroke
+LTb
+LCb setrgbcolor
+3441 1984 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+4762 1983 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+4596 1972 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+1845 1986 M
+-110 11 V
+stroke
+LTb
+LCb setrgbcolor
+2285 2009 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+2451 2036 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+4155 1970 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+4321 1985 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+2285 2009 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+2120 1984 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3124 3406 M
+3015 3284 L
+stroke
+LTb
+LCb setrgbcolor
+2959 3220 M
+56 64 V
+stroke
+LTb
+LCb setrgbcolor
+3166 2007 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+4871 1956 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+3001 1994 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+3881 1980 M
+-110 32 V
+stroke
+LTb
+LCb setrgbcolor
+3715 1967 M
+56 45 V
+stroke
+LTb
+LCb setrgbcolor
+2891 2037 M
+-109 45 V
+stroke
+LTb
+LCb setrgbcolor
+2726 2157 M
+56 -75 V
+stroke
+LTb
+LCb setrgbcolor
+3068 3330 M
+-57 -383 V
+stroke
+LTb
+LCb setrgbcolor
+4430 1957 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+4596 1972 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+3275 1975 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+3441 1984 M
+-109 35 V
+stroke
+LTb
+LCb setrgbcolor
+1954 1966 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+2120 1984 M
+-110 17 V
+stroke
+LTb
+LCb setrgbcolor
+3990 1951 M
+56 46 V
+stroke
+LTb
+LCb setrgbcolor
+4155 1970 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3715 1967 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+3550 1955 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+2726 2157 M
+-110 -86 V
+stroke
+LTb
+LCb setrgbcolor
+2560 2013 M
+56 58 V
+stroke
+LTb
+LCb setrgbcolor
+4871 1956 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4705 1949 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+2835 2007 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3001 1994 M
+-110 43 V
+stroke
+LTb
+LCb setrgbcolor
+4265 1942 M
+56 43 V
+stroke
+LTb
+LCb setrgbcolor
+4430 1957 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+2560 2013 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+2394 1991 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+3110 1964 M
+56 43 V
+stroke
+LTb
+LCb setrgbcolor
+3275 1975 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3824 1935 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+3990 1951 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+1954 1966 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3550 1955 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+3385 1942 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+3068 3330 M
+2959 3220 L
+stroke
+LTb
+LCb setrgbcolor
+2229 1970 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+2394 1991 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+4705 1949 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4540 1935 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+4099 1926 M
+56 44 V
+stroke
+LTb
+LCb setrgbcolor
+4265 1942 M
+-110 28 V
+stroke
+LTb
+LCb setrgbcolor
+2944 1943 M
+57 51 V
+stroke
+LTb
+LCb setrgbcolor
+3110 1964 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+3824 1935 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3659 1926 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+2229 1970 M
+-109 14 V
+stroke
+LTb
+LCb setrgbcolor
+2063 1941 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+4814 1919 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+3385 1942 M
+-110 33 V
+stroke
+LTb
+LCb setrgbcolor
+3219 1932 M
+56 43 V
+stroke
+LTb
+LCb setrgbcolor
+4374 1916 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4540 1935 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+4099 1926 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3933 1907 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+2504 1966 M
+56 47 V
+stroke
+LTb
+LCb setrgbcolor
+2669 1994 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2063 1941 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3659 1926 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+3494 1913 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+2338 1950 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+2504 1966 M
+-110 25 V
+stroke
+LTb
+LCb setrgbcolor
+4649 1913 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4814 1919 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+4208 1899 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+4374 1916 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3219 1932 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3053 1924 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3768 1897 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+3933 1907 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+2944 1943 M
+-109 64 V
+stroke
+LTb
+LCb setrgbcolor
+2779 1952 M
+56 55 V
+stroke
+LTb
+LCb setrgbcolor
+2726 2157 M
+109 -150 V
+stroke
+LTb
+LCb setrgbcolor
+3494 1913 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+3328 1900 M
+57 42 V
+stroke
+LTb
+LCb setrgbcolor
+2172 1937 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+2338 1950 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3053 1924 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+2888 1913 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+4208 1899 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+4043 1885 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4649 1913 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+4483 1894 M
+57 41 V
+stroke
+LTb
+LCb setrgbcolor
+3602 1886 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3768 1897 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+2726 2157 M
+-57 -163 V
+stroke
+LTb
+LCb setrgbcolor
+2613 1942 M
+56 52 V
+stroke
+LTb
+LCb setrgbcolor
+2779 1952 M
+-110 42 V
+stroke
+LTb
+LCb setrgbcolor
+2172 1937 M
+-109 4 V
+stroke
+LTb
+LCb setrgbcolor
+4758 1892 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+3328 1900 M
+-109 32 V
+stroke
+LTb
+LCb setrgbcolor
+3163 1893 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+4043 1885 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3877 1871 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+2613 1942 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+2447 1924 M
+57 42 V
+stroke
+LTb
+LCb setrgbcolor
+4483 1894 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+4318 1872 M
+56 44 V
+stroke
+LTb
+LCb setrgbcolor
+3068 3330 M
+56 76 V
+stroke
+LTb
+LCb setrgbcolor
+3437 1873 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3602 1886 M
+-108 27 V
+stroke
+LTb
+LCb setrgbcolor
+2888 1913 M
+-109 39 V
+stroke
+LTb
+LCb setrgbcolor
+2722 1908 M
+57 44 V
+stroke
+LTb
+LCb setrgbcolor
+4152 1858 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4318 1872 M
+-110 27 V
+stroke
+LTb
+LCb setrgbcolor
+2447 1924 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+2282 1915 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+3163 1893 M
+-110 31 V
+stroke
+LTb
+LCb setrgbcolor
+2997 1884 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+4758 1892 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4592 1873 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3877 1871 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3711 1858 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+3437 1873 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3272 1857 M
+56 43 V
+stroke
+LTb
+LCb setrgbcolor
+2556 1901 M
+57 41 V
+stroke
+LTb
+LCb setrgbcolor
+2722 1908 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+4152 1858 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+3986 1847 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+4427 1853 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4592 1873 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+2282 1915 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+2831 1874 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+2997 1884 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+3547 1847 M
+55 39 V
+stroke
+LTb
+LCb setrgbcolor
+3711 1858 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+3272 1857 M
+-109 36 V
+stroke
+LTb
+LCb setrgbcolor
+3106 1855 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+4427 1853 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4261 1829 M
+57 43 V
+stroke
+LTb
+LCb setrgbcolor
+2556 1901 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+2391 1853 M
+56 71 V
+stroke
+LTb
+LCb setrgbcolor
+3986 1847 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3821 1832 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+4702 1853 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3381 1833 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+3547 1847 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+2666 1870 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+2831 1874 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+4095 1822 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+4261 1829 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+2941 1846 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+3106 1855 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+2391 1853 M
+-109 62 V
+stroke
+LTb
+LCb setrgbcolor
+4536 1832 M
+56 41 V
+stroke
+LTb
+LCb setrgbcolor
+4702 1853 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+3655 1819 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3821 1832 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+3381 1833 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3215 1825 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+2500 1866 M
+-109 -13 V
+stroke
+LTb
+LCb setrgbcolor
+2666 1870 M
+-110 31 V
+stroke
+LTb
+LCb setrgbcolor
+2500 1866 M
+56 35 V
+stroke
+LTb
+LCb setrgbcolor
+4536 1832 M
+-109 21 V
+stroke
+LTb
+LCb setrgbcolor
+4370 1813 M
+57 40 V
+stroke
+LTb
+LCb setrgbcolor
+3930 1808 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+4095 1822 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+2775 1836 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+2941 1846 M
+-110 28 V
+stroke
+LTb
+LCb setrgbcolor
+3655 1819 M
+-108 28 V
+stroke
+LTb
+LCb setrgbcolor
+3490 1809 M
+57 38 V
+stroke
+LTb
+LCb setrgbcolor
+4205 1797 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+4370 1813 M
+-109 16 V
+stroke
+LTb
+LCb setrgbcolor
+3050 1818 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+3215 1825 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+3930 1808 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3764 1793 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+4645 1808 M
+57 45 V
+stroke
+LTb
+LCb setrgbcolor
+3325 1799 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+3490 1809 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+2775 1836 M
+-109 34 V
+stroke
+LTb
+LCb setrgbcolor
+2609 1836 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+4205 1797 M
+-110 25 V
+stroke
+LTb
+LCb setrgbcolor
+4039 1784 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+4645 1808 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+4480 1792 M
+56 40 V
+stroke
+LTb
+LCb setrgbcolor
+2884 1810 M
+57 36 V
+stroke
+LTb
+LCb setrgbcolor
+3050 1818 M
+-109 28 V
+stroke
+LTb
+LCb setrgbcolor
+3600 1780 M
+55 39 V
+stroke
+LTb
+LCb setrgbcolor
+3764 1793 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3159 1789 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+3325 1799 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+4480 1792 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+4314 1777 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+2609 1836 M
+-109 30 V
+stroke
+LTb
+LCb setrgbcolor
+3873 1771 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+4039 1784 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+2718 1772 M
+57 64 V
+stroke
+LTb
+LCb setrgbcolor
+2884 1810 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3600 1780 M
+-110 29 V
+stroke
+LTb
+LCb setrgbcolor
+3434 1773 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4314 1777 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4148 1760 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+3159 1789 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+2993 1783 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+4589 1759 M
+56 49 V
+stroke
+LTb
+LCb setrgbcolor
+3873 1771 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3708 1754 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3268 1764 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+3434 1773 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+2718 1772 M
+-109 64 V
+stroke
+LTb
+LCb setrgbcolor
+4589 1759 M
+-109 33 V
+stroke
+LTb
+LCb setrgbcolor
+4423 1757 M
+57 35 V
+stroke
+LTb
+LCb setrgbcolor
+3983 1746 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+4148 1760 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3543 1747 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3708 1754 M
+-108 26 V
+stroke
+LTb
+LCb setrgbcolor
+2993 1783 M
+-109 27 V
+stroke
+LTb
+LCb setrgbcolor
+2828 1778 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+2828 1778 M
+-110 -6 V
+stroke
+LTb
+LCb setrgbcolor
+3268 1764 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3103 1755 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4257 1740 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+4423 1757 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3817 1734 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+3983 1746 M
+-110 25 V
+stroke
+LTb
+LCb setrgbcolor
+3377 1739 M
+57 34 V
+stroke
+LTb
+LCb setrgbcolor
+3543 1747 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+4532 1737 M
+57 22 V
+stroke
+LTb
+LCb setrgbcolor
+4257 1740 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4092 1722 M
+56 38 V
+stroke
+LTb
+LCb setrgbcolor
+3651 1722 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+3817 1734 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+2937 1753 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3103 1755 M
+-110 28 V
+stroke
+LTb
+LCb setrgbcolor
+3377 1739 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3212 1730 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4092 1722 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3926 1709 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+4532 1737 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4367 1720 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+3487 1713 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+3651 1722 M
+-108 25 V
+stroke
+LTb
+LCb setrgbcolor
+2937 1753 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3212 1730 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3046 1716 M
+57 39 V
+stroke
+LTb
+LCb setrgbcolor
+4367 1720 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+4201 1703 M
+56 37 V
+stroke
+LTb
+LCb setrgbcolor
+3926 1709 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+3761 1700 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+3487 1713 M
+-110 26 V
+stroke
+LTb
+LCb setrgbcolor
+3321 1706 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4201 1703 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4035 1680 M
+57 42 V
+stroke
+LTb
+LCb setrgbcolor
+4476 1701 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+3761 1700 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+3596 1689 M
+55 33 V
+stroke
+LTb
+LCb setrgbcolor
+3046 1716 M
+-109 37 V
+stroke
+LTb
+LCb setrgbcolor
+3155 1698 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+3321 1706 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3870 1676 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4035 1680 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4476 1701 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+4310 1683 M
+57 37 V
+stroke
+LTb
+LCb setrgbcolor
+3430 1680 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3596 1689 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3155 1698 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+4310 1683 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4145 1667 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+3870 1676 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3704 1667 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3265 1676 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3430 1680 M
+-109 26 V
+stroke
+LTb
+LCb setrgbcolor
+3979 1653 M
+56 27 V
+stroke
+LTb
+LCb setrgbcolor
+4145 1667 M
+-110 13 V
+stroke
+LTb
+LCb setrgbcolor
+4420 1662 M
+56 39 V
+stroke
+LTb
+LCb setrgbcolor
+3539 1656 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3704 1667 M
+-108 22 V
+stroke
+LTb
+LCb setrgbcolor
+3265 1676 M
+-110 22 V
+stroke
+LTb
+LCb setrgbcolor
+4254 1647 M
+56 36 V
+stroke
+LTb
+LCb setrgbcolor
+4420 1662 M
+-110 21 V
+stroke
+LTb
+LCb setrgbcolor
+3979 1653 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+3813 1643 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3539 1656 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3374 1647 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4254 1647 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4088 1634 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3648 1634 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+3813 1643 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3374 1647 M
+-109 29 V
+stroke
+LTb
+LCb setrgbcolor
+4088 1634 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+3923 1620 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4363 1601 M
+57 61 V
+stroke
+LTb
+LCb setrgbcolor
+3648 1634 M
+-109 22 V
+stroke
+LTb
+LCb setrgbcolor
+3483 1622 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4197 1614 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+4363 1601 M
+-109 46 V
+stroke
+LTb
+LCb setrgbcolor
+3923 1620 M
+-110 23 V
+stroke
+LTb
+LCb setrgbcolor
+3757 1611 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+3483 1622 M
+-109 25 V
+stroke
+LTb
+LCb setrgbcolor
+4032 1601 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4197 1614 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4307 1594 M
+56 7 V
+stroke
+LTb
+LCb setrgbcolor
+3592 1605 M
+56 29 V
+stroke
+LTb
+LCb setrgbcolor
+3757 1611 M
+-109 23 V
+stroke
+LTb
+LCb setrgbcolor
+4032 1601 M
+-109 19 V
+stroke
+LTb
+LCb setrgbcolor
+3866 1587 M
+57 33 V
+stroke
+LTb
+LCb setrgbcolor
+3592 1605 M
+-109 17 V
+stroke
+LTb
+LCb setrgbcolor
+4141 1581 M
+56 33 V
+stroke
+LTb
+LCb setrgbcolor
+4307 1594 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+3700 1580 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+3866 1587 M
+-109 24 V
+stroke
+LTb
+LCb setrgbcolor
+3975 1569 M
+57 32 V
+stroke
+LTb
+LCb setrgbcolor
+4141 1581 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+3700 1580 M
+-108 25 V
+stroke
+LTb
+LCb setrgbcolor
+4250 1563 M
+57 31 V
+stroke
+LTb
+LCb setrgbcolor
+3810 1545 M
+56 42 V
+stroke
+LTb
+LCb setrgbcolor
+3975 1569 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+4085 1549 M
+56 32 V
+stroke
+LTb
+LCb setrgbcolor
+4250 1563 M
+-109 18 V
+stroke
+LTb
+LCb setrgbcolor
+3810 1545 M
+-110 35 V
+stroke
+LTb
+LCb setrgbcolor
+4085 1549 M
+-110 20 V
+stroke
+LTb
+LCb setrgbcolor
+3919 1539 M
+56 30 V
+stroke
+LTb
+LCb setrgbcolor
+3919 1539 M
+-109 6 V
+stroke
+LTb
+LCb setrgbcolor
+4194 1529 M
+56 34 V
+stroke
+LTb
+LCb setrgbcolor
+4194 1529 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4028 1519 M
+57 30 V
+stroke
+LTb
+LCb setrgbcolor
+4028 1519 M
+-109 20 V
+stroke
+LTb
+LCb setrgbcolor
+4028 1519 M
+109 -139 V
+stroke
+LTb
+LCb setrgbcolor
+4194 1529 M
+-57 -149 V
+% End plot #1
+% Begin plot #2
+stroke
+LCb setrgbcolor
+6339 4696 M
+('data/graph.dat' u 1:2:3) Rshow
+1.000 UL
+LTb
+LCb setrgbcolor
+LCb setrgbcolor
+6423 4696 M
+399 0 V
+% End plot #2
+stroke
+LTb
+LCb setrgbcolor
+4304 609 M
+6229 1717 L
+stroke
+LTb
+LCb setrgbcolor
+4304 609 M
+971 1249 L
+stroke
+LTb
+LCb setrgbcolor
+971 1249 M
+1196 688 V
+stroke
+LTb
+LCb setrgbcolor
+6229 1717 M
+4898 1972 L
+stroke
+LTb
+LCb setrgbcolor
+971 3463 M
+0 -2214 V
+stroke
+LTb
+LCb setrgbcolor
+971 1249 M
+39 22 V
+stroke
+919 1199 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+/vshift -46 def
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1388 1169 M
+38 22 V
+stroke
+1336 1119 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 50)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1804 1089 M
+39 22 V
+stroke
+1753 1039 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 100)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+2221 1009 M
+39 22 V
+stroke
+2170 960 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 150)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+2638 929 M
+39 22 V
+stroke
+2586 880 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 200)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+3055 849 M
+38 22 V
+stroke
+LTb
+LCb setrgbcolor
+4940 1935 M
+39 22 V
+stroke
+3003 800 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 250)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+3472 769 M
+38 22 V
+stroke
+LTb
+LCb setrgbcolor
+5357 1855 M
+39 22 V
+stroke
+3420 720 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 300)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+3887 689 M
+39 22 V
+stroke
+LTb
+LCb setrgbcolor
+5774 1775 M
+38 22 V
+stroke
+3836 640 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 350)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+4304 609 M
+39 23 V
+stroke
+LTb
+LCb setrgbcolor
+6190 1695 M
+39 22 V
+stroke
+4253 560 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 400)]
+] -46.7 MCshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+4304 609 M
+-67 13 V
+stroke
+LTb
+LCb setrgbcolor
+1038 1236 M
+-67 13 V
+stroke
+4393 581 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+4625 794 M
+-67 13 V
+stroke
+LTb
+LCb setrgbcolor
+1359 1421 M
+-67 12 V
+stroke
+4714 765 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 100)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+4946 978 M
+-67 13 V
+stroke
+LTb
+LCb setrgbcolor
+1680 1605 M
+-67 13 V
+stroke
+5035 950 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 200)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+5267 1163 M
+-67 13 V
+stroke
+LTb
+LCb setrgbcolor
+2000 1790 M
+-67 13 V
+stroke
+5356 1135 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 300)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+5587 1348 M
+-67 13 V
+stroke
+5677 1319 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 400)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+5908 1532 M
+-67 13 V
+stroke
+5998 1504 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 500)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+6229 1717 M
+-67 13 V
+stroke
+6318 1688 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 600)]
+] -46.7 MLshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 1987 M
+-63 0 V
+stroke
+845 1987 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 2198 M
+-63 0 V
+stroke
+845 2198 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.02)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 2409 M
+-63 0 V
+stroke
+845 2409 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.04)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 2619 M
+-63 0 V
+stroke
+845 2619 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.06)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 2830 M
+-63 0 V
+stroke
+845 2830 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.08)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 3041 M
+-63 0 V
+stroke
+845 3041 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.1)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 3252 M
+-63 0 V
+stroke
+845 3252 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.12)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UL
+LTb
+LCb setrgbcolor
+1034 3463 M
+-63 0 V
+stroke
+845 3463 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0.14)]
+] -46.7 MRshow
+/Helvetica findfont 140 scalefont setfont
+1.000 UL
+LTb
+LCb setrgbcolor
+1.000 UP
+stroke
+grestore
+end
+showpage
+%%Trailer
+%%DocumentFonts: Helvetica

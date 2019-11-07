@@ -30,6 +30,7 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
+#include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/imgproc/imgproc.hpp"
@@ -198,6 +199,27 @@ public:
    */
    Feature< T, int >* getFeatures();
   
+  /**
+   * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   *
+   * \brief This method realize the match between two foveas.
+   *
+   * \param modelKeypoints - model keypoints
+   * \param modelDescriptors - model descriptors
+   */
+  void matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
+  
+  /**
+   * \fn double matching2( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   *
+   * \brief This method realize the match between two foveas.
+   *
+   * \param modelKeypoints - model keypoints
+   * \param modelDescriptors - model descriptors
+   */
+  double matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
+  
+  
 private:
   //
   // Methods
@@ -235,6 +257,7 @@ private:
   //
   std::vector< Level< T > > levels; ///< List of levels
   Feature< T, int >* features = NULL; ///< Features
+  std::vector< std::vector< cv::DMatch > > matches; 
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
@@ -261,7 +284,7 @@ Fovea< T >::Fovea(cv::Mat img, int m, T w, T f){
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
-  for ( int k = 0; k < m; k++ ){
+  for ( int k = 0; k < m + 1; k++ ){
     Level< T > l( k, m, w, u, f );
     levels.push_back( l );
   }
@@ -287,7 +310,7 @@ Fovea< T >::Fovea(int m, T w, T u, T f){
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
-  for ( int k = 0; k < m; k++ ){
+  for ( int k = 0; k < m + 1; k++ ){
     Level< T > l( k, m, w, u, f );
     levels.push_back( l );
   }
@@ -356,7 +379,7 @@ Fovea< T >::updateFovea(T f){
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
-  for ( int k = 0; k < m; k++ ){
+  for ( int k = 0; k < m + 1; k++ ){
     levels[k].updateLevel( m, w, u, this->f );
   }
 }
@@ -378,7 +401,7 @@ Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
   std::vector< cv::KeyPoint > kp;
   std::vector< std::vector< cv::KeyPoint > > keypoints;
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static, this->m+1) // Schedule(static, m+1) keeps the order
+#pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
     cv::Mat imgLevel = levels[k].getLevel( img );
@@ -401,14 +424,14 @@ Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
     cv::Rect roi = cv::Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
     if ( k < m ){ // Copying levels to foveated image
       resize( imgLevel, imgLevel, cv::Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
-      imgLevel.copyTo( imgFoveated( roi ) );
+      //imgLevel.copyTo( imgFoveated( roi ) );
     }
-    else
+    //else
       imgLevel.copyTo( imgFoveated( roi ) );
-      
+    
     // Paint rectangle in each level
     cv::rectangle(imgFoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), color);
-
+    
   }
   
   if ( keypoints.size() != 0 ){
@@ -441,7 +464,7 @@ template <typename T>
 bool
 Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
   if ( code == MRMF ){
-    std::cout << "MRMF actived" << std::endl;
+    //std::cout << "MRMF actived" << std::endl;
     //int feature = _KAZE_;
     features = new Feature< T, int >( img, levels, feature );
 #ifdef DEBUG
@@ -449,7 +472,7 @@ Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
 #endif
   }
   if ( code == MMF ){
-    std::cout << "MMF actived" << std::endl;
+    //std::cout << "MMF actived" << std::endl;
   }
   return true;
 }
@@ -500,6 +523,270 @@ Feature< T, int >*
 Fovea< T >::getFeatures(){
   return features;
 }
+
+
+/**
+ * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+ *
+ * \brief This method realize the match between two foveas.
+ *
+ * \param modelKeypoints - model keypoints
+ * \param modelDescriptors - model descriptors
+ */
+template <typename T>
+void
+Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
+  //cv::FlannBasedMatcher matcher;
+  //cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce-Hamming" );
+  //cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce" );
+  cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
+  std::vector< cv::DMatch > _matches;
+  std::vector<cv::Point2f> modelPoints, imgPoints;
+  cv::Mat mask, level;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
+#endif
+  for ( int k = 0; k < levels.size(); k++ ){ // Levels
+    if ( !(this->features)->getDescriptors( k ).empty() ){
+      level = levels[k].getLevel( scene );
+      _matches.clear();
+      matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), _matches );
+      
+      /*cv::Mat img_matches;
+      drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), _matches, img_matches);
+      imshow( "img_matches", img_matches );
+      cv::waitKey( 0 );*/
+
+      matches.push_back( _matches );
+      std::cout << _matches.size() << std::endl;
+      if ( _matches.size() != 0 ){
+	/*double max_dist = 0; double min_dist = 10000;
+	//-- Quick calculation of max and min distances between keypoints
+	for( int i = 0; i < modelDescriptors.rows; i++ ){ 
+	  double dist = _matches[i].distance;
+	  if( dist < min_dist ) min_dist = dist;
+	  if( dist > max_dist ) max_dist = dist;
+	}
+#ifdef DEBUG
+	printf("-- Max dist : %f \n", max_dist );
+	printf("-- Min dist : %f \n", min_dist );
+#endif
+	//-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
+	std::vector< cv::DMatch > good_matches;
+	for( int i = 0; i < modelDescriptors.rows; i++ ){ 
+	  if( _matches[i].distance <= std::max( 2*min_dist, 30.0 ) ) 
+	    good_matches.push_back( _matches[i]);
+	}*/
+	
+	modelPoints.clear(); imgPoints.clear();
+	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	for ( unsigned int i = 0; i < _matches.size(); i++ ){
+	  cv::DMatch m = _matches[i];
+	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+	}
+	
+	//cv::Mat H = findHomography(modelPoints, imgPoints, cv::RANSAC, 3, mask);
+	//cv::Mat H = findHomography(modelPoints, imgPoints, 0, 3, mask, 2000, 0.995);
+	cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	std::cout << "level " << k << " , mask " << mask.rows << ", " << mask.cols << std::endl;
+	int inliers = 0;
+	int outliers = 0;
+	for ( int x = 0; x < mask.rows; x++ ){
+	  for ( int y = 0; y < mask.cols; y++ ){
+	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
+	    //Counting inliers and outliers
+	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	    //mask.at<uchar>(x, y) > 0.0 ? inliers++ : outliers++;
+	  }
+	}
+	std::cout << "quantidade de inliers: " << inliers << std::endl;
+	std::cout << "quantidade de outliers: " << outliers << std::endl;
+
+      }
+	  
+	/*modelPoints.clear(); imgPoints.clear();
+	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	for ( unsigned int i = 0; i < _matches.size(); i++ ){
+	  cv::DMatch m = _matches[i];
+	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+	}
+	cv::Mat H = findHomography(modelPoints, imgPoints, cv::RANSAC, 3, mask);
+	std::cout << "level " << k << " , mask " << mask.rows << ", " << mask.cols << std::endl;
+	int inliers = 0;
+	int outliers = 0;
+	for ( int x = 0; x < mask.rows; x++ ){
+	  for ( int y = 0; y < mask.cols; y++ ){
+	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
+	    //Counting inliers and outliers
+	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	  }
+	}
+	std::cout << "quantidade de inliers: " << inliers << std::endl;
+	std::cout << "quantidade de outliers: " << outliers << std::endl;*/
+    /*}
+      else{
+	std::cout << "Haven't matches" << std::endl;
+	}*/
+    }
+    else{
+      std::cout << "Haven't extracted features" << std::endl;
+    }
+  }
+}
+
+/**
+ * \fn double matching2( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+ *
+ * \brief This method realize the match between two foveas.
+ *
+ * \param modelKeypoints - model keypoints
+ * \param modelDescriptors - model descriptors
+ */
+template <typename T>
+double
+Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
+
+  // -----------------------
+  // First possibility
+  // -----------------------
+  /*
+  cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
+  std::vector< cv::DMatch > _matches;
+  std::vector<cv::Point2f> modelPoints, imgPoints;
+  cv::Mat mask, level;
+  int inliers, outliers;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
+#endif
+  for ( int k = levels.size()-1; k < levels.size(); k++ ){ // Levels
+    inliers = 0; outliers = 0;
+#ifdef DEBUG
+    std::cout << "level " << k << std::endl;
+#endif
+    if ( !(this->features)->getDescriptors( k ).empty() ){
+      level = levels[k].getLevel( scene );
+      _matches.clear();
+      matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), _matches );
+      
+      //cv::Mat img_matches;
+      //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), _matches, img_matches);
+      //imshow( "img_matches", img_matches );
+      //cv::waitKey( 0 );
+
+      //matches.push_back( _matches );
+      //std::cout << _matches.size() << std::endl;
+      if ( _matches.size() != 0 ){
+	modelPoints.clear(); imgPoints.clear();
+	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	for ( unsigned int i = 0; i < _matches.size(); i++ ){
+	  cv::DMatch m = _matches[i];
+	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+	}
+	
+	cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	//std::cout << " , mask " << mask.rows << ", " << mask.cols << std::endl;
+	for ( int x = 0; x < mask.rows; x++ ){
+	  for ( int y = 0; y < mask.cols; y++ ){
+	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
+	    //Counting inliers and outliers
+	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	  }
+	}
+#ifdef DEBUG
+	std::cout << "quantidade de inliers: " << inliers << std::endl;
+	std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+      }
+    }
+    else{
+#ifdef DEBUG
+      std::cout << "quantidade de inliers: " << inliers << std::endl;
+      std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+    }
+    double matchesTotal = inliers + outliers;
+    double resultado = 0.0;
+    // Threshold matches
+    int threshold_matches = 4;
+    if ( matchesTotal > threshold_matches )
+      resultado = ((inliers * 1.0)/matchesTotal);
+    return resultado;
+  }
+  */
+
+
+  // -----------------------
+  // Second possibility
+  // -----------------------
+  const double ransac_thresh = 2.5f; // RANSAC inlier threshold
+  const double nn_match_ratio = 0.8f; // Nearest-neighbour matching ratio
+  cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce-Hamming" );
+  std::vector< std::vector< cv::DMatch > > matches;
+  std::vector<cv::Point2f> modelPoints, imgPoints;
+  cv::Mat mask, level;
+  int inliers, outliers;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
+#endif
+  //for ( int k = 0; k < 1; k++ ){ // Levels
+  for ( int k = levels.size()-1; k < levels.size(); k++ ){ // Levels
+    inliers = 0; outliers = 0;
+#ifdef DEBUG
+    std::cout << "level " << k << std::endl;
+#endif
+    if ( !(this->features)->getDescriptors( k ).empty() ){
+      level = levels[k].getLevel( scene );
+      matches.clear();
+      matcher->knnMatch( modelDescriptors, (this->features)->getDescriptors( k ), matches, 20 );
+      
+      std::cout << matches.size() << std::endl;
+      if ( matches.size() != 0 ){
+	modelPoints.clear(); imgPoints.clear();
+	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	for ( unsigned int i = 0; i < matches.size(); i++ ){
+	  if( matches[i][0].distance < nn_match_ratio * matches[i][1].distance ) {
+	    cv::DMatch m = matches[i][0];
+	    modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	    imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+	  }
+	}
+	if ( modelPoints.size() >= 4 ){
+	  cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	  //std::cout << " , mask " << mask.rows << ", " << mask.cols << std::endl;
+	  for ( int x = 0; x < mask.rows; x++ ){
+	    for ( int y = 0; y < mask.cols; y++ ){
+	      //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
+	      //Counting inliers and outliers
+	      (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	    }
+	  }
+	}
+#ifdef DEBUG
+	std::cout << "quantidade de inliers: " << inliers << std::endl;
+	std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+      }
+    }
+    else{
+#ifdef DEBUG
+      std::cout << "quantidade de inliers: " << inliers << std::endl;
+      std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+    }
+    double matchesTotal = inliers + outliers;
+    double resultado = 0.0;
+    // Threshold matches
+    int threshold_matches = 10;
+    if ( matchesTotal > threshold_matches )
+      resultado = ((inliers * 1.0)/matchesTotal);
+    return resultado;
+  }
+
+}
+
 
 /**
  * \fn void checkParameters( int m, T w, T u, T f )

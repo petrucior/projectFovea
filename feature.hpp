@@ -47,6 +47,9 @@
 #define _ORB_ 0
 #define _KAZE_ 1
 #define _SURF_ 2
+#define _FAST_ 3
+#define _AKAZE_ 4
+#define _MSER_ 5
 
 /**
  * \class Feature
@@ -137,21 +140,94 @@ template <typename T, typename K>
 Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int method ){
   cv::Ptr<cv::FeatureDetector> detector;
   cv::Ptr<cv::DescriptorExtractor> descriptor;
+  
+  // ORB configuration
+  int orb_nfeatures = 500;
+  float orb_scaleFactor = 1.2f;
+  int orb_nlevels = 8;
+  int orb_edgeThreshold = 31;
+  int orb_firstLevel = 0;
+  int orb_WTA_K = 2;
+  int orb_scoreType = cv::ORB::HARRIS_SCORE;
+  int orb_patchSize = 31;
+  int orb_fastThreshold = 20;
+
+  // KAZE Configuration
+  bool kaze_extended = false;
+  bool kaze_upright = false;
+  float kaze_threshold = 0.001f;
+  int kaze_nOctaves = 4;
+  int kaze_nOctaveLayers = 4;
+  int kaze_diffusivity = cv::KAZE::DIFF_PM_G2;
+  
+  // FAST Configuration
+  int fast_threshold = 10;
+  bool fast_nonmaxSuppression = true;
+  int fast_type = cv::FastFeatureDetector::TYPE_9_16;
+
+  // AKAZE Configuration
+  int akaze_descriptor_type = cv::AKAZE::DESCRIPTOR_MLDB;
+  int akaze_descriptor_size = 0;
+  int akaze_descriptor_channels = 3;
+  float akaze_threshold = 0.001f;
+  int akaze_nOctaves = 4;
+  int akaze_nOctaveLayers = 4;
+  int akaze_diffusivity = cv::KAZE::DIFF_PM_G2; 
+
+  // MSER Configuration
+  int mser_delta = 5;
+  int mser_min_area = 60;
+  int mser_max_area = 14400;
+  double mser_max_variation = 0.25;
+  double mser_min_diversity = .2;
+  int mser_max_evolution = 200;
+  double mser_area_threshold = 1.01;
+  double mser_min_margin = 0.003;
+  int mser_edge_blur_size = 5;
+
   switch ( method ){
   case _ORB_:
+#ifdef DEBUG
     std::cout << "ORB feature actived" << std::endl;
-    detector = cv::ORB::create();
-    descriptor = cv::ORB::create();
+#endif
+    detector = cv::ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
+    descriptor = cv::ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
     break;
   case _KAZE_:
+#ifdef DEBUG
     std::cout << "KAZE feature actived" << std::endl;
-    detector = cv::KAZE::create();
-    descriptor = cv::KAZE::create();
+#endif
+    detector = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
+    descriptor = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     break;
     //case _SURF_:
+    //std::cout << "SURF feature actived" << std::endl;
     //detector = cv::xfeatures2d::SURF::create(400);
     //descriptor = cv::xfeatures2d::SURF::create(400);
     //break;
+  case _FAST_:
+#ifdef DEBUG
+    std::cout << "FAST feature actived" << std::endl;
+#endif
+    detector = cv::FastFeatureDetector::create( fast_threshold, fast_nonmaxSuppression, fast_type );
+    descriptor = cv::FastFeatureDetector::create( fast_threshold, fast_nonmaxSuppression, fast_type );
+    break;
+  case _AKAZE_:
+#ifdef DEBUG
+    std::cout << "AKAZE feature actived" << std::endl;
+#endif
+    detector = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
+    descriptor = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
+    break;
+  case _MSER_:
+#ifdef DEBUG
+    std::cout << "MSER feature actived" << std::endl;
+#endif
+    detector = cv::MSER::create( mser_delta, mser_min_area, mser_max_area, mser_max_variation, mser_min_diversity, mser_max_evolution, 
+				 mser_area_threshold, mser_min_margin, mser_edge_blur_size );
+    descriptor = cv::MSER::create( mser_delta, mser_min_area, mser_max_area, mser_max_variation, mser_min_diversity, mser_max_evolution, 
+				   mser_area_threshold, mser_min_margin, mser_edge_blur_size );
+    break;
   default:
     std::cout << "Feature wasn't configured" << std::endl;
     break;
@@ -163,11 +239,15 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
     int64 t = cv::getTickCount();
     detector->detect ( level, kp );
     t = cv::getTickCount() - t;
+#ifdef DEBUG
     std::cout << "Feature extraction = " << t*1000/cv::getTickFrequency() << " ms, ";
+#endif
     t = cv::getTickCount();
     descriptor->compute ( level, kp, dp );
     t = cv::getTickCount() - t;
+#ifdef DEBUG
     std::cout << " Feature description = " << t*1000/cv::getTickFrequency() << " ms" << std::endl;
+#endif
     keypoints.push_back( kp );
     descriptors.push_back( dp );
   }

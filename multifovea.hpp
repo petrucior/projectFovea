@@ -356,7 +356,7 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
-  for ( int k =  0; k < this->m; k++ ){ // Levels
+  for ( int k =  0; k < this->m + 1; k++ ){ // Levels
     for ( int focus = 0; focus < this->foveas.size(); focus++ ){ // foveas
       Level< T > level = (this->foveas[focus])->getLevelFromFovea( k );
       cv::Mat imgLevel = level.getLevel( img );
