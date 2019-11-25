@@ -2,7 +2,7 @@
  * \file detections.hpp
  * 
  * \brief This file contains the prototype and implementation of strategies
- * to move the foveae.
+ * to move the fovea.
  *
  * \author
  * Petrucio Ricardo Tavares de Medeiros \n

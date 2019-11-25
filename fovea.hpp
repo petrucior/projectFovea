@@ -121,6 +121,17 @@ public:
   void setFovea( T px );
   
   /**
+   * \fn std::vector< T > getParameters();
+   *
+   * \brief Function that is responsible for informing the user of the fovea parameters
+   *
+   * \return The parameters of the fovea
+   *
+   * \note The parameter "m" is replicated to coordinates of type T
+   */
+  std::vector< T > getParameters();
+  
+  /**
    * \fn void updateFovea(int m, T w, T u, T f)
    *
    * \brief This method update the fovea structure
@@ -210,14 +221,26 @@ public:
   void matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
   
   /**
-   * \fn double matching2( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   * \fn double getInliersRatio( int k )
    *
-   * \brief This method realize the match between two foveas.
+   * \brief This method returns inlier ratio
    *
-   * \param modelKeypoints - model keypoints
-   * \param modelDescriptors - model descriptors
+   * \param k - Level from fovea
+   *
+   * \return This method return inlier ratio calculated after features extraction and match in level k
    */
-  double matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
+  double getInliersRatio( int k );
+  
+  /**
+   * \fn int getNumberMatches( int k )
+   *
+   * \brief This method returns number of matches
+   *
+   * \param k - Level from fovea
+   *
+   * \return This method return the number of matches calculated after features extraction and match in level k
+   */
+  int getNumberMatches( int k );
   
   
 private:
@@ -257,7 +280,8 @@ private:
   //
   std::vector< Level< T > > levels; ///< List of levels
   Feature< T, int >* features = NULL; ///< Features
-  std::vector< std::vector< cv::DMatch > > matches; 
+  std::vector< double > inliersRatio; ///< Inliers Ratio
+  std::vector< int > numberMatches; ///< Quantity of matches
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
@@ -356,6 +380,26 @@ Fovea< T >::setFovea( T px ){
   f.y = px.y - (u.y/2);
   fixFovea();
 }
+
+/**
+ * \fn std::vector< T > getParameters();
+ *
+ * \brief Function that is responsible for informing the user of the fovea parameters
+ *
+ * \return The parameters of the fovea
+ *
+ * \note The parameter "m" is replicated to coordinates of type T
+ */
+template <typename T>
+std::vector< T > 
+Fovea< T >::getParameters(){
+  std::vector< T > parameters;
+  parameters.push_back( T( this->m, this->m ) );
+  parameters.push_back( this->w );
+  parameters.push_back( this->u );
+  parameters.push_back( this->f );
+  return parameters;
+} 
 
 /**
  * \fn void updateFovea(int m, T w, T u, T f)
@@ -524,7 +568,6 @@ Fovea< T >::getFeatures(){
   return features;
 }
 
-
 /**
  * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
  *
@@ -536,161 +579,47 @@ Fovea< T >::getFeatures(){
 template <typename T>
 void
 Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
-  //cv::FlannBasedMatcher matcher;
-  //cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce-Hamming" );
-  //cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce" );
+  
+  // -----------------------
+  // First possibility
+  // -----------------------
   cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
-  std::vector< cv::DMatch > _matches;
+  std::vector< cv::DMatch > matches;
   std::vector<cv::Point2f> modelPoints, imgPoints;
   cv::Mat mask, level;
+  int inliers, outliers;
+  inliersRatio.clear();
+  numberMatches.clear();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
-    if ( !(this->features)->getDescriptors( k ).empty() ){
-      level = levels[k].getLevel( scene );
-      _matches.clear();
-      matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), _matches );
-      
-      /*cv::Mat img_matches;
-      drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), _matches, img_matches);
-      imshow( "img_matches", img_matches );
-      cv::waitKey( 0 );*/
-
-      matches.push_back( _matches );
-      std::cout << _matches.size() << std::endl;
-      if ( _matches.size() != 0 ){
-	/*double max_dist = 0; double min_dist = 10000;
-	//-- Quick calculation of max and min distances between keypoints
-	for( int i = 0; i < modelDescriptors.rows; i++ ){ 
-	  double dist = _matches[i].distance;
-	  if( dist < min_dist ) min_dist = dist;
-	  if( dist > max_dist ) max_dist = dist;
-	}
-#ifdef DEBUG
-	printf("-- Max dist : %f \n", max_dist );
-	printf("-- Min dist : %f \n", min_dist );
-#endif
-	//-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
-	std::vector< cv::DMatch > good_matches;
-	for( int i = 0; i < modelDescriptors.rows; i++ ){ 
-	  if( _matches[i].distance <= std::max( 2*min_dist, 30.0 ) ) 
-	    good_matches.push_back( _matches[i]);
-	}*/
-	
-	modelPoints.clear(); imgPoints.clear();
-	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-	for ( unsigned int i = 0; i < _matches.size(); i++ ){
-	  cv::DMatch m = _matches[i];
-	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
-	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
-	}
-	
-	//cv::Mat H = findHomography(modelPoints, imgPoints, cv::RANSAC, 3, mask);
-	//cv::Mat H = findHomography(modelPoints, imgPoints, 0, 3, mask, 2000, 0.995);
-	cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
-	std::cout << "level " << k << " , mask " << mask.rows << ", " << mask.cols << std::endl;
-	int inliers = 0;
-	int outliers = 0;
-	for ( int x = 0; x < mask.rows; x++ ){
-	  for ( int y = 0; y < mask.cols; y++ ){
-	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
-	    //Counting inliers and outliers
-	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
-	    //mask.at<uchar>(x, y) > 0.0 ? inliers++ : outliers++;
-	  }
-	}
-	std::cout << "quantidade de inliers: " << inliers << std::endl;
-	std::cout << "quantidade de outliers: " << outliers << std::endl;
-
-      }
-	  
-	/*modelPoints.clear(); imgPoints.clear();
-	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-	for ( unsigned int i = 0; i < _matches.size(); i++ ){
-	  cv::DMatch m = _matches[i];
-	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
-	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
-	}
-	cv::Mat H = findHomography(modelPoints, imgPoints, cv::RANSAC, 3, mask);
-	std::cout << "level " << k << " , mask " << mask.rows << ", " << mask.cols << std::endl;
-	int inliers = 0;
-	int outliers = 0;
-	for ( int x = 0; x < mask.rows; x++ ){
-	  for ( int y = 0; y < mask.cols; y++ ){
-	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
-	    //Counting inliers and outliers
-	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
-	  }
-	}
-	std::cout << "quantidade de inliers: " << inliers << std::endl;
-	std::cout << "quantidade de outliers: " << outliers << std::endl;*/
-    /*}
-      else{
-	std::cout << "Haven't matches" << std::endl;
-	}*/
-    }
-    else{
-      std::cout << "Haven't extracted features" << std::endl;
-    }
-  }
-}
-
-/**
- * \fn double matching2( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
- *
- * \brief This method realize the match between two foveas.
- *
- * \param modelKeypoints - model keypoints
- * \param modelDescriptors - model descriptors
- */
-template <typename T>
-double
-Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
-
-  // -----------------------
-  // First possibility
-  // -----------------------
-  /*
-  cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
-  std::vector< cv::DMatch > _matches;
-  std::vector<cv::Point2f> modelPoints, imgPoints;
-  cv::Mat mask, level;
-  int inliers, outliers;
-#ifdef _OPENMP
-#pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
-#endif
-  for ( int k = levels.size()-1; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
 #ifdef DEBUG
     std::cout << "level " << k << std::endl;
 #endif
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
-      _matches.clear();
-      matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), _matches );
+      matches.clear();
+      matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), matches );
       
       //cv::Mat img_matches;
-      //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), _matches, img_matches);
+      //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
       //imshow( "img_matches", img_matches );
       //cv::waitKey( 0 );
 
-      //matches.push_back( _matches );
-      //std::cout << _matches.size() << std::endl;
-      if ( _matches.size() != 0 ){
+      if ( matches.size() != 0 ){
 	modelPoints.clear(); imgPoints.clear();
 	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-	for ( unsigned int i = 0; i < _matches.size(); i++ ){
-	  cv::DMatch m = _matches[i];
+	for ( unsigned int i = 0; i < matches.size(); i++ ){
+	  cv::DMatch m = matches[i];
 	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
 	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
 	}
 	
 	cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
-	//std::cout << " , mask " << mask.rows << ", " << mask.cols << std::endl;
 	for ( int x = 0; x < mask.rows; x++ ){
 	  for ( int y = 0; y < mask.cols; y++ ){
-	    //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
 	    //Counting inliers and outliers
 	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
 	  }
@@ -701,26 +630,27 @@ Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint >
 #endif
       }
     }
-    else{
+    else{ // Descriptors empty
 #ifdef DEBUG
       std::cout << "quantidade de inliers: " << inliers << std::endl;
       std::cout << "quantidade de outliers: " << outliers << std::endl;
 #endif
     }
-    double matchesTotal = inliers + outliers;
-    double resultado = 0.0;
-    // Threshold matches
-    int threshold_matches = 4;
-    if ( matchesTotal > threshold_matches )
-      resultado = ((inliers * 1.0)/matchesTotal);
-    return resultado;
+    
+    double result = 0.0;
+    if ( matches.size() != 0 )
+      result = (inliers * 1.0)/matches.size();
+    inliersRatio.push_back( result );
+    numberMatches.push_back( matches.size() );
+    
   }
-  */
 
-
+  
+  
   // -----------------------
   // Second possibility
   // -----------------------
+  /*
   const double ransac_thresh = 2.5f; // RANSAC inlier threshold
   const double nn_match_ratio = 0.8f; // Nearest-neighbour matching ratio
   cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce-Hamming" );
@@ -732,17 +662,16 @@ Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint >
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
 #endif
   //for ( int k = 0; k < 1; k++ ){ // Levels
-  for ( int k = levels.size()-1; k < levels.size(); k++ ){ // Levels
+  for ( int k = 0; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
-#ifdef DEBUG
+    //#ifdef DEBUG
     std::cout << "level " << k << std::endl;
-#endif
+    //#endif
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
       matches.clear();
       matcher->knnMatch( modelDescriptors, (this->features)->getDescriptors( k ), matches, 20 );
       
-      std::cout << matches.size() << std::endl;
       if ( matches.size() != 0 ){
 	modelPoints.clear(); imgPoints.clear();
 	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
@@ -754,7 +683,7 @@ Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint >
 	  }
 	}
 	if ( modelPoints.size() >= 4 ){
-	  cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, ransac_thresh, mask);
 	  //std::cout << " , mask " << mask.rows << ", " << mask.cols << std::endl;
 	  for ( int x = 0; x < mask.rows; x++ ){
 	    for ( int y = 0; y < mask.cols; y++ ){
@@ -764,29 +693,62 @@ Fovea< T >::matching2( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint >
 	    }
 	  }
 	}
-#ifdef DEBUG
+	//#ifdef DEBUG
 	std::cout << "quantidade de inliers: " << inliers << std::endl;
 	std::cout << "quantidade de outliers: " << outliers << std::endl;
-#endif
+	//#endif
       }
     }
     else{
-#ifdef DEBUG
+      //#ifdef DEBUG
       std::cout << "quantidade de inliers: " << inliers << std::endl;
       std::cout << "quantidade de outliers: " << outliers << std::endl;
-#endif
+      //#endif
     }
     double matchesTotal = inliers + outliers;
-    double resultado = 0.0;
+    double result = 0.0;
     // Threshold matches
-    int threshold_matches = 10;
+    int threshold_matches = 25;
     if ( matchesTotal > threshold_matches )
-      resultado = ((inliers * 1.0)/matchesTotal);
-    return resultado;
+      result = ((inliers * 1.0)/matchesTotal);
+    return result;
   }
-
+  */
 }
 
+/**
+ * \fn double getInliersRatio( int k )
+ *
+ * \brief This method returns inlier ratio
+ *
+ * \param k - Level from fovea
+ *
+ * \return This method return inlier ratio calculated after features extraction and match in level k
+ */
+template <typename T>
+double 
+Fovea< T >::getInliersRatio( int k ){
+  if ( inliersRatio.size() == 0 ) 
+    return 0.0;
+  return inliersRatio[k];
+}
+
+/**
+ * \fn int getNumberMatches( int k )
+ *
+ * \brief This method returns number of matches
+ *
+ * \param k - Level from fovea
+ *
+ * \return This method return the number of matches calculated after features extraction and match in level k
+ */
+template <typename T>
+int 
+Fovea< T >::getNumberMatches( int k ){
+  if ( numberMatches.size() == 0 )
+    return 0;
+  return numberMatches[k];
+} 
 
 /**
  * \fn void checkParameters( int m, T w, T u, T f )

@@ -58,10 +58,10 @@ int main( int argc, char** argv ){
     if ( key == 'e' ){
       //fscene->foveatedFeatures( scene, _KAZE_, MRMF );
       fscene->foveatedFeatures( scene, _ORB_, MRMF );
-      //fscene->matching( scene, model, modelKeypoints, modelDescriptors );
-      char buffer [33];
+      fscene->matching( scene, model, modelKeypoints, modelDescriptors );
+      /*char buffer [33];
       double ratio = fscene->matching2( scene, model, modelKeypoints, modelDescriptors );
-      std::cout << ratio << std::endl;
+      std::cout << ratio << std::endl;*/
     }
   }
   

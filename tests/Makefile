@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= testdetect.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o
+OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: testdetect #testrectangle testpolygons testlevel testfovea testmulti testdetect
+all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics
 
 #
 # Regra de compilação e ligação do executáveis
@@ -110,10 +110,23 @@ testdetect: $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) -o testdetect $(LIBS) -O3
 
 #
-# Regra de compilação do arquivo objeto testfovea.o
+# Regra de compilação do arquivo objeto testdetect.o
 #
 testdetect.o: testdetect.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp $(DIR)/multifovea.hpp
 	$(CC) $(CFLAGS) testdetect.cpp -o testdetect.o
+
+#
+# Regra de compilação e ligação do executáveis
+# 
+teststatistics: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o teststatistics $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto teststatistics.o
+#
+teststatistics.o: teststatistics.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp $(DIR)/multifovea.hpp $(DIR)/statistics.hpp
+	$(CC) $(CFLAGS) teststatistics.cpp -o teststatistics.o
+
 
 #
 # Regra que elimina arquivos intermediários
@@ -125,5 +138,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect
+	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics
 
