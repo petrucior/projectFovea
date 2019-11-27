@@ -43,10 +43,11 @@ int main( int argc, char** argv ){
     
   //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 4, cv::Point(100, 100), cv::Point( scene.cols, scene.rows ), fs );
   
-  Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
+  //Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
+  Statistics< cv::Point > *s = new Statistics< cv::Point >();
   //s->plotProportion( fscene, scene, model,  modelKeypoints, modelDescriptors, 70, 1000 );
-
-  /*while ( true ){
+  
+  while ( true ){
     setMouseCallback( "sceneFoveated", on_mouse, fscene );
     sceneFoveated = fscene->foveatedImage( scene, cv::Scalar(255, 255, 255) );
     imshow("sceneFoveated", sceneFoveated );
@@ -59,10 +60,10 @@ int main( int argc, char** argv ){
       fscene->foveatedFeatures( scene, _ORB_, MRMF );
       fscene->matching( scene, model, modelKeypoints, modelDescriptors );
       
-      std::cout << s->functionFovea( fscene ) << std::endl;
+      std::cout << s->functionFovea( fscene, 70, 1000 ) << std::endl;
       
     }
-  }*/
+  }
 
   /*double referencePotential = 0.8;
   std::vector< double > potentials;  
@@ -120,7 +121,7 @@ int main( int argc, char** argv ){
   cv::Point2f pointEstimated = s->maximumLikelihoodEstimator( points, potentials, 1 );
   std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;*/
 
-  std::vector< cv::Point2f > points;
+  /*std::vector< cv::Point2f > points;
   points.push_back( cv::Point2f( 4, 8 ) );
   points.push_back( cv::Point2f( 9, 6 ) );
   points.push_back( cv::Point2f( 5, 5 ) );
@@ -144,7 +145,7 @@ int main( int argc, char** argv ){
   //invpotentials.push_back(8.48);
   //invpotentials.push_back(1.41);
   cv::Point2f pointEstimated = s->trilaterationEstimator(points, invpotentials);
-  std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
+  std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;*/
   
   
   return 0;

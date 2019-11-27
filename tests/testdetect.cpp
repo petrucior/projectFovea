@@ -36,7 +36,7 @@ int main( int argc, char** argv ){
   descriptor = cv::ORB::create();
   
   Fovea< Point > *fscene = new Fovea< Point >( 2, Point(120, 120), Point( scene.cols, scene.rows ), fs );
-
+  
   // Configuration to _KAZE_
   //detector = cv::KAZE::create();
   //descriptor = cv::KAZE::create();

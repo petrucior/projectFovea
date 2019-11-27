@@ -166,6 +166,25 @@ public:
    * \return Show the extraction feature in each fovea
    */
   cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors );
+
+  /**
+   * \fn std::vector< Fovea< T >* > getFoveas()
+   *
+   * \brief This function return all foveas built.
+   *
+   * \return Vector with all foveas
+   */
+  std::vector< Fovea< T >* > getFoveas();
+
+  /**
+   * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   *
+   * \brief This method realize the match between two foveas.
+   *
+   * \param modelKeypoints - model keypoints
+   * \param modelDescriptors - model descriptors
+   */
+  void matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
   
 private:
   //
@@ -434,5 +453,38 @@ Multifovea< T >::multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > c
   }*/
   return output;
 }
+
+/**
+ * \fn std::vector< Fovea< T >* > getFoveas()
+ *
+ * \brief This function return all foveas built.
+ *
+ * \return Vector with all foveas
+ */
+template <typename T>
+std::vector< Fovea< T >* > 
+Multifovea< T >::getFoveas(){
+  return foveas;
+}
+
+/**
+ * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+ *
+ * \brief This method realize the match between two foveas.
+ *
+ * \param modelKeypoints - model keypoints
+ * \param modelDescriptors - model descriptors
+ */
+template <typename T>
+void 
+Multifovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+  for ( int focus = 0; focus < this->foveas.size(); focus++ ){
+    foveas[focus]->matching( scene, model, modelKeypoints, modelDescriptors );
+  }
+}
+
 
 /** @} */ //end of group class.

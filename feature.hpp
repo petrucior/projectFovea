@@ -144,7 +144,7 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   // ORB configuration
   int orb_nfeatures = 500;
   float orb_scaleFactor = 1.2f;
-  int orb_nlevels = 8;
+  int orb_nlevels = 1;
   int orb_edgeThreshold = 31;
   int orb_firstLevel = 0;
   int orb_WTA_K = 2;

@@ -37,7 +37,8 @@
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
-#include "fovea.hpp"
+//#include "fovea.hpp"
+#include "multifovea.hpp"
 #include "graph.hpp"
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
@@ -84,7 +85,7 @@ public:
 		       cv::Mat modelDescriptors, float threshold1, float threshold2 );
   
   /**
-   * \fn double functionFovea( Fovea< T >* fovea )
+   * \fn double functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 )
    *
    * \brief Calculate the function pondering levels 
    * \f$ f_{nfovea} = \sum_{k = 0}^{k = m + 1} \alpha_{k} Ir_{k} \f$, 
@@ -92,10 +93,11 @@ public:
    * \f$ Ir \f$ represent the inliers ratio in the level 
    *
    * \param fovea - Fovea pointer to be analised
+   * \param threshold1, threshold2 - Filtering limits
    *
    * \return A value that means the fovea's contribution to target detection.
    */
-  double functionFovea( Fovea< T >* fovea );
+  double functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 );
   
   /**
    * \fn std::vector< double > regionTransformed( T R_t, std::vector< T > R )
@@ -226,11 +228,11 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
 	  if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
 	       ( fovea->getNumberMatches( k ) < threshold2 ) ){
 	    fprintf( file, "%f ", fovea->getInliersRatio( k ) );
-	    if ( maxInliersRatio < fovea->getInliersRatio( k ) ){
+	    /*if ( maxInliersRatio < fovea->getInliersRatio( k ) ){
 	      maxInliersRatio = fovea->getInliersRatio( k );
 	      //std::cout << "level = " << k << std::endl; 
 	      //std::cout << "( x, y ) = ( " << i << ", " << j << " )" << std::endl;
-	    }
+	    }*/
 	  }
 	  else{
 	    fprintf( file, "%f ", 0.0 );
@@ -260,7 +262,7 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
 }
 
 /**
- * \fn double functionFovea( Fovea< T >* fovea )
+ * \fn double functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 )
  *
  * \brief Calculate the function pondering levels 
  * \f$ f_{nfovea} = \sum_{k = 0}^{m + 1} \alpha_{k} Ir_{k} \f$, 
@@ -268,6 +270,7 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
  * \f$ Ir \f$ represent the inliers ratio in the level 
  *
  * \param fovea - Fovea pointer to be analised
+ * \param threshold1, threshold2 - Filtering limits
  *
  * \return A value that means the fovea's contribution to target detection.
  *
@@ -275,7 +278,7 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
  */
 template <typename T>
 double 
-Statistics< T >::functionFovea( Fovea< T >* fovea ){
+Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 ){
   double function = 0.0;
   std::vector< T > parameters = fovea->getParameters();
   int m = parameters[0].x;
@@ -289,7 +292,10 @@ Statistics< T >::functionFovea( Fovea< T >* fovea ){
   }
   std::vector< double > alpha = regionTransformed( totalRegion, regions );
   for ( int k = 0; k < m + 1; k++ ){
-    function += alpha[k] * fovea->getInliersRatio( k );
+    if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
+	 ( fovea->getNumberMatches( k ) < threshold2 ) ){
+      function += alpha[k] * fovea->getInliersRatio( k );
+    }
   }
   return function;
 }

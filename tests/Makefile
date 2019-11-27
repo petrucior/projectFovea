@@ -14,8 +14,8 @@ CFLAGS= -Wall -pedantic -ansi -g -c `pkg-config --cflags opencv`
 
 #
 # A variável LFLAGS indica que opção de compilação queremos
-#
-LFLAGS= -Wall -g 
+# MACOS: -openmp  Unix: -fopenmp 
+LFLAGS= -Wall -g #-openmp #-fopenmp
 
 #
 # A variável DIR indica o diretório dos arquivos de cabeçalho do projeto
@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o
+OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics
+all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction
 
 #
 # Regra de compilação e ligação do executáveis
@@ -129,6 +129,19 @@ teststatistics.o: teststatistics.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR
 
 
 #
+# Regra de compilação e ligação do executáveis
+# 
+testfunction: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o testfunction $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto testfunction.o
+#
+testfunction.o: testfunction.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp $(DIR)/multifovea.hpp $(DIR)/statistics.hpp
+	$(CC) $(CFLAGS) testfunction.cpp -o testfunction.o
+
+
+#
 # Regra que elimina arquivos intermediários
 # 
 clean:
@@ -138,5 +151,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics
+	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction
 
