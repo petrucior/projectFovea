@@ -590,15 +590,15 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   int inliers, outliers;
   inliersRatio.clear();
   numberMatches.clear();
-  int64 t = cv::getTickCount();
+  //int64 t = cv::getTickCount();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
-    //#ifdef DEBUG
+#ifdef DEBUG
     std::cout << "level " << k << std::endl;
-    //#endif
+#endif
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
       matches.clear();
@@ -631,30 +631,29 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
 	  }
 	}
-	//#ifdef DEBUG
+#ifdef DEBUG
 	std::cout << "quantidade de inliers: " << inliers << std::endl;
 	std::cout << "quantidade de outliers: " << outliers << std::endl;
-	//#endif
+#endif
       }
     }
     else{ // Descriptors empty
-      //#ifdef DEBUG
+#ifdef DEBUG
       std::cout << "quantidade de inliers: " << inliers << std::endl;
       std::cout << "quantidade de outliers: " << outliers << std::endl;
-      //#endif
+#endif
     }
     
     double result = 0.0;
     if ( matches.size() != 0 )
       result = (inliers * 1.0)/matches.size();
-    //result = (inliers * 1.0);
     inliersRatio.push_back( result );
     numberMatches.push_back( matches.size() );
     
   }
 
-  t = cv::getTickCount() - t;
-  std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
+  //t = cv::getTickCount() - t;
+  //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
   
   
   
