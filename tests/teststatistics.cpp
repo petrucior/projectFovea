@@ -27,25 +27,48 @@ int main( int argc, char** argv ){
   // Extraction features of model
   cv::Ptr<cv::FeatureDetector> detector;
   cv::Ptr<cv::DescriptorExtractor> descriptor;
+
+  // -----------------------
   // Configuration to _ORB_
+  // -----------------------
   detector = cv::ORB::create();
   descriptor = cv::ORB::create();
-  
   Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(120, 120), cv::Point( scene.cols, scene.rows ), fs );
-
+  
+  // -----------------------
   // Configuration to _KAZE_
+  // -----------------------
   //detector = cv::KAZE::create();
   //descriptor = cv::KAZE::create();
+  //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 4, cv::Point(100, 100), cv::Point( scene.cols, scene.rows ), fs );
+    
+  // -----------------------
+  // Configuration to _AKAZE_
+  // -----------------------
+  //detector = cv::AKAZE::create();
+  //descriptor = cv::AKAZE::create();
+  //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(100, 100), cv::Point( scene.cols, scene.rows ), fs );
+  
+  // -----------------------
+  // Configuration to _BRISK_
+  // -----------------------
+  //detector = cv::BRISK::create();
+  //descriptor = cv::BRISK::create();
+  //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(100, 100), cv::Point( scene.cols, scene.rows ), fs );
+    
+  
+  // -----------------------
+  // Configuration to Model
+  // -----------------------
   std::vector< cv::KeyPoint > modelKeypoints;
   cv::Mat modelDescriptors;
   detector->detect ( model, modelKeypoints );
   descriptor->compute ( model, modelKeypoints, modelDescriptors );
     
-  //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 4, cv::Point(100, 100), cv::Point( scene.cols, scene.rows ), fs );
   
   //Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
   Statistics< cv::Point > *s = new Statistics< cv::Point >();
-  //s->plotProportion( fscene, scene, model,  modelKeypoints, modelDescriptors, 70, 1000 );
+  //s->plotProportion( fscene, scene, model, _ORB_, modelKeypoints, modelDescriptors, 0.0, 1000.0 );
   
   while ( true ){
     setMouseCallback( "sceneFoveated", on_mouse, fscene );
@@ -58,9 +81,10 @@ int main( int argc, char** argv ){
     if ( key == 'e' ){
       //fscene->foveatedFeatures( scene, _KAZE_, MRMF );
       fscene->foveatedFeatures( scene, _ORB_, MRMF );
+      //fscene->foveatedFeatures( scene, _BRISK_, MRMF );
       fscene->matching( scene, model, modelKeypoints, modelDescriptors );
       
-      std::cout << s->functionFovea( fscene, 70, 1000 ) << std::endl;
+      std::cout << s->functionFovea( fscene, 0.0, 1000 ) << std::endl;
       
     }
   }

@@ -69,19 +69,21 @@ public:
   //
   
   /**
-   * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, 
-   * cv::Mat modelDescriptors, float threshold ) 
+   * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int methodDetector,
+   * std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors, float threshold ) 
    *
    * \brief Plot the proportion of inliers/(inliers+outliers) in each level.
    *
    * \param fovea - Fovea pointer to be analised
    * \param scene - Image to be foveated
    * \param model - Template/Model to be detected
+   * \param method - Feature specification configured (see settings features) 
    * \param modelKeypoints - Model keypoints
    * \param modelDescriptors - Model descriptors
    * \param threshold1, threshold2 - Filtering limits
    */
-  void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, 
+  void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method,
+		       std::vector< cv::KeyPoint > modelKeypoints, 
 		       cv::Mat modelDescriptors, float threshold1, float threshold2 );
   
   /**
@@ -114,7 +116,7 @@ public:
    *
    * \return returns normalized weights for each level
    */
-  std::vector< double > regionTransformed( T R_t, std::vector< T > R );
+  std::vector< double > regionTransformed( double R_t, std::vector< double > R );
   
   /**
    * \fn int localGradient( double referencePotential, std::vector< double > potentials )
@@ -190,35 +192,36 @@ public:
 #endif
 
 /**
- * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, 
- * cv::Mat modelDescriptors, float threshold1, float threshold2 ) 
+ * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method,
+ * std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors, 
+ * float threshold1, float threshold2 ) 
  *
  * \brief Plot the proportion of inliers/(inliers+outliers) in each level.
  *
  * \param fovea - Fovea pointer to be analised
  * \param scene - Image to be foveated
  * \param model - Template/Model to be detected
+ * \param methodDetector - Feature specification configured (see settings features) 
  * \param modelKeypoints - Model keypoints
  * \param modelDescriptors - Model descriptors
  * \param threshold1, threshold2 - Filtering limits
  */
 template <typename T>
 void 
-Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, 
+Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method, 
+				 std::vector< cv::KeyPoint > modelKeypoints, 
 				 cv::Mat modelDescriptors, float threshold1, float threshold2 ){
   std::vector< T > parameters = fovea->getParameters();
   int m = parameters[0].x;
   FILE *file;
-  char buffer[100];
   file = fopen ("data/graph3d.dat","w");
-  int numberMatchesMax = 0;
-  double maxInliersRatio = 0.0;
+  //double maxInliersRatio = 0.0;
   if ( file != NULL ){
     fprintf( file, "#%c #%c #%c \n", 'x', 'y', 'z');
     for ( int i = 0; i < scene.rows; i+=10 ){
       for ( int j = 0; j < scene.cols; j+=10 ){
 	fovea->updateFovea( cv::Point( i, j ) );
-	fovea->foveatedFeatures( scene, _ORB_, MRMF );
+	fovea->foveatedFeatures( scene, method, MRMF );
 	fovea->matching( scene, model, modelKeypoints, modelDescriptors );
 	
 	fprintf( file, "%d %d ", i, j );
@@ -282,19 +285,28 @@ Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float thres
   double function = 0.0;
   std::vector< T > parameters = fovea->getParameters();
   int m = parameters[0].x;
-  T totalRegion = T( 0, 0 );
-  std::vector< T > regions;
+  double totalRegionx = 0.0;
+  std::vector< double > regionsx;
+  //T totalRegion = T( 0.0, 0.0 );
+  //std::vector< T > regions;
   for ( int k = 0; k < m + 1; k++ ){
-    Level< T > level = fovea->getLevelFromFovea( k );
-    std::vector< T > boundingBox = level.boundingBox( k, m, parameters[1], parameters[2], parameters[3] );
-    totalRegion += T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) );
-    regions.push_back( T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) ) );
+    if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
+	 ( fovea->getNumberMatches( k ) < threshold2 ) ){
+      Level< T > level = fovea->getLevelFromFovea( k );
+      std::vector< T > boundingBox = level.boundingBox( k, m, parameters[1], parameters[2], parameters[3] );
+      totalRegionx += (1.0/(boundingBox[1].x));
+      regionsx.push_back( (1.0/(boundingBox[1].x)) );
+      //totalRegion += T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) );
+      //regions.push_back( T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) ) );
+    }
   }
-  std::vector< double > alpha = regionTransformed( totalRegion, regions );
+  std::vector< double > alpha = regionTransformed( totalRegionx, regionsx );
+  //std::vector< double > alpha = regionTransformed( totalRegion, regions );
   for ( int k = 0; k < m + 1; k++ ){
     if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
 	 ( fovea->getNumberMatches( k ) < threshold2 ) ){
       function += alpha[k] * fovea->getInliersRatio( k );
+      //std::cout << "level = " << k << " , alfa = " << alpha[k] << " , function = " << fovea->getInliersRatio( k ) << std::endl;
     }
   }
   return function;
@@ -315,9 +327,9 @@ Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float thres
  */
 template <typename T>
 std::vector< double >
-Statistics< T >::regionTransformed( T R_t, std::vector< T > R ){
+Statistics< T >::regionTransformed( double R_t, std::vector< double > R ){
   std::vector< double > weights;
-  for ( int analised = 0; analised < R.size(); analised++ ){
+  /*for ( int analised = 0; analised < R.size(); analised++ ){
     double complementx = 0.0; double complementy = 0.0;
     for ( int notAnalised = 0; notAnalised < R.size(); notAnalised++ ){
       if ( notAnalised != analised ){
@@ -328,7 +340,28 @@ Statistics< T >::regionTransformed( T R_t, std::vector< T > R ){
     complementx -= ((double)R[analised].x / R_t.x);
     complementy -= ((double)R[analised].y / R_t.y);
     weights.push_back( complementx );
+  }*/
+  
+  /*T R_t_complement = T(0, 0);
+  for ( int r = 0; r < R.size(); r++ ){
+    R_t_complement += R_t - R[r];
   }
+  if ( R_t_complement.x != 0 || R_t_complement.y != 0 ){
+    for ( int r = 0; r < R.size(); r++ ){
+      double wx = double( R_t.x - R[r].x ) / R_t_complement.x;
+      double wy = double( R_t.y - R[r].y ) / R_t_complement.y;
+      weights.push_back( wx );
+    }
+  }
+  else{
+    weights.push_back( 0.0 );
+  }*/
+  
+  for ( int r = 0; r < R.size(); r++ ){
+    double wx = double(R[r])/ R_t;
+    weights.push_back( wx );
+  }
+  
   return weights;
 }
 

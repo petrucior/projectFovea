@@ -78,7 +78,7 @@ int main( int argc, char** argv ){
   Statistics< cv::Point > *s = new Statistics< cv::Point >();
   std::vector< Fovea< cv::Point >* > foveas = fscene->getFoveas();
   for( int f = 0; f < fs.size(); f++ ){
-    std::cout << s->functionFovea( foveas[f], 70, 1000 ) << std::endl;
+    std::cout << s->functionFovea( foveas[f], 87, 1000 ) << std::endl;
   }
   //imshow("image", multifoveated );
   //waitKey( 0 );

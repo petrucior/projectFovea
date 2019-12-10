@@ -273,7 +273,7 @@ private:
    *
    * \return Return the position of pixel on the both axis to image.
    */
-  T mapLevel2Image( int k, int m, T w, T u, T f, T px );
+  T mapLevel2Image( int k, int m, T w, T u, T f, T px );  
   
   //
   // Attributes
@@ -583,7 +583,7 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   // -----------------------
   // First possibility
   // -----------------------
-  cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
+  /*cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
   std::vector< cv::DMatch > matches;
   std::vector<cv::Point2f> modelPoints, imgPoints;
   cv::Mat mask, level;
@@ -610,27 +610,86 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
       //cv::waitKey( 0 );
 
       if ( matches.size() != 0 ){
-	modelPoints.clear(); imgPoints.clear();
-	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-	for ( unsigned int i = 0; i < matches.size(); i++ ){
-	  cv::DMatch m = matches[i];
-	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
-	  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
-	}
+	// -------------------
+	// First tentative
+	// -------------------
+	//modelPoints.clear(); imgPoints.clear();
+	//std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	//for ( unsigned int i = 0; i < matches.size(); i++ ){
+	//  cv::DMatch m = matches[i];
+	//  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	//  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+	//}
 	
 	//
 	// --------------------------------------------------
 	// This function is very expensive to be processing
 	// --------------------------------------------------
 	//
-	cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask );
-	//cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
-	for ( int x = 0; x < mask.rows; x++ ){
-	  for ( int y = 0; y < mask.cols; y++ ){
-	    //Counting inliers and outliers
-	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	//cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask );
+	////cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	//for ( int x = 0; x < mask.rows; x++ ){
+	//  for ( int y = 0; y < mask.cols; y++ ){
+	//    //Counting inliers and outliers
+	//    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	//  }
+	//}
+	
+	
+	// -------------------
+	// Second tentative
+	// -------------------
+	// Detectin min and max distances between matches
+	//double min_dist=matches[0].distance, max_dist=matches[0].distance;
+	//for ( int i = 1; i < modelDescriptors.rows; i++ ){
+	//  double dist = matches[i].distance;
+	//  if ( dist < min_dist ) min_dist = dist;
+	//  if ( dist > max_dist ) max_dist = dist;
+	//}
+	
+	// When the distance between descriptors is greater than 2x the minimum distance, 
+	// the match is considered incorrect, but sometimes the minimum distance is too 
+	// small and an empirical value of 30 is set to the lower limit.
+	//std::vector< cv::DMatch > good_matches;
+	//for ( int i = 0; i < modelDescriptors.rows; i++ ){
+	//  if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
+	//    good_matches.push_back ( matches[i] );
+	//    inliers++;
+	//  }
+	//  else
+	//    outliers++;
+	//}
+
+	// -------------------
+	// Third tentative
+	// -------------------
+	double min_dist=matches[0].distance, max_dist=matches[0].distance;
+	for ( int i = 1; i < modelDescriptors.rows; i++ ){
+	  double dist = matches[i].distance;
+	  if ( dist < min_dist ) min_dist = dist;
+	  if ( dist > max_dist ) max_dist = dist;
+	}
+	
+	modelPoints.clear(); imgPoints.clear();
+	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	for ( unsigned int i = 0; i < matches.size(); i++ ){
+	  if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
+	    cv::DMatch m = matches[i];
+	    modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	    imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
 	  }
 	}
+	
+	if ( modelPoints.size() != 0 ){
+	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask );
+	  for ( int x = 0; x < mask.rows; x++ ){
+	    for ( int y = 0; y < mask.cols; y++ ){
+	      //Counting inliers and outliers
+	      (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	    }
+	  }
+	}
+	
 #ifdef DEBUG
 	std::cout << "quantidade de inliers: " << inliers << std::endl;
 	std::cout << "quantidade de outliers: " << outliers << std::endl;
@@ -654,7 +713,7 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 
   //t = cv::getTickCount() - t;
   //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
-  
+  */
   
   
   // -----------------------
@@ -717,13 +776,139 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
     }
     double matchesTotal = inliers + outliers;
     double result = 0.0;
-    // Threshold matches
-    int threshold_matches = 25;
-    if ( matchesTotal > threshold_matches )
+    if ( matchesTotal > 0.0 )
       result = ((inliers * 1.0)/matchesTotal);
-    return result;
+    inliersRatio.push_back( result );
+    numberMatches.push_back( matches.size() );
   }
   */
+
+
+  // -----------------------
+  // Third possibility
+  // -----------------------
+  cv::BFMatcher matcher(cv::NORM_HAMMING, true); // https://docs.opencv.org/3.4/d3/da1/classcv_1_1BFMatcher.html
+  std::vector< cv::DMatch > matches;
+  std::vector<cv::Point2f> modelPoints, imgPoints;
+  cv::Mat mask, level;
+  int inliers, outliers;
+  inliersRatio.clear();
+  numberMatches.clear();
+  std::string type = "bf"; //"bf/knn";
+  const double kDistanceCoef = 2.0; //4.0;
+  //const int kMaxMatchingSize = 50;
+  //int64 t = cv::getTickCount();
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
+#endif
+  for ( int k = 0; k < levels.size(); k++ ){ // Levels
+    inliers = 0; outliers = 0;
+#ifdef DEBUG
+    std::cout << "level " << k << std::endl;
+#endif
+    if ( !(this->features)->getDescriptors( k ).empty() ){
+      level = levels[k].getLevel( scene );
+      matches.clear();
+      
+      if (type == "bf") {
+	matcher.match(modelDescriptors, (this->features)->getDescriptors( k ), matches, cv::Mat());
+      }
+      if (type == "knn") {
+	std::vector< std::vector<cv::DMatch> > vmatches;
+        matcher.knnMatch(modelDescriptors, (this->features)->getDescriptors( k ), vmatches, 1);
+        for (int i = 0; i < static_cast<int>(vmatches.size()); ++i) {
+	  if (!vmatches[i].size()) {
+	    continue;
+	  }
+	  matches.push_back(vmatches[i][0]);
+        }
+      }
+      
+      //cv::Mat img_matches;
+      //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
+      //imshow( "img_matches", img_matches );
+      //cv::waitKey( 0 );
+      
+      std::sort(matches.begin(), matches.end());
+      /*while (matches.front().distance * kDistanceCoef < matches.back().distance){
+        matches.pop_back();
+      }
+      while (matches.size() > kMaxMatchingSize){
+        matches.pop_back();
+      }*/
+      
+      double min_dist = matches.front().distance;
+      // When the distance between descriptors is greater than 2x the minimum distance, 
+      // the match is considered incorrect, but sometimes the minimum distance is too 
+      // small and an empirical value of 30 is set to the lower limit.
+      std::vector< cv::DMatch > good_matches;
+      for ( int i = 0; i < matches.size()/*modelDescriptors.rows*/; i++ ){
+	if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
+	  good_matches.push_back ( matches[i] );
+	  inliers++;
+	}
+	else
+	  outliers++;
+      }
+
+      modelPoints.clear(); imgPoints.clear();
+      std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+      for ( unsigned int i = 0; i < 6 /*good_matches.size()*/; i++ ){
+	cv::DMatch m = good_matches[i];
+	modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+      }
+      if ( modelPoints.size() > 5 ){
+	cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 4, mask);
+	for ( int x = 0; x < mask.rows; x++ ){
+	  for ( int y = 0; y < mask.cols; y++ ){
+	    //Counting inliers and outliers
+	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	  }
+	}
+      }
+
+      /*modelPoints.clear(); imgPoints.clear();
+      std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+      for ( unsigned int i = 0; i < matches.size(); i++ ){
+	cv::DMatch m = matches[i];
+	modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
+      }
+      if ( modelPoints.size() > 5 ){
+	//cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask);
+	cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 4, mask);
+	for ( int x = 0; x < mask.rows; x++ ){
+	  for ( int y = 0; y < mask.cols; y++ ){
+	    //Counting inliers and outliers
+	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	  }
+	}
+      }*/
+      
+#ifdef DEBUG
+      std::cout << "quantidade de inliers: " << inliers << std::endl;
+      std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+    }
+    else{ // Descriptors empty
+#ifdef DEBUG
+      std::cout << "quantidade de inliers: " << inliers << std::endl;
+      std::cout << "quantidade de outliers: " << outliers << std::endl;
+#endif
+    }
+    
+    double result = 0.0;
+    if ( matches.size() != 0 )
+      result = (inliers * 1.0)/matches.size();
+    inliersRatio.push_back( result );
+    numberMatches.push_back( matches.size() );
+    
+  }
+  
+  //t = cv::getTickCount() - t;
+  //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
+  
 }
 
 /**

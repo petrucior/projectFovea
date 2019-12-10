@@ -47,9 +47,8 @@
 #define _ORB_ 0
 #define _KAZE_ 1
 #define _SURF_ 2
-#define _FAST_ 3
-#define _AKAZE_ 4
-#define _MSER_ 5
+#define _AKAZE_ 3
+#define _BRISK_ 4
 
 /**
  * \class Feature
@@ -74,7 +73,7 @@ public:
    * \param levels - Fovea levels
    * \param method - Feature specification configured (see settings features)
    */
-  Feature(cv::Mat img, std::vector< Level< T > > levels, int method );
+  Feature( cv::Mat img, std::vector< Level< T > > levels, int method );
     
   /**
    * \fn ~Feature()
@@ -160,11 +159,6 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   int kaze_nOctaveLayers = 4;
   int kaze_diffusivity = cv::KAZE::DIFF_PM_G2;
   
-  // FAST Configuration
-  int fast_threshold = 10;
-  bool fast_nonmaxSuppression = true;
-  int fast_type = cv::FastFeatureDetector::TYPE_9_16;
-
   // AKAZE Configuration
   int akaze_descriptor_type = cv::AKAZE::DESCRIPTOR_MLDB;
   int akaze_descriptor_size = 0;
@@ -174,19 +168,14 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   int akaze_nOctaveLayers = 4;
   int akaze_diffusivity = cv::KAZE::DIFF_PM_G2; 
 
-  // MSER Configuration
-  int mser_delta = 5;
-  int mser_min_area = 60;
-  int mser_max_area = 14400;
-  double mser_max_variation = 0.25;
-  double mser_min_diversity = .2;
-  int mser_max_evolution = 200;
-  double mser_area_threshold = 1.01;
-  double mser_min_margin = 0.003;
-  int mser_edge_blur_size = 5;
+  // BRISK Configuration
+  int thresh = 30;
+  int octaves = 3;
+  float patternScale = 1.0f;
 
+  // Detector
   switch ( method ){
-  case _ORB_:
+  case _ORB_ :
 #ifdef DEBUG
     std::cout << "ORB feature actived" << std::endl;
 #endif
@@ -203,15 +192,7 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
     //case _SURF_:
     //std::cout << "SURF feature actived" << std::endl;
     //detector = cv::xfeatures2d::SURF::create(400);
-    //descriptor = cv::xfeatures2d::SURF::create(400);
     //break;
-  case _FAST_:
-#ifdef DEBUG
-    std::cout << "FAST feature actived" << std::endl;
-#endif
-    detector = cv::FastFeatureDetector::create( fast_threshold, fast_nonmaxSuppression, fast_type );
-    descriptor = cv::FastFeatureDetector::create( fast_threshold, fast_nonmaxSuppression, fast_type );
-    break;
   case _AKAZE_:
 #ifdef DEBUG
     std::cout << "AKAZE feature actived" << std::endl;
@@ -219,14 +200,12 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
     detector = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
     descriptor = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
     break;
-  case _MSER_:
+  case _BRISK_:
 #ifdef DEBUG
-    std::cout << "MSER feature actived" << std::endl;
+    std::cout << "BRISK feature actived" << std::endl;
 #endif
-    detector = cv::MSER::create( mser_delta, mser_min_area, mser_max_area, mser_max_variation, mser_min_diversity, mser_max_evolution, 
-				 mser_area_threshold, mser_min_margin, mser_edge_blur_size );
-    descriptor = cv::MSER::create( mser_delta, mser_min_area, mser_max_area, mser_max_variation, mser_min_diversity, mser_max_evolution, 
-				   mser_area_threshold, mser_min_margin, mser_edge_blur_size );
+    detector = cv::BRISK::create( thresh, octaves, patternScale );
+    descriptor = cv::BRISK::create( thresh, octaves, patternScale );
     break;
   default:
     std::cout << "Feature wasn't configured" << std::endl;
