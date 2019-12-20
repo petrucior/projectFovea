@@ -10,7 +10,7 @@ CC= g++
 #
 # A variável CFLAGS indica que opção de compilação queremos
 #
-CFLAGS= -Wall -pedantic -ansi -g -c `pkg-config --cflags opencv`
+CFLAGS= -Wall -pedantic -ansi -g -c `pkg-config --libs opencv`
 
 #
 # A variável LFLAGS indica que opção de compilação queremos

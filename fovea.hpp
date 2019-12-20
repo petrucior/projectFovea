@@ -787,16 +787,18 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   // -----------------------
   // Third possibility
   // -----------------------
-  cv::BFMatcher matcher(cv::NORM_HAMMING, true); // https://docs.opencv.org/3.4/d3/da1/classcv_1_1BFMatcher.html
+  //cv::BFMatcher matcher(cv::NORM_HAMMING, true); // https://docs.opencv.org/3.4/d3/da1/classcv_1_1BFMatcher.html
+  //cv::BFMatcher matcher( cv::NORM_L2, true );
+  cv::Ptr< cv::DescriptorMatcher > matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
   std::vector< cv::DMatch > matches;
-  std::vector<cv::Point2f> modelPoints, imgPoints;
+  std::vector< cv::Point2f > modelPoints, imgPoints;
   cv::Mat mask, level;
   int inliers, outliers;
+  int matchesMax = 0;
   inliersRatio.clear();
   numberMatches.clear();
+  std::vector< cv::DMatch > good_matches;
   std::string type = "bf"; //"bf/knn";
-  const double kDistanceCoef = 2.0; //4.0;
-  //const int kMaxMatchingSize = 50;
   //int64 t = cv::getTickCount();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
@@ -806,106 +808,90 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 #ifdef DEBUG
     std::cout << "level " << k << std::endl;
 #endif
+    good_matches.clear();
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
       matches.clear();
       
-      if (type == "bf") {
-	matcher.match(modelDescriptors, (this->features)->getDescriptors( k ), matches, cv::Mat());
-      }
-      if (type == "knn") {
-	std::vector< std::vector<cv::DMatch> > vmatches;
-        matcher.knnMatch(modelDescriptors, (this->features)->getDescriptors( k ), vmatches, 1);
-        for (int i = 0; i < static_cast<int>(vmatches.size()); ++i) {
-	  if (!vmatches[i].size()) {
-	    continue;
+      std::vector< cv::KeyPoint > sceneKeypoints =  (this->features)->getKeyPoints( k );
+      if ( sceneKeypoints.size() > 2 ){
+	if (type == "bf") {
+	  matcher->match(modelDescriptors, (this->features)->getDescriptors( k ), matches, cv::Mat());
+	  //-- Filter matches using the Lowe's ratio test
+	  const float ratio_thresh = 0.25f;
+      	  for (int i = 0; i < static_cast<int>(matches.size()); ++i){
+	    if ( matches[i].distance < ratio_thresh )
+              good_matches.push_back(matches[i]);
 	  }
-	  matches.push_back(vmatches[i][0]);
-        }
-      }
-      
-      //cv::Mat img_matches;
-      //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
-      //imshow( "img_matches", img_matches );
-      //cv::waitKey( 0 );
-      
-      std::sort(matches.begin(), matches.end());
-      /*while (matches.front().distance * kDistanceCoef < matches.back().distance){
-        matches.pop_back();
-      }
-      while (matches.size() > kMaxMatchingSize){
-        matches.pop_back();
-      }*/
-      
-      double min_dist = matches.front().distance;
-      // When the distance between descriptors is greater than 2x the minimum distance, 
-      // the match is considered incorrect, but sometimes the minimum distance is too 
-      // small and an empirical value of 30 is set to the lower limit.
-      std::vector< cv::DMatch > good_matches;
-      for ( int i = 0; i < matches.size()/*modelDescriptors.rows*/; i++ ){
-	if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
-	  good_matches.push_back ( matches[i] );
-	  inliers++;
 	}
-	else
-	  outliers++;
-      }
+	if (type == "knn") {
+	  std::vector< std::vector<cv::DMatch> > vmatches;
+	  matcher->knnMatch( modelDescriptors, (this->features)->getDescriptors( k ), vmatches, 2 );
+	  //-- Filter matches using the Lowe's ratio test
+	  const float ratio_thresh = 0.75f;
+      	  for (int i = 0; i < static_cast<int>(vmatches.size()); ++i) {
+	    if (!vmatches[i].size()) {
+	      continue;
+	    }	    
+	    if (vmatches[i][0].distance < ratio_thresh * vmatches[i][1].distance)
+	      good_matches.push_back(vmatches[i][0]);
+	  }
+	}
+	
+	//cv::Mat img_matches;
+	//drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
+	//imshow( "img_matches", img_matches );
+	//cv::waitKey( 0 );
 
-      modelPoints.clear(); imgPoints.clear();
-      std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-      for ( unsigned int i = 0; i < 6 /*good_matches.size()*/; i++ ){
-	cv::DMatch m = good_matches[i];
-	modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
-	imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
-      }
-      if ( modelPoints.size() > 5 ){
-	cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 4, mask);
-	for ( int x = 0; x < mask.rows; x++ ){
-	  for ( int y = 0; y < mask.cols; y++ ){
-	    //Counting inliers and outliers
-	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
-	  }
+	//
+	// Used when you need more precision
+	//
+	/*std::sort(good_matches.begin(), good_matches.end());
+	
+	modelPoints.clear(); imgPoints.clear();
+	for ( unsigned int i = 0; i < good_matches.size(); i++ ){
+	  cv::DMatch m = good_matches[i];
+	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
+	  imgPoints.push_back(sceneKeypoints[m.trainIdx].pt);
 	}
-      }
-
-      /*modelPoints.clear(); imgPoints.clear();
-      std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
-      for ( unsigned int i = 0; i < matches.size(); i++ ){
-	cv::DMatch m = matches[i];
-	modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
-	imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
-      }
-      if ( modelPoints.size() > 5 ){
-	//cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask);
-	cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 4, mask);
-	for ( int x = 0; x < mask.rows; x++ ){
-	  for ( int y = 0; y < mask.cols; y++ ){
-	    //Counting inliers and outliers
-	    (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	
+	if ( modelPoints.size() > 5 ){
+	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask);
+	  for ( int x = 0; x < mask.rows; x++ ){
+	    for ( int y = 0; y < mask.cols; y++ ){
+	      //Counting inliers and outliers
+	      (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
+	    }
 	  }
-	}
-      }*/
-      
-#ifdef DEBUG
-      std::cout << "quantidade de inliers: " << inliers << std::endl;
-      std::cout << "quantidade de outliers: " << outliers << std::endl;
-#endif
+	}*/
+	
+      }
     }
-    else{ // Descriptors empty
 #ifdef DEBUG
-      std::cout << "quantidade de inliers: " << inliers << std::endl;
-      std::cout << "quantidade de outliers: " << outliers << std::endl;
+    std::cout << "quantidade de features: " << good_matches.size() << std::endl;
+    std::cout << "quantidade de inliers: " << inliers << std::endl;
+    std::cout << "quantidade de outliers: " << outliers << std::endl;
 #endif
-    }
     
-    double result = 0.0;
-    if ( matches.size() != 0 )
-      result = (inliers * 1.0)/matches.size();
+    /*double result = 0.0;
+    if ( good_matches.size() != 0 )
+      result = (double)(inliers * 1.0)/good_matches.size();
     inliersRatio.push_back( result );
-    numberMatches.push_back( matches.size() );
-    
+    numberMatches.push_back( good_matches.size() );*/
+
+    numberMatches.push_back( good_matches.size() );
+    matchesMax += static_cast<int>(good_matches.size());
   }
   
+  for( int i = 0; i < numberMatches.size(); i++ )
+    inliersRatio.push_back( (double)(numberMatches[i] * 1.0 )/matchesMax );
+
+  /*
+   *  matchesMax ------ 100
+   *  numberMatches[i] ----- x
+   *  x = numberMatches[i] * 100 / matchesMax
+   */			   
+			   
   //t = cv::getTickCount() - t;
   //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
   

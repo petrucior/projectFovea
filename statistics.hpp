@@ -218,8 +218,8 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
   //double maxInliersRatio = 0.0;
   if ( file != NULL ){
     fprintf( file, "#%c #%c #%c \n", 'x', 'y', 'z');
-    for ( int i = 0; i < scene.rows; i+=10 ){
-      for ( int j = 0; j < scene.cols; j+=10 ){
+    for ( int i = 0; i < scene.rows; i+=15 ){
+      for ( int j = 0; j < scene.cols; j+=15 ){
 	fovea->updateFovea( cv::Point( i, j ) );
 	fovea->foveatedFeatures( scene, method, MRMF );
 	fovea->matching( scene, model, modelKeypoints, modelDescriptors );
@@ -290,15 +290,15 @@ Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float thres
   //T totalRegion = T( 0.0, 0.0 );
   //std::vector< T > regions;
   for ( int k = 0; k < m + 1; k++ ){
-    if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
-	 ( fovea->getNumberMatches( k ) < threshold2 ) ){
+    /*if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
+	 ( fovea->getNumberMatches( k ) < threshold2 ) ){*/
       Level< T > level = fovea->getLevelFromFovea( k );
       std::vector< T > boundingBox = level.boundingBox( k, m, parameters[1], parameters[2], parameters[3] );
-      totalRegionx += (1.0/(boundingBox[1].x));
-      regionsx.push_back( (1.0/(boundingBox[1].x)) );
+      totalRegionx += (1.0/( (boundingBox[0].x + boundingBox[1].x) * (boundingBox[0].y + boundingBox[1].y)) );
+      regionsx.push_back( (1.0/( (boundingBox[0].x + boundingBox[1].x) * (boundingBox[0].y + boundingBox[1].y) ) ) );
       //totalRegion += T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) );
       //regions.push_back( T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) ) );
-    }
+    //}
   }
   std::vector< double > alpha = regionTransformed( totalRegionx, regionsx );
   //std::vector< double > alpha = regionTransformed( totalRegion, regions );
@@ -356,9 +356,15 @@ Statistics< T >::regionTransformed( double R_t, std::vector< double > R ){
   else{
     weights.push_back( 0.0 );
   }*/
+
   
-  for ( int r = 0; r < R.size(); r++ ){
+  /*for ( int r = 0; r < R.size(); r++ ){
     double wx = double(R[r])/ R_t;
+    weights.push_back( wx );
+  }*/
+
+  for ( int r = 0; r < R.size(); r++ ){
+    double wx = (double)(r + 1.0)/static_cast<int>(R.size());
     weights.push_back( wx );
   }
   
@@ -546,7 +552,7 @@ Statistics< T >::maximumLikelihoodEstimator( std::vector< T > samples, std::vect
 
   return T(x, y);
 }
-  
+
 /**
  * \fn T trilaterationEstimator( std::vector< T > foveae, std::vector< double > inverseDetectionRate )
  *

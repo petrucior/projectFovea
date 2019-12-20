@@ -1,7 +1,17 @@
-#include <iostream>
+/*#include <iostream>
 #include <string>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "../statistics.hpp"*/
+
+#include <iostream>
+#include <string>
+#include "opencv2/core.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #include "../statistics.hpp"
 
 using namespace cv;
@@ -20,7 +30,6 @@ int main( int argc, char** argv ){
   std::cout << argv[1] << std::endl;
   cv::Mat model = cv::imread(argv[1]);//, CV_LOAD_IMAGE_GRAYSCALE);
   cv::Mat scene = cv::imread(argv[2]);//, CV_LOAD_IMAGE_GRAYSCALE):
-  cv::namedWindow("sceneFoveated", 1);
   cv::Mat sceneFoveated;
   cv::Point fs = cv::Point( -60, 0 );
   cv::Scalar color = cv::Scalar( 255, 255, 255 );
@@ -29,11 +38,18 @@ int main( int argc, char** argv ){
   cv::Ptr<cv::DescriptorExtractor> descriptor;
 
   // -----------------------
+  // Configuration to _SURF_
+  // -----------------------
+  detector = cv::xfeatures2d::SURF::create();
+  descriptor = cv::xfeatures2d::SURF::create();
+  Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(120, 120), cv::Point( scene.cols, scene.rows ), fs );
+  
+  // -----------------------
   // Configuration to _ORB_
   // -----------------------
-  detector = cv::ORB::create();
-  descriptor = cv::ORB::create();
-  Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(120, 120), cv::Point( scene.cols, scene.rows ), fs );
+  //detector = cv::ORB::create();
+  //descriptor = cv::ORB::create();
+  //Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(120, 120), cv::Point( scene.cols, scene.rows ), fs );
   
   // -----------------------
   // Configuration to _KAZE_
@@ -68,8 +84,9 @@ int main( int argc, char** argv ){
   
   //Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
   Statistics< cv::Point > *s = new Statistics< cv::Point >();
-  //s->plotProportion( fscene, scene, model, _ORB_, modelKeypoints, modelDescriptors, 0.0, 1000.0 );
+  //s->plotProportion( fscene, scene, model, _SURF_, modelKeypoints, modelDescriptors, 0.0, 1000.0 );
   
+  cv::namedWindow("sceneFoveated", 1);
   while ( true ){
     setMouseCallback( "sceneFoveated", on_mouse, fscene );
     sceneFoveated = fscene->foveatedImage( scene, cv::Scalar(255, 255, 255) );
@@ -80,15 +97,16 @@ int main( int argc, char** argv ){
     if ( key == 'q' ) break;
     if ( key == 'e' ){
       //fscene->foveatedFeatures( scene, _KAZE_, MRMF );
-      fscene->foveatedFeatures( scene, _ORB_, MRMF );
+      //fscene->foveatedFeatures( scene, _ORB_, MRMF );
       //fscene->foveatedFeatures( scene, _BRISK_, MRMF );
+      fscene->foveatedFeatures( scene, _SURF_, MRMF );
       fscene->matching( scene, model, modelKeypoints, modelDescriptors );
       
-      std::cout << s->functionFovea( fscene, 0.0, 1000 ) << std::endl;
+      std::cout << s->functionFovea( fscene, 15.0, 1000.0 ) << std::endl;
       
     }
   }
-
+  
   /*double referencePotential = 0.8;
   std::vector< double > potentials;  
   potentials.push_back( 0.5 );

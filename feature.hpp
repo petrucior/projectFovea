@@ -189,10 +189,13 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
     detector = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     descriptor = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     break;
-    //case _SURF_:
-    //std::cout << "SURF feature actived" << std::endl;
-    //detector = cv::xfeatures2d::SURF::create(400);
-    //break;
+  case _SURF_:
+#ifdef DEBUG
+    std::cout << "SURF feature actived" << std::endl;
+#endif
+    detector = cv::xfeatures2d::SURF::create(400);
+    descriptor = cv::xfeatures2d::SURF::create(400);
+    break;
   case _AKAZE_:
 #ifdef DEBUG
     std::cout << "AKAZE feature actived" << std::endl;
