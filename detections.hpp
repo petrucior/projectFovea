@@ -31,6 +31,8 @@
 #include <vector> // std::vector
 #include "statistics.h" //Statistics
 
+using namespace std;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -68,7 +70,7 @@ public:
   T lastPosition( T lastPosition );
 
   /**
-   * \fn T nFrames( std::vector< T > samples )
+   * \fn T nFrames( vector< T > samples )
    *
    * \brief Detection strategy that holds the n last frames using MLE, but 
    * is possible to use kalman filter. 
@@ -77,7 +79,7 @@ public:
    *
    * \return Point estimated through n last position
    */
-  T nFrames( std::vector< T > samples );
+  T nFrames( vector< T > samples );
 
   /**
    * \fn void disableFovea( bool &fovea )
@@ -130,7 +132,7 @@ Detections::lastPosition( T lastPosition ){
 }
 
 /**
- * \fn T nFrames( std::vector< T > samples )
+ * \fn T nFrames( vector< T > samples )
  *
  * \brief Detection strategy that holds the n last frames using MLE, but 
  * is possible to use kalman filter.
@@ -140,7 +142,7 @@ Detections::lastPosition( T lastPosition ){
  * \return Point estimated through n last position
  */
 T
-Detections::nFrames( std::vector< T > samples ){
+Detections::nFrames( vector< T > samples ){
   Statistics statistic = new Statistics();
   return statistic.maximumLikelihoodEstimator( samples );
 }

@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o
+OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o testsurf.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction
+all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
 
 #
 # Regra de compilação e ligação do executáveis
@@ -140,6 +140,18 @@ testfunction: $(OBJS)
 testfunction.o: testfunction.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp $(DIR)/multifovea.hpp $(DIR)/statistics.hpp
 	$(CC) $(CFLAGS) testfunction.cpp -o testfunction.o
 
+#
+# Regra de compilação e ligação do executáveis
+# 
+testsurf: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o testsurf $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto testfunction.o
+#
+testsurf.o: testsurf.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp #$(DIR)/multifovea.hpp $(DIR)/statistics.hpp $(DIR)/foveatedHessianDetector.hpp
+	$(CC) $(CFLAGS) testsurf.cpp -o testsurf.o
+
 
 #
 # Regra que elimina arquivos intermediários
@@ -151,5 +163,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction
+	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
 

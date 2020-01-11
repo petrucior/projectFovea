@@ -35,6 +35,9 @@
 #include "rectangle.hpp" // Shape< T >::Rectangle
 #include "polygons.hpp" // Shape< T >::Polygons
 
+using namespace std;
+using namespace cv;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -90,7 +93,7 @@ public:
   void updateLevel( int m, T w, T u, T f );
     
   /**
-   * \fn cv::Mat getLevel( cv::Mat img )
+   * \fn Mat getLevel( Mat img )
    *
    * \brief Method responsable to create an image with 
    * with level dimension
@@ -99,10 +102,10 @@ public:
    *
    * \return Image that represent the level
    */
-  cv::Mat getLevel( cv::Mat img );
+  Mat getLevel( Mat img );
   
   /**
-   * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )
+   * \fn vector< T > boundingBox( int k, int m, T w, T u, T f )
    *
    * \brief This method return the bounding box delimiting
    * the region where will be created the shape.
@@ -116,7 +119,7 @@ public:
    * \return Vector containing 2 positions with tuple 
    * information the limits of rectangular region ( delta and size ).
    */
-  std::vector< T > boundingBox( int k, int m, T w, T u, T f );
+  vector< T > boundingBox( int k, int m, T w, T u, T f );
   
 private:
   //
@@ -177,7 +180,7 @@ template <typename T>
 Level< T >::Level( int k, int m, T w, T u, T f ){
   indexLevel = k;
   dimW = w;
-  std::vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
+  vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
   //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
   shape = r;
@@ -206,14 +209,14 @@ Level< T >::~Level(){
 template <typename T>
 void
 Level< T >::updateLevel( int m, T w, T u, T f ){
-  std::vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
+  vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
   //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
   shape = r;
 }
 
 /**
- * \fn cv::Mat getLevel( cv::Mat img )
+ * \fn Mat getLevel( Mat img )
  *
  * \brief Method responsable to create an image with 
  * with level dimension
@@ -223,18 +226,18 @@ Level< T >::updateLevel( int m, T w, T u, T f ){
  * \return Image that represent the level
  */
 template <typename T>
-cv::Mat
-Level< T >::getLevel( cv::Mat img ){
+Mat
+Level< T >::getLevel( Mat img ){
   // It's necessary cut the image depending of vertices him
-  std::vector< T > boundingBox = shape->getVertices();
-  cv::Rect roi(boundingBox[0].x, boundingBox[0].y, boundingBox[1].x, boundingBox[1].y);
-  cv::Mat croppedImage = img( roi );
-  cv::resize(croppedImage, croppedImage, cv::Size(dimW.x, dimW.y), 0, 0, cv::INTER_AREA);
+  vector< T > boundingBox = shape->getVertices();
+  Rect roi((int)boundingBox[0].x, (int)boundingBox[0].y, (int)boundingBox[1].x, (int)boundingBox[1].y);
+  Mat croppedImage = img( roi );
+  resize(croppedImage, croppedImage, Size((int)dimW.x, (int)dimW.y), 0, 0, INTER_AREA);
   return croppedImage;
 }
 
 /**
- * \fn std::vector< T > boundingBox( int k, int m, T w, T u, T f )
+ * \fn vector< T > boundingBox( int k, int m, T w, T u, T f )
  *
  * \brief This method return the bounding box delimiting
  * the region where will be created the shape.
@@ -249,11 +252,11 @@ Level< T >::getLevel( cv::Mat img ){
  * information the limits of rectangular region ( delta and size ).
  */
 template <typename T>
-std::vector< T > 
+vector< T > 
 Level< T >::boundingBox( int k, int m, T w, T u, T f ){
   T delta = getDelta( k, m, w, u, f ); ///< Delta is the upper left corner of bounding box
   T size = getSize( k, m, w, u ); ///< Size is the dimension between Delta and bottom right corner of bounding box
-  std::vector< T > _boundingBox;  ///< Tuple vector containing delta and size
+  vector< T > _boundingBox;  ///< Tuple vector containing delta and size
   _boundingBox.push_back( delta );
   _boundingBox.push_back( size );
   return _boundingBox;
@@ -278,7 +281,7 @@ Level< T >::getDelta( int k, int m, T w, T u, T f ){
   int dx = int( k * ( u.x - w.x + ( 2 * f.x ) ) )/ ( 2 * m );
   int dy = int( k * ( u.y - w.y + ( 2 * f.y ) ) )/ ( 2 * m );
 #ifdef DEBUG
-  std::cout << "Delta: ( " << dx << ", " << dy << " ) " << std::endl;  
+  cout << "Delta: ( " << dx << ", " << dy << " ) " << endl;  
 #endif
   return T( dx, dy );
 }
@@ -298,10 +301,10 @@ Level< T >::getDelta( int k, int m, T w, T u, T f ){
 template <typename T>
 T 
 Level< T >::getSize( int k, int m, T w, T u ){
-  int sx = ((m * u.x) + (w.x * k) - (k * u.x)) / m;
-  int sy = ((m * u.y) + (w.y * k) - (k * u.y)) / m;
+  int sx = int( ((m * u.x) + (w.x * k) - (k * u.x)) / m );
+  int sy = int( ((m * u.y) + (w.y * k) - (k * u.y)) / m );
 #ifdef DEBUG
-  std::cout << "Size: ( " << sx << ", " << sy << " ) " << std::endl;  
+  cout << "Size: ( " << sx << ", " << sy << " ) " << endl;  
 #endif
   return T( sx, sy );
 }

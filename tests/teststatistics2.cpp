@@ -1,11 +1,10 @@
-/*#include <iostream>AOA
+/*#include <iostream>
 #include <string>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "../statistics.hpp"*/
 
 #include <iostream>
-#include <stdlib.h>
 #include <string>
 #include "opencv2/core.hpp"
 #include "opencv2/calib3d.hpp"
@@ -19,9 +18,9 @@ using namespace cv;
 
 static void on_mouse(int event, int x, int y, int flags, void *_fovea) {
   if ( event == EVENT_MOUSEMOVE ){
-    Fovea< Point2f > *fovea = (Fovea< Point2f > *) _fovea;
-    fovea->updateFovea( Point2f(x, y ) );
-    std::cout << "( " << x << ", " << y << " )" << std::endl;
+    Fovea< Point > *fovea = (Fovea< Point > *) _fovea;
+    fovea->updateFovea( Point(x, y ) );
+    //std::cout << "( " << x << ", " << y << " )" << std::endl;
   }
 }
 
@@ -32,41 +31,8 @@ int main( int argc, char** argv ){
   cv::Mat model = cv::imread(argv[1]);//, CV_LOAD_IMAGE_GRAYSCALE);
   cv::Mat scene = cv::imread(argv[2]);//, CV_LOAD_IMAGE_GRAYSCALE):
   cv::Mat sceneFoveated;
-  Mat multifoveated = scene;
-  std::vector< cv::Point2f > fs, fr;
-  /*int quantFoveas = 10;
-  // Foveas randomly positioned
-  for( int qf = 0; qf < quantFoveas; qf++ ){
-    float x = rand() % scene.cols/2;
-    float y = rand() % scene.rows/2;
-    if ( x < scene.cols/2 ) { x = (scene.cols/2 - x); } else{ x = (x - scene.cols/2); }
-    if ( y < scene.rows/2 ) { y = (scene.rows/2 - y); } else{ y = (y - scene.rows/2); }
-    fs.push_back( cv::Point2f(x, y) );
-  }*/
-  // Foveas simetrically positioned
-  fs.push_back( cv::Point2f( -150, 70.0 ) );
-  fs.push_back( cv::Point2f( -80, 70.0 ) );
-  fs.push_back( cv::Point2f( -115, -20.0 ) );
-  fs.push_back( cv::Point2f( -40.0, 40.0 ) );
-  fs.push_back( cv::Point2f( 40.0, 40.0 ) );
-  fs.push_back( cv::Point2f( 40.0, -40.0 ) );
-  fs.push_back( cv::Point2f( -40.0, -40.0 ) );
-  fs.push_back( cv::Point2f( -80.0, 80.0 ) );
-  fs.push_back( cv::Point2f( 80.0, 80.0 ) );
-  fs.push_back( cv::Point2f( 80.0, -80.0 ) );
-  fs.push_back( cv::Point2f( -80.0, -80.0 ) );
-  fs.push_back( cv::Point2f( -90.0, 50.0 ) );
-  fs.push_back( cv::Point2f( 90.0, 50.0 ) );
-  fs.push_back( cv::Point2f( 90.0, -50.0 ) );
-  fs.push_back( cv::Point2f( -90.0, -50.0 ) );
-  std::vector< cv::Scalar > colors;
-  srand (time(NULL)); // Initialize random seed                                                                                                                                                 
-  for (int i = 0; i < fs.size(); i++){
-    int r = rand() % 256; // 0 - 255                                                                                                                                                            
-    int g = rand() % 256; // 0 - 255                                                                                                                                                            
-    int b = rand() % 256; // 0 - 255                                                                                                                                                            
-    colors.push_back( cv::Scalar(b, g, r) );
-  }
+  cv::Point fs = cv::Point( -60, 0 );
+  cv::Scalar color = cv::Scalar( 255, 255, 255 );
   // Extraction features of model
   cv::Ptr<cv::FeatureDetector> detector;
   cv::Ptr<cv::DescriptorExtractor> descriptor;
@@ -76,8 +42,8 @@ int main( int argc, char** argv ){
   // -----------------------
   detector = cv::xfeatures2d::SURF::create();
   descriptor = cv::xfeatures2d::SURF::create();
-  Multifovea< cv::Point2f > *m = new Multifovea< cv::Point2f >( 5, cv::Point2f(120, 120), cv::Point2f( scene.cols, scene.rows ), fs, REEXECUTION );
-    
+  Fovea< cv::Point > *fscene = new Fovea< cv::Point >( 5, cv::Point(120, 120), cv::Point( scene.cols, scene.rows ), fs );
+  
   // -----------------------
   // Configuration to _ORB_
   // -----------------------
@@ -114,15 +80,15 @@ int main( int argc, char** argv ){
   cv::Mat modelDescriptors;
   detector->detect ( model, modelKeypoints );
   descriptor->compute ( model, modelKeypoints, modelDescriptors );
+    
   
-  
-  Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
-  //Statistics< cv::Point > *s = new Statistics< cv::Point >();
+  //Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
+  Statistics< cv::Point > *s = new Statistics< cv::Point >();
   //s->plotProportion( fscene, scene, model, _SURF_, modelKeypoints, modelDescriptors, 0.0, 1000.0 );
   
   cv::namedWindow("sceneFoveated", 1);
   while ( true ){
-    /*setMouseCallback( "sceneFoveated", on_mouse, fscene );
+    setMouseCallback( "sceneFoveated", on_mouse, fscene );
     sceneFoveated = fscene->foveatedImage( scene, cv::Scalar(255, 255, 255) );
     imshow("sceneFoveated", sceneFoveated );
     drawKeypoints( model, modelKeypoints, model, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
@@ -130,49 +96,15 @@ int main( int argc, char** argv ){
     char key = waitKey( 0 );
     if ( key == 'q' ) break;
     if ( key == 'e' ){
+      //fscene->foveatedFeatures( scene, _KAZE_, MRMF );
+      //fscene->foveatedFeatures( scene, _ORB_, MRMF );
+      //fscene->foveatedFeatures( scene, _BRISK_, MRMF );
       fscene->foveatedFeatures( scene, _SURF_, MRMF );
       fscene->matching( scene, model, modelKeypoints, modelDescriptors );
       
       std::cout << s->functionFovea( fscene, 15.0, 1000.0 ) << std::endl;
       
-    }*/
-    
-    setMouseCallback( "sceneFoveated", on_mouse, (m->getFoveas())[0]);
-    multifoveated = m->multifoveatedImage( scene );
-    //multifoveated = m->multifoveaLevelsImage( scene, colors );
-    imshow("sceneFoveated", multifoveated );
-    char key = waitKey( 0 );
-    if ( key == 'q' ) break;
-    if ( key == 'e' ){
-      m->foveatedFeatures( scene, _SURF_, MRMF );
-      m->matching( scene, model, modelKeypoints, modelDescriptors );
-      std::vector< double > potentials = s->functionMultiFovea( m, 15.0, 1000.0 );
-      std::vector< cv::Point2f > points;
-      std::vector< double > invpotentials;
-      for ( int f = 0; f < fs.size(); f++ ){
-	std::cout << "potentials: " << potentials[f];
-	fr.push_back( cv::Point2f( scene.cols/2 + fs[f].x, scene.rows/2 + fs[f].y ) );
-	if ( f < 3 ){
-	  invpotentials.push_back( ((1.0 - potentials[f]) * 0.001 )/ 0.0001 );
-	  points.push_back( cv::Point2f( scene.cols/2 + fs[f].x, scene.rows/2 + fs[f].y ) );
-	  std::cout << ", invpotentials: " << invpotentials[f];
-	}
-	std::cout << std::endl;
-      }
-      
-      cv::Point2f pointEstimated;
-      pointEstimated = s->maximumLikelihoodEstimator( fr, potentials, 1 );
-      std::cout << "Maximum Likelihood Estimator ( MLE )" << std::endl;
-      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
-      cv::circle( multifoveated, cv::Point( (int)pointEstimated.x /*+ scene.cols/2*/, (int)pointEstimated.y /*+ scene.rows/2*/  ), 4, cv::Scalar(0, 0, 255 ), -1, 8, 0);
-
-      pointEstimated = s->trilaterationEstimator(points, invpotentials);
-      std::cout << "Trilateration" << std::endl;
-      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
-      cv::circle( multifoveated, cv::Point( (int)pointEstimated.x /*+ scene.cols/2*/, (int)pointEstimated.y /*+ scene.rows/2*/  ), 4, cv::Scalar(0, 255, 255 ), -1, 8, 0);
-      
     }
-
   }
   
   /*double referencePotential = 0.8;
@@ -230,7 +162,7 @@ int main( int argc, char** argv ){
   potentials.push_back(0.859);
   cv::Point2f pointEstimated = s->maximumLikelihoodEstimator( points, potentials, 1 );
   std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;*/
-  
+
   /*std::vector< cv::Point2f > points;
   points.push_back( cv::Point2f( 4, 8 ) );
   points.push_back( cv::Point2f( 9, 6 ) );
@@ -239,7 +171,7 @@ int main( int argc, char** argv ){
   //points.push_back( cv::Point2f( 7, 7 ) );
   // point to be estimated is (6, 6)
   std::vector< double > invpotentials;
-  
+
   //      pos ----- potential  \  complement ----- radius
   // ref 6, 6 -----    1       \   0.0001    ----- 0.001
   //     3, 3 -----    0.5     \   0.5       ----- 5

@@ -29,6 +29,7 @@
 #define FOVEA_HPP
 
 #include <iostream> //std::cout, std::endl
+#include <stdio.h>
 #include <vector> //std::vector
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
@@ -44,6 +45,9 @@
 // Settings fovea
 #define MRMF 0 ///< Identify the use of MRMF method
 #define MMF 1 ///< Identify the use of MMF method
+
+using namespace std;
+using namespace cv;
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -64,7 +68,7 @@ public:
   // Methods
   //
   /**
-   * \fn Fovea(cv::Mat img, int m, T w, T f)
+   * \fn Fovea(Mat img, int m, T w, T f)
    *
    * \brief Constructor default of fovea class.
    * This constructor create a fovea associeted to an image.
@@ -77,7 +81,7 @@ public:
    * \param w - Size of levels
    * \param f - Position (x, y) of the fovea
    */
-  Fovea(cv::Mat img, int m, T w, T f);
+  Fovea(Mat img, int m, T w, T f);
   
   /**
    * \fn Fovea(int m, T w, T u, T f)
@@ -94,6 +98,19 @@ public:
    * \param f - Position (x, y) of the fovea
    */
   Fovea(int m, T w, T u, T f);
+
+  /**
+   * \fn Fovea(Mat img, String ymlFile, int index)
+   *
+   * \brief Constructor default of fovea class.
+   * This constructor is used to configure multiple foveas using
+   * a file yaml.
+   *
+   * \param img - Image to be foveated
+   * \param ymlFile - File that contains all information of configuration
+   * \param index - Vector index with fovea position information
+   */
+  Fovea(Mat img, String ymlFile, int index);
   
   /**
    * \fn ~Fovea()
@@ -121,7 +138,7 @@ public:
   void setFovea( T px );
   
   /**
-   * \fn std::vector< T > getParameters();
+   * \fn vector< T > getParameters();
    *
    * \brief Function that is responsible for informing the user of the fovea parameters
    *
@@ -129,7 +146,7 @@ public:
    *
    * \note The parameter "m" is replicated to coordinates of type T
    */
-  std::vector< T > getParameters();
+  vector< T > getParameters();
   
   /**
    * \fn void updateFovea(int m, T w, T u, T f)
@@ -148,7 +165,7 @@ public:
   void updateFovea(T f);
   
   /**
-   * \fn cv::Mat foveatedImage( cv::Mat img, cv::Scalar color )
+   * \fn Mat foveatedImage( Mat img, Scalar color )
    *
    * \brief This function builds the focused image.
    *
@@ -157,10 +174,10 @@ public:
    *
    * \return Image foveated created by levels
    */
-  cv::Mat foveatedImage( cv::Mat img, cv::Scalar color );
+  Mat foveatedImage( Mat img, Scalar color );
   
   /**
-   * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+   * \fn bool foveatedFeatures( Mat img, int feature, int code )
    *
    * \brief This method compute and extract features 
    * of foveated structure using MRMF or MMF.
@@ -176,7 +193,7 @@ public:
    * \return True if was done computed and extracted
    * features and False otherwise.
    */
-  bool foveatedFeatures( cv::Mat img, int feature, int code );
+  bool foveatedFeatures( Mat img, int feature, int code );
 
   /**
    * \fn Level< T > getLevelFromFovea( int k )
@@ -190,7 +207,7 @@ public:
   Level< T > getLevelFromFovea( int k );
 
   /**
-   * \fn std::vector< T > getMapLevel2Image( int k )
+   * \fn vector< T > getMapLevel2Image( int k )
    *
    * \brief This method calculates the position of pixel on the 
    * level to image by level
@@ -199,7 +216,7 @@ public:
    *
    * \return Vector containing the boundingBox to map of level
    */
-  std::vector< T > getMapLevel2Image( int k );
+  vector< T > getMapLevel2Image( int k );
 
   /**
    * \fn Feature< T, int >* getFeatures()
@@ -211,14 +228,14 @@ public:
    Feature< T, int >* getFeatures();
   
   /**
-   * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   * \fn void matching( vector< KeyPoint > modelKeypoints, Mat modelDescriptors )
    *
    * \brief This method realize the match between two foveas.
    *
    * \param modelKeypoints - model keypoints
    * \param modelDescriptors - model descriptors
    */
-  void matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
+  void matching( Mat scene, Mat model, vector< KeyPoint > modelKeypoints, Mat modelDescriptors );
   
   /**
    * \fn double getInliersRatio( int k )
@@ -278,20 +295,23 @@ private:
   //
   // Attributes
   //
-  std::vector< Level< T > > levels; ///< List of levels
+  vector< Level< T > > levels; ///< List of levels
   Feature< T, int >* features = NULL; ///< Features
-  std::vector< double > inliersRatio; ///< Inliers Ratio
-  std::vector< int > numberMatches; ///< Quantity of matches
+  vector< double > inliersRatio; ///< Inliers Ratio
+  vector< int > numberMatches; ///< Quantity of matches
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
   T f; ///< Position (x, y) to build the fovea
+  vector< int > beta; // bvector: [b1, b2, ..., bn]: a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
+  vector< int > eta; // etavector: [e1, e2, ..., en]: a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
+  vector< int > level; // levelvector: [l1, l2, ..., ln]: a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
 };
 
 #endif
 
 /**
- * \fn Fovea(cv::Mat img, int m, T w, T f)
+ * \fn Fovea(Mat img, int m, T w, T f)
  *
  * \brief Constructor default of fovea class.
  *
@@ -302,7 +322,7 @@ private:
  * \param f - Position (x, y) of the fovea
  */
 template <typename T>
-Fovea< T >::Fovea(cv::Mat img, int m, T w, T f){
+Fovea< T >::Fovea(Mat img, int m, T w, T f){
   T u = T( img.cols, img.rows );
   this->checkParameters( m, w, u, f );
 #ifdef _OPENMP
@@ -338,7 +358,48 @@ Fovea< T >::Fovea(int m, T w, T u, T f){
     Level< T > l( k, m, w, u, f );
     levels.push_back( l );
   }
-} 
+}
+
+/**
+ * \fn Fovea(Mat img, String ymlFile, int index)
+ *
+ * \brief Constructor default of fovea class.
+ * This constructor is used to configure multiple foveas using
+ * a file yaml.
+ *
+ * \param img - Image to be foveated
+ * \param ymlFile - File that contains all information of configuration
+ * \param index - Vector index with fovea position information
+ */
+template <typename T>
+Fovea< T >::Fovea(Mat img, String ymlFile, int index){
+  T u = T( img.cols, img.rows );
+  FileStorage fs(ymlFile, FileStorage::READ);
+  int wx = (int) fs["smallestLevelWidth"];
+  int wy = (int) fs["smallestLevelHeight"];
+  T w = T( wx, wy );
+  fs["etavector"] >> eta;
+  fs["bvector"] >> beta;
+  fs["levelvector"] >> level;
+  int numberOfLevels = (int) fs["numberOfLevels"];
+  m = numberOfLevels - 1;
+  vector< int > fx, fy;
+  fs["foveax"] >> fx;
+  fs["foveay"] >> fy;
+  // handling possible problems with foveas vector index
+  if ( fx.size() < index + 1 )
+    return;
+  T f = T( fx[index], fy[index] );
+  fs.release();
+  this->checkParameters( m, w, u, f );
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+  for ( int k = 0; k < m + 1; k++ ){
+    Level< T > l( k, m, w, u, f );
+    levels.push_back( l );
+  }
+}
 
 /**
  * \fn ~Fovea()
@@ -347,7 +408,7 @@ Fovea< T >::Fovea(int m, T w, T u, T f){
  */
 template <typename T>
 Fovea< T >::~Fovea(){
-  std::vector< Level< T > >().swap( this->levels ); // Free the memory
+  vector< Level< T > >().swap( this->levels ); // Free the memory
 }
 
 /**
@@ -382,7 +443,7 @@ Fovea< T >::setFovea( T px ){
 }
 
 /**
- * \fn std::vector< T > getParameters();
+ * \fn vector< T > getParameters();
  *
  * \brief Function that is responsible for informing the user of the fovea parameters
  *
@@ -391,9 +452,9 @@ Fovea< T >::setFovea( T px ){
  * \note The parameter "m" is replicated to coordinates of type T
  */
 template <typename T>
-std::vector< T > 
+vector< T > 
 Fovea< T >::getParameters(){
-  std::vector< T > parameters;
+  vector< T > parameters;
   parameters.push_back( T( this->m, this->m ) );
   parameters.push_back( this->w );
   parameters.push_back( this->u );
@@ -429,7 +490,7 @@ Fovea< T >::updateFovea(T f){
 }
 
 /**
- * \fn cv::Mat foveatedImage( cv::Mat img, cv::Scalar color )
+ * \fn Mat foveatedImage( Mat img, Scalar color )
  *
  * \brief This function builds the focused image.
  *
@@ -439,20 +500,20 @@ Fovea< T >::updateFovea(T f){
  * \return Image foveated created by levels
  */
 template <typename T>
-cv::Mat 
-Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
-  cv::Mat imgFoveated = img.clone();
-  std::vector< cv::KeyPoint > kp;
-  std::vector< std::vector< cv::KeyPoint > > keypoints;
+Mat 
+Fovea< T >::foveatedImage( Mat img, Scalar color ){
+  Mat imgFoveated = img.clone();
+  vector< KeyPoint > kp;
+  vector< vector< KeyPoint > > keypoints;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
-    cv::Mat imgLevel = levels[k].getLevel( img );
+    Mat imgLevel = levels[k].getLevel( img );
     if ( features != NULL ){
       kp = features->getKeyPoints( k );
       for ( int i = 0; i < kp.size(); i++ ){
-	cv::Point2f kpPos = mapLevel2Image( k, this->m, this->w, this->u, this->f, cv::Point2f( kp[i].pt.x, kp[i].pt.y ) );
+	Point2f kpPos = mapLevel2Image( k, this->m, this->w, this->u, this->f, Point2f( kp[i].pt.x, kp[i].pt.y ) );
 	kp[i].pt.x = kpPos.x;
 	kp[i].pt.y = kpPos.y;
       }
@@ -462,25 +523,25 @@ Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
     T initial = mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ); 
     T final = mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) );
 #ifdef DEBUG
-    std::cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << std::endl;
-    std::cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << std::endl;
+    cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << endl;
+    cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << endl;
 #endif
-    cv::Rect roi = cv::Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
+    Rect roi = Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
     if ( k < m ){ // Copying levels to foveated image
-      resize( imgLevel, imgLevel, cv::Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
+      resize( imgLevel, imgLevel, Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
       //imgLevel.copyTo( imgFoveated( roi ) );
     }
     //else
       imgLevel.copyTo( imgFoveated( roi ) );
     
     // Paint rectangle in each level
-    cv::rectangle(imgFoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), color);
+    rectangle(imgFoveated, Point(initial.x, initial.y), Point(final.x - 1, final.y - 1), color);
     
   }
   
   if ( keypoints.size() != 0 ){
     for ( int i = 0; i < keypoints.size(); i++ )
-      cv::drawKeypoints( imgFoveated, keypoints[i], imgFoveated, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
+      drawKeypoints( imgFoveated, keypoints[i], imgFoveated, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
   }
   
   features = NULL;
@@ -488,7 +549,7 @@ Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
 }  
 
 /**
- * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+ * \fn bool foveatedFeatures( Mat img, int feature, int code )
  *
  * \brief This method compute and extract features 
  * of foveated structure using MRMF or MMF.
@@ -506,9 +567,9 @@ Fovea< T >::foveatedImage( cv::Mat img, cv::Scalar color ){
  */
 template <typename T>
 bool
-Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
+Fovea< T >::foveatedFeatures( Mat img, int feature, int code ){
   if ( code == MRMF ){
-    //std::cout << "MRMF actived" << std::endl;
+    //cout << "MRMF actived" << endl;
     //int feature = _KAZE_;
     features = new Feature< T, int >( img, levels, feature );
 #ifdef DEBUG
@@ -516,7 +577,7 @@ Fovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
 #endif
   }
   if ( code == MMF ){
-    //std::cout << "MMF actived" << std::endl;
+    //cout << "MMF actived" << endl;
   }
   return true;
 }
@@ -537,7 +598,7 @@ Fovea< T >::getLevelFromFovea( int k ){
 }
 
 /**
- * \fn std::vector< T > getMapLevel2Image( int k )
+ * \fn vector< T > getMapLevel2Image( int k )
  *
  * \brief This method calculates the position of pixel on the 
  * level to image by level
@@ -547,9 +608,9 @@ Fovea< T >::getLevelFromFovea( int k ){
  * \return Vector containing the boundingBox to map of level
  */
 template <typename T>
-std::vector< T > 
+vector< T > 
 Fovea< T >::getMapLevel2Image( int k ){
-  std::vector< T > mapImage;
+  vector< T > mapImage;
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( 0, 0 ) ) );
   mapImage.push_back( this->mapLevel2Image( k, this->m, this->w, this->u, this->f, T( this->w.x, this->w.y ) ) );
   return mapImage;
@@ -569,7 +630,7 @@ Fovea< T >::getFeatures(){
 }
 
 /**
- * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+ * \fn void matching( vector< KeyPoint > modelKeypoints, Mat modelDescriptors )
  *
  * \brief This method realize the match between two foveas.
  *
@@ -578,45 +639,44 @@ Fovea< T >::getFeatures(){
  */
 template <typename T>
 void
-Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
-  
+Fovea< T >::matching( Mat scene, Mat model, vector< KeyPoint > modelKeypoints, Mat modelDescriptors ){
   // -----------------------
   // First possibility
   // -----------------------
-  /*cv::Ptr<cv::BFMatcher> matcher = cv::BFMatcher::create ( cv::NORM_HAMMING, true );
-  std::vector< cv::DMatch > matches;
-  std::vector<cv::Point2f> modelPoints, imgPoints;
-  cv::Mat mask, level;
+  /*Ptr<BFMatcher> matcher = BFMatcher::create ( NORM_HAMMING, true );
+  vector< DMatch > matches;
+  vector< Point2f > modelPoints, imgPoints;
+  Mat mask, level;
   int inliers, outliers;
   inliersRatio.clear();
   numberMatches.clear();
-  //int64 t = cv::getTickCount();
+  //int64 t = getTickCount();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
 #ifdef DEBUG
-    std::cout << "level " << k << std::endl;
+    cout << "level " << k << endl;
 #endif
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
       matches.clear();
       matcher->match( modelDescriptors, (this->features)->getDescriptors( k ), matches );
       
-      //cv::Mat img_matches;
+      //Mat img_matches;
       //drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
       //imshow( "img_matches", img_matches );
-      //cv::waitKey( 0 );
+      //waitKey( 0 );
 
       if ( matches.size() != 0 ){
 	// -------------------
 	// First tentative
 	// -------------------
 	//modelPoints.clear(); imgPoints.clear();
-	//std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	//vector< KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
 	//for ( unsigned int i = 0; i < matches.size(); i++ ){
-	//  cv::DMatch m = matches[i];
+	//  DMatch m = matches[i];
 	//  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
 	//  imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
 	//}
@@ -626,8 +686,8 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	// This function is very expensive to be processing
 	// --------------------------------------------------
 	//
-	//cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask );
-	////cv::Mat H = findHomography( modelPoints, imgPoints, mask, cv::RANSAC, 3 );
+	//Mat H = findHomography( modelPoints, imgPoints, RANSAC, 2.5f, mask );
+	////Mat H = findHomography( modelPoints, imgPoints, mask, RANSAC, 3 );
 	//for ( int x = 0; x < mask.rows; x++ ){
 	//  for ( int y = 0; y < mask.cols; y++ ){
 	//    //Counting inliers and outliers
@@ -650,9 +710,9 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	// When the distance between descriptors is greater than 2x the minimum distance, 
 	// the match is considered incorrect, but sometimes the minimum distance is too 
 	// small and an empirical value of 30 is set to the lower limit.
-	//std::vector< cv::DMatch > good_matches;
+	//vector< DMatch > good_matches;
 	//for ( int i = 0; i < modelDescriptors.rows; i++ ){
-	//  if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
+	//  if ( matches[i].distance <= max( 2*min_dist, 30.0 ) ){
 	//    good_matches.push_back ( matches[i] );
 	//    inliers++;
 	//  }
@@ -671,17 +731,17 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	}
 	
 	modelPoints.clear(); imgPoints.clear();
-	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	vector< KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
 	for ( unsigned int i = 0; i < matches.size(); i++ ){
-	  if ( matches[i].distance <= cv::max( 2*min_dist, 30.0 ) ){
-	    cv::DMatch m = matches[i];
+	  if ( matches[i].distance <= max( 2*min_dist, 30.0 ) ){
+	    DMatch m = matches[i];
 	    modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
 	    imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
 	  }
 	}
 	
 	if ( modelPoints.size() != 0 ){
-	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask );
+	  Mat H = findHomography( modelPoints, imgPoints, RANSAC, 2.5f, mask );
 	  for ( int x = 0; x < mask.rows; x++ ){
 	    for ( int y = 0; y < mask.cols; y++ ){
 	      //Counting inliers and outliers
@@ -691,15 +751,15 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	}
 	
 #ifdef DEBUG
-	std::cout << "quantidade de inliers: " << inliers << std::endl;
-	std::cout << "quantidade de outliers: " << outliers << std::endl;
+	cout << "quantidade de inliers: " << inliers << endl;
+	cout << "quantidade de outliers: " << outliers << endl;
 #endif
       }
     }
     else{ // Descriptors empty
 #ifdef DEBUG
-      std::cout << "quantidade de inliers: " << inliers << std::endl;
-      std::cout << "quantidade de outliers: " << outliers << std::endl;
+      cout << "quantidade de inliers: " << inliers << endl;
+      cout << "quantidade de outliers: " << outliers << endl;
 #endif
     }
     
@@ -711,8 +771,8 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
     
   }
 
-  //t = cv::getTickCount() - t;
-  //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
+  //t = getTickCount() - t;
+  //cout << "time = " << t*1000/getTickFrequency() << " ms ";
   */
   
   
@@ -722,10 +782,10 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   /*
   const double ransac_thresh = 2.5f; // RANSAC inlier threshold
   const double nn_match_ratio = 0.8f; // Nearest-neighbour matching ratio
-  cv::Ptr<cv::DescriptorMatcher> matcher  = cv::DescriptorMatcher::create( "BruteForce-Hamming" );
-  std::vector< std::vector< cv::DMatch > > matches;
-  std::vector<cv::Point2f> modelPoints, imgPoints;
-  cv::Mat mask, level;
+  Ptr< DescriptorMatcher> matcher  = DescriptorMatcher::create( "BruteForce-Hamming" );
+  vector< vector< DMatch > > matches;
+  vector< Point2f > modelPoints, imgPoints;
+  Mat mask, level;
   int inliers, outliers;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
@@ -734,7 +794,7 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
     //#ifdef DEBUG
-    std::cout << "level " << k << std::endl;
+    cout << "level " << k << endl;
     //#endif
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
@@ -743,35 +803,35 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
       
       if ( matches.size() != 0 ){
 	modelPoints.clear(); imgPoints.clear();
-	std::vector< cv::KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
+	vector< KeyPoint > imgKeypoints =  (this->features)->getKeyPoints( k );
 	for ( unsigned int i = 0; i < matches.size(); i++ ){
 	  if( matches[i][0].distance < nn_match_ratio * matches[i][1].distance ) {
-	    cv::DMatch m = matches[i][0];
+	    DMatch m = matches[i][0];
 	    modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
 	    imgPoints.push_back(imgKeypoints[m.trainIdx].pt);
 	  }
 	}
 	if ( modelPoints.size() >= 4 ){
-	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, ransac_thresh, mask);
-	  //std::cout << " , mask " << mask.rows << ", " << mask.cols << std::endl;
+	  Mat H = findHomography( modelPoints, imgPoints, RANSAC, ransac_thresh, mask);
+	  //cout << " , mask " << mask.rows << ", " << mask.cols << endl;
 	  for ( int x = 0; x < mask.rows; x++ ){
 	    for ( int y = 0; y < mask.cols; y++ ){
-	      //std::cout << (int)mask.at<uchar>(x,y) << std::endl;
+	      //cout << (int)mask.at<uchar>(x,y) << endl;
 	      //Counting inliers and outliers
 	      (int)mask.at<uchar>(x, y) == 1 ? inliers++ : outliers++;
 	    }
 	  }
 	}
 	//#ifdef DEBUG
-	std::cout << "quantidade de inliers: " << inliers << std::endl;
-	std::cout << "quantidade de outliers: " << outliers << std::endl;
+	cout << "quantidade de inliers: " << inliers << endl;
+	cout << "quantidade de outliers: " << outliers << endl;
 	//#endif
       }
     }
     else{
       //#ifdef DEBUG
-      std::cout << "quantidade de inliers: " << inliers << std::endl;
-      std::cout << "quantidade de outliers: " << outliers << std::endl;
+      cout << "quantidade de inliers: " << inliers << endl;
+      cout << "quantidade de outliers: " << outliers << endl;
       //#endif
     }
     double matchesTotal = inliers + outliers;
@@ -787,36 +847,37 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
   // -----------------------
   // Third possibility
   // -----------------------
-  //cv::BFMatcher matcher(cv::NORM_HAMMING, true); // https://docs.opencv.org/3.4/d3/da1/classcv_1_1BFMatcher.html
-  //cv::BFMatcher matcher( cv::NORM_L2, true );
-  cv::Ptr< cv::DescriptorMatcher > matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
-  std::vector< cv::DMatch > matches;
-  std::vector< cv::Point2f > modelPoints, imgPoints;
-  cv::Mat mask, level;
+  //BFMatcher matcher( NORM_HAMMING, true); // https://docs.opencv.org/3.4/d3/da1/classcv_1_1BFMatcher.html
+  //BFMatcher matcher( NORM_L2, true );
+  //Ptr< BFMatcher > matcher = BFMatcher::create( NORM_L2, true );
+  Ptr< DescriptorMatcher > matcher = DescriptorMatcher::create( DescriptorMatcher::FLANNBASED );
+  vector< DMatch > matches;
+  vector< Point2f > modelPoints, imgPoints;
+  Mat mask, level;
   int inliers, outliers;
   int matchesMax = 0;
   inliersRatio.clear();
   numberMatches.clear();
-  std::vector< cv::DMatch > good_matches;
-  std::string type = "bf"; //"bf/knn";
-  //int64 t = cv::getTickCount();
+  vector< DMatch > good_matches;
+  string type = "bf"; //"bf/knn";
+  //int64 t = getTickCount();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->levels.size()) // Schedule(static, m+1) keeps the order
 #endif
   for ( int k = 0; k < levels.size(); k++ ){ // Levels
     inliers = 0; outliers = 0;
 #ifdef DEBUG
-    std::cout << "level " << k << std::endl;
+    cout << "level " << k << endl;
 #endif
     good_matches.clear();
     if ( !(this->features)->getDescriptors( k ).empty() ){
       level = levels[k].getLevel( scene );
       matches.clear();
       
-      std::vector< cv::KeyPoint > sceneKeypoints =  (this->features)->getKeyPoints( k );
+      vector< KeyPoint > sceneKeypoints =  (this->features)->getKeyPoints( k );
       if ( sceneKeypoints.size() > 2 ){
 	if (type == "bf") {
-	  matcher->match(modelDescriptors, (this->features)->getDescriptors( k ), matches, cv::Mat());
+	  matcher->match(modelDescriptors, (this->features)->getDescriptors( k ), matches, Mat());
 	  //-- Filter matches using the Lowe's ratio test
 	  const float ratio_thresh = 0.25f;
       	  for (int i = 0; i < static_cast<int>(matches.size()); ++i){
@@ -825,7 +886,7 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	  }
 	}
 	if (type == "knn") {
-	  std::vector< std::vector<cv::DMatch> > vmatches;
+	  vector< vector<DMatch> > vmatches;
 	  matcher->knnMatch( modelDescriptors, (this->features)->getDescriptors( k ), vmatches, 2 );
 	  //-- Filter matches using the Lowe's ratio test
 	  const float ratio_thresh = 0.75f;
@@ -838,25 +899,25 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
 	  }
 	}
 	
-	//cv::Mat img_matches;
+	//Mat img_matches;
 	//drawMatches(model, modelKeypoints, level, (this->features)->getKeyPoints( k ), matches, img_matches);
 	//imshow( "img_matches", img_matches );
-	//cv::waitKey( 0 );
+	//waitKey( 0 );
 
 	//
 	// Used when you need more precision
 	//
-	/*std::sort(good_matches.begin(), good_matches.end());
+	/*sort(good_matches.begin(), good_matches.end());
 	
 	modelPoints.clear(); imgPoints.clear();
 	for ( unsigned int i = 0; i < good_matches.size(); i++ ){
-	  cv::DMatch m = good_matches[i];
+	  DMatch m = good_matches[i];
 	  modelPoints.push_back(modelKeypoints[m.queryIdx].pt);
 	  imgPoints.push_back(sceneKeypoints[m.trainIdx].pt);
 	}
 	
 	if ( modelPoints.size() > 5 ){
-	  cv::Mat H = findHomography( modelPoints, imgPoints, cv::RANSAC, 2.5f, mask);
+	  Mat H = findHomography( modelPoints, imgPoints, RANSAC, 2.5f, mask);
 	  for ( int x = 0; x < mask.rows; x++ ){
 	    for ( int y = 0; y < mask.cols; y++ ){
 	      //Counting inliers and outliers
@@ -868,9 +929,9 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
       }
     }
 #ifdef DEBUG
-    std::cout << "quantidade de features: " << good_matches.size() << std::endl;
-    std::cout << "quantidade de inliers: " << inliers << std::endl;
-    std::cout << "quantidade de outliers: " << outliers << std::endl;
+    cout << "quantidade de features: " << good_matches.size() << endl;
+    cout << "quantidade de inliers: " << inliers << endl;
+    cout << "quantidade de outliers: " << outliers << endl;
 #endif
     
     /*double result = 0.0;
@@ -892,8 +953,8 @@ Fovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > 
    *  x = numberMatches[i] * 100 / matchesMax
    */			   
 			   
-  //t = cv::getTickCount() - t;
-  //std::cout << "time = " << t*1000/cv::getTickFrequency() << " ms ";
+  //t = getTickCount() - t;
+  //cout << "time = " << t*1000/getTickFrequency() << " ms ";
   
 }
 
@@ -978,7 +1039,7 @@ Fovea< T >::mapLevel2Image( int k, int m, T w, T u, T f, T px ){
   int _px = ( (k * w.x) * (u.x - w.x) + (2 * k * w.x * f.x) + (2 * px.x) * ( (m * u.x) - (k * u.x) + (k * w.x) ) )/ (2 * m * w.x);
   int _py = ( (k * w.y) * (u.y - w.y) + (2 * k * w.y * f.y) + (2 * px.y) * ( (m * u.y) - (k * u.y) + (k * w.y) ) )/ (2 * m * w.y);
 #ifdef DEBUG
-  std::cout << "Map: ( " << _px << ", " << _py << " ) " << std::endl;  
+  cout << "Map: ( " << _px << ", " << _py << " ) " << endl;  
 #endif
   return T( _px, _py );
 }

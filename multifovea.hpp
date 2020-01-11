@@ -47,6 +47,9 @@
 #define BITMAP 2 ///< Identify the use of bitmap approach
 #define BLOCKS 3 ///< Identify the use of block-based processing approach
 
+using namespace std;
+using namespace cv;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -70,7 +73,7 @@ public:
   // Methods
   //
   /**
-   * \fn Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mode)
+   * \fn Multifovea(Mat img, int m, T w, vector< T > fs, int mode)
    *
    * \brief Constructor default of multifovea class.
    * This constructor create many foveas associeted to an image.
@@ -85,10 +88,24 @@ public:
    * \param mode - identify the approach: reexecution, pixel-by-pixel, 
    * bitmap or block-based (see settings multifovea approaches )
    */
-  Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mode);
+  Multifovea(Mat img, int m, T w, vector< T > fs, int mode);
   
   /**
-   * \fn Multifovea(int m, T w, T u, std::vector< T > fs, int mode)
+   * \fn Multifovea(Mat img, String ymlFile, int mode)
+   *
+   * \brief Constructor default of multifovea class.
+   * This constructor is used to configure multiple foveas using
+   * a file yaml.
+   * 
+   * \param img - Image to be foveated
+   * \param ymlFile - File that contains all information of configuration
+   * \param mode - identify the approach: reexecution, pixel-by-pixel, 
+   * bitmap or block-based (see settings multifovea approaches )
+   */
+  Multifovea(Mat img, String ymlFile, int mode);
+  
+  /**
+   * \fn Multifovea(int m, T w, T u, vector< T > fs, int mode)
    *
    * \brief Constructor default of multifovea class.
    * This constructor create many foveas associated to image parameters.
@@ -103,7 +120,7 @@ public:
    * \param mode - identify the approach: reexecution, pixel-by-pixel, 
    * bitmap or block-based (see settings multifovea approaches )
    */
-  Multifovea(int m, T w, T u, std::vector< T > fs, int mode);
+  Multifovea(int m, T w, T u, vector< T > fs, int mode);
   
   /**
    * \fn ~Multifovea()
@@ -113,7 +130,7 @@ public:
   ~Multifovea();
 
   /**
-   * \fn void updateMultifovea(std::vector< T > fs)
+   * \fn void updateMultifovea(vector< T > fs)
    *
    * \brief This method update the foveas structure
    * and can be thought in update only what need to 
@@ -123,10 +140,10 @@ public:
    *
    * \param fs - Vector with positions (x, y) of the foveas
    */
-  void updateMultifovea(std::vector< T > fs);
+  void updateMultifovea(vector< T > fs);
 
   /**
-   * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+   * \fn bool foveatedFeatures( Mat img, int feature, int code )
    *
    * \brief This method compute and extract features
    * of foveated structures using MRMF or MMF.
@@ -142,10 +159,10 @@ public:
    * \return True if was done computed and extracted
    * features and False otherwise.
    */
-  bool foveatedFeatures( cv::Mat img, int feature, int code );
+  bool foveatedFeatures( Mat img, int feature, int code );
   
   /**
-   * \fn cv::Mat multifoveatedImage( cv::Mat img )
+   * \fn Mat multifoveatedImage( Mat img )
    *
    * \brief This function builds an image with multiples focus.
    *
@@ -153,10 +170,10 @@ public:
    *
    * \return Image multifoveated created by multiples focus
    */
-  cv::Mat multifoveatedImage( cv::Mat img );
+  Mat multifoveatedImage( Mat img );
   
   /**
-   * \fn cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors )
+   * \fn Mat multifoveaLevelsImage( Mat img, vector< Scalar > colors )
    *
    * \brief This function builds multiples images foveated to different focus
    *
@@ -165,26 +182,37 @@ public:
    *
    * \return Show the extraction feature in each fovea
    */
-  cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors );
+  Mat multifoveaLevelsImage( Mat img, vector< Scalar > colors );
 
   /**
-   * \fn std::vector< Fovea< T >* > getFoveas()
+   * \fn vector< Fovea< T >* > getFoveas()
    *
    * \brief This function return all foveas built.
    *
    * \return Vector with all foveas
    */
-  std::vector< Fovea< T >* > getFoveas();
+  vector< Fovea< T >* > getFoveas();
 
   /**
-   * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+   * \fn Fovea< T >* getFovea( int k )
+   *
+   * \brief  This function return the fovea solicited
+   *
+   * \param k - Level of fovea
+   *
+   * \return The fovea of k index
+   */
+  Fovea< T >* getFovea( int k );
+  
+  /**
+   * \fn void matching( vector< KeyPoint > modelKeypoints, Mat modelDescriptors )
    *
    * \brief This method realize the match between two foveas.
    *
    * \param modelKeypoints - model keypoints
    * \param modelDescriptors - model descriptors
    */
-  void matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors );
+  void matching( Mat scene, Mat model, vector< KeyPoint > modelKeypoints, Mat modelDescriptors );
   
 private:
   //
@@ -194,16 +222,15 @@ private:
   //
   // Attributes
   //
-  std::vector< Fovea< T >* > foveas; ///< Pointers to foveas
+  vector< Fovea< T >* > foveas; ///< Pointers to foveas
   // Parameters
   int m; ///< Number levels of fovea
-      
 };
 
 #endif
 
 /**
- * \fn Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mode)
+ * \fn Multifovea(Mat img, int m, T w, vector< T > fs, int mode)
  *
  * \brief Constructor default of multifovea class.
  * This constructor create many foveas associeted to an image.
@@ -219,13 +246,13 @@ private:
  * bitmap or block-based (see settings multifovea approaches )
  */
 template <typename T>
-Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mode){
+Multifovea< T >::Multifovea(Mat img, int m, T w, vector< T > fs, int mode){
   // Keeping value of quantity levels
   this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
   case REEXECUTION:
-    std::cout << "reexecution approach" << std::endl;
+    cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
@@ -235,23 +262,70 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
     }
     break;
   case PIXELBYPIXEL:
-    std::cout << "pixel by pixel processing approach" << std::endl;
+    cout << "pixel by pixel processing approach" << endl;
     break;
   case BITMAP:
-    std::cout << "bitmap approach" << std::endl;
+    cout << "bitmap approach" << endl;
     break;
   case BLOCKS:
-    std::cout << "Block-based processing approach" << std::endl;
+    cout << "Block-based processing approach" << endl;
     break;
   default:
-    std::cout << "There was not configured the mode" << std::endl;
+    cout << "There was not configured the mode" << endl;
     break;
   }
 }
 
+/**
+ * \fn Multifovea(Mat img, String ymlFile, int mode)
+ *
+ * \brief Constructor default of multifovea class.
+ * This constructor is used to configure multiple foveas using
+ * a file yaml.
+ * 
+ * \param img - Image to be foveated
+ * \param ymlFile - File that contains all information of configuration
+ * \param mode - identify the approach: reexecution, pixel-by-pixel, 
+ * bitmap or block-based (see settings multifovea approaches )
+ */
+template <typename T>
+Multifovea< T >::Multifovea(Mat img, String ymlFile, int mode){
+  vector< int > fx;
+  FileStorage fs(ymlFile, FileStorage::READ);
+  int numberOfLevels = (int) fs["numberOfLevels"];
+  // Keeping value of quantity levels
+  this->m = numberOfLevels - 1;
+  fs["foveax"] >> fx;
+  fs.release();
+  Fovea< T > *fovea;
+  switch ( mode ){
+  case REEXECUTION:
+    cout << "reexecution approach" << endl;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+    for ( int f = 0; f < fx.size(); f++ ){
+      fovea = new Fovea< T >( img, ymlFile, f );
+      foveas.push_back( fovea );
+    }
+    break;
+  case PIXELBYPIXEL:
+    cout << "pixel by pixel processing approach" << endl;
+    break;
+  case BITMAP:
+    cout << "bitmap approach" << endl;
+    break;
+  case BLOCKS:
+    cout << "Block-based processing approach" << endl;
+    break;
+  default:
+    cout << "There was not configured the mode" << endl;
+    break;
+  }
+}
 
 /**
- * \fn Multifovea(int m, T w, T u, std::vector< T > fs, int mode)
+ * \fn Multifovea(int m, T w, T u, vector< T > fs, int mode)
  *
  * \brief Constructor default of multifovea class.
  * This constructor create many foveas associated to image parameters.
@@ -267,13 +341,13 @@ Multifovea< T >::Multifovea(cv::Mat img, int m, T w, std::vector< T > fs, int mo
  * bitmap or block-based (see settings multifovea approaches )
  */
 template <typename T>
-Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
+Multifovea< T >::Multifovea(int m, T w, T u, vector< T > fs, int mode){
   // Keeping value of quantity levels
   this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
   case REEXECUTION:
-    std::cout << "reexecution approach" << std::endl;
+    cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
@@ -283,20 +357,19 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
     }
     break;
   case PIXELBYPIXEL:
-    std::cout << "pixel by pixel processing approach" << std::endl;
+    cout << "pixel by pixel processing approach" << endl;
     break;
   case BITMAP:
-    std::cout << "bitmap approach" << std::endl;
+    cout << "bitmap approach" << endl;
     break;
   case BLOCKS:
-    std::cout << "Block-based processing approach" << std::endl;
+    cout << "Block-based processing approach" << endl;
     break;
   default:
-    std::cout << "There was not configured the mode" << std::endl;
+    cout << "There was not configured the mode" << endl;
     break;
   }
 }
-
 
 /**
  * \fn ~Multifovea()
@@ -305,11 +378,11 @@ Multifovea< T >::Multifovea(int m, T w, T u, std::vector< T > fs, int mode){
  */
 template <typename T>
 Multifovea< T >::~Multifovea(){
-  std::vector< Fovea< T > >().swap( this->foveas ); // Free the memory
+  vector< Fovea< T > >().swap( this->foveas ); // Free the memory
 }
 
 /**
- * \fn void updateMultifovea(std::vector< T > fs)
+ * \fn void updateMultifovea(vector< T > fs)
  *
  * \brief This method update the foveas structures
  * and can be thought in update only what need to 
@@ -321,13 +394,13 @@ Multifovea< T >::~Multifovea(){
  */
 template <typename T>
 void 
-Multifovea< T >::updateMultifovea( std::vector< T > fs){
+Multifovea< T >::updateMultifovea( vector< T > fs){
   for ( int f = 0; f < foveas.size(); f++ )
     (this->foveas[f])->updateFovea( fs[f] );
 }
 
 /**
- * \fn bool foveatedFeatures( cv::Mat img, int feature, int code )
+ * \fn bool foveatedFeatures( Mat img, int feature, int code )
  *
  * \brief This method compute and extract features
  * of foveated structures using MRMF or MMF.
@@ -345,14 +418,14 @@ Multifovea< T >::updateMultifovea( std::vector< T > fs){
  */
 template <typename T>
 bool
-Multifovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
+Multifovea< T >::foveatedFeatures( Mat img, int feature, int code ){
   for ( int f = 0; f < foveas.size(); f++ )
     (this->foveas[f])->foveatedFeatures( img, feature, code );
   return true;
 }
 
 /**
- * \fn cv::Mat multifoveatedImage( cv::Mat img )
+ * \fn Mat multifoveatedImage( Mat img )
  *
  * \brief This function builds an image with multiples focus.
  *
@@ -361,42 +434,42 @@ Multifovea< T >::foveatedFeatures( cv::Mat img, int feature, int code ){
  * \return Image multifoveated created by multiples focus
  */
 template <typename T>
-cv::Mat 
-Multifovea< T >::multifoveatedImage( cv::Mat img ){
-  std::vector<cv::Scalar> colors;
+Mat 
+Multifovea< T >::multifoveatedImage( Mat img ){
+  vector<Scalar> colors;
   srand (time(NULL)); // Initialize random seed
   for (int i = 0; i < foveas.size(); i++){
     int r = rand() % 256; // 0 - 255
     int g = rand() % 256; // 0 - 255
     int b = rand() % 256; // 0 - 255
-    colors.push_back(cv::Scalar(b, g, r));
+    colors.push_back(Scalar(b, g, r));
   }
-  cv::Mat imgMultifoveated = img.clone();
+  Mat imgMultifoveated = img.clone();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
   for ( int k =  0; k < this->m + 1; k++ ){ // Levels
     for ( int focus = 0; focus < this->foveas.size(); focus++ ){ // foveas
       Level< T > level = (this->foveas[focus])->getLevelFromFovea( k );
-      cv::Mat imgLevel = level.getLevel( img );
+      Mat imgLevel = level.getLevel( img );
       // Mapping levels to foveated image
-      std::vector< T > mapLevel2Image = (foveas[focus])->getMapLevel2Image( k );
+      vector< T > mapLevel2Image = (foveas[focus])->getMapLevel2Image( k );
       T initial = mapLevel2Image[0];
       T final = mapLevel2Image[1];
 #ifdef DEBUG
-      std::cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << std::endl;
-      std::cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << std::endl;
+      cout << "(xi, yi) = (" << initial.x << ", " << initial.y << ")" << endl;
+      cout << "(xf, yf) = (" << final.x << ", " << final.y << ")" << endl;
 #endif
-      cv::Rect roi = cv::Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
+      Rect roi = Rect( initial.x, initial.y, final.x - initial.x, final.y - initial.y );
       if ( k < m ){ // Copying levels to foveated image
-	resize( imgLevel, imgLevel, cv::Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
+	resize( imgLevel, imgLevel, Size(final.x - initial.x, final.y - initial.y), 0, 0, CV_INTER_LINEAR );
 	imgLevel.copyTo( imgMultifoveated( roi ) );
       }
       else
 	imgLevel.copyTo( imgMultifoveated( roi ) );
       
       // Paint rectangle in each level
-      cv::rectangle(imgMultifoveated, cv::Point(initial.x, initial.y), cv::Point(final.x - 1, final.y - 1), colors[focus]);
+      rectangle(imgMultifoveated, Point(initial.x, initial.y), Point(final.x - 1, final.y - 1), colors[focus]);
      
     }
   }
@@ -406,7 +479,7 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
 
 
 /**
- * \fn cv::Mat multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors )
+ * \fn Mat multifoveaLevelsImage( Mat img, vector< Scalar > colors )
  *
  * \brief This function builds multiples images foveated to different focus
  *
@@ -418,14 +491,14 @@ Multifovea< T >::multifoveatedImage( cv::Mat img ){
  * \note This method isn't showing +4 foveas. It's necessary modify the display!
  */
 template <typename T>
-cv::Mat 
-Multifovea< T >::multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > colors ){
+Mat 
+Multifovea< T >::multifoveaLevelsImage( Mat img, vector< Scalar > colors ){
   /*
     Mat a, Mat b, Mat dst // a,b loaded
-    cv::hconcat(a, b, dst) // horizontal
-    cv::vconcat(a, b, dst) // vertical
+    hconcat(a, b, dst) // horizontal
+    vconcat(a, b, dst) // vertical
    */
-  cv::Mat imageFoveated, output, suboutput;
+  Mat imageFoveated, output, suboutput;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
 #endif
@@ -434,18 +507,18 @@ Multifovea< T >::multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > c
       suboutput = output;
     else{
       if ( focus > 0 && focus % 4 == 0 )
-	cv::vconcat( suboutput, output, suboutput );
+	vconcat( suboutput, output, suboutput );
     }*/
     
     imageFoveated = (foveas[focus])->foveatedImage( img, colors[focus] );
     if ( focus % 4 == 0 )
       output = imageFoveated;
     else
-      cv::hconcat(output, imageFoveated, output);
+      hconcat(output, imageFoveated, output);
     
     char buffer[50];
     sprintf(buffer, "Fovea %d", focus);
-    putText(output, buffer, T(10, (10*focus)+10), cv::FONT_HERSHEY_SIMPLEX, 0.25, colors[focus], 1, 1);
+    putText(output, buffer, T(10, (10*focus)+10), FONT_HERSHEY_SIMPLEX, 0.25, colors[focus], 1, 1);
     
   }
   /*if ( foveas.size() > 4 ){
@@ -455,20 +528,36 @@ Multifovea< T >::multifoveaLevelsImage( cv::Mat img, std::vector< cv::Scalar > c
 }
 
 /**
- * \fn std::vector< Fovea< T >* > getFoveas()
+ * \fn vector< Fovea< T >* > getFoveas()
  *
  * \brief This function return all foveas built.
  *
  * \return Vector with all foveas
  */
 template <typename T>
-std::vector< Fovea< T >* > 
+vector< Fovea< T >* > 
 Multifovea< T >::getFoveas(){
   return foveas;
 }
 
 /**
- * \fn void matching( std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors )
+ * \fn Fovea< T >* getFovea( int k )
+ *
+ * \brief This function return the fovea solicited.
+ *
+ * \param k - Level of fovea
+ *
+ * \return The fovea of k index
+ */
+template <typename T>
+Fovea< T >*
+Multifovea< T >::getFovea( int k ){
+  return foveas[k];
+}
+  
+
+/**
+ * \fn void matching( vector< KeyPoint > modelKeypoints, Mat modelDescriptors )
  *
  * \brief This method realize the match between two foveas.
  *
@@ -477,7 +566,7 @@ Multifovea< T >::getFoveas(){
  */
 template <typename T>
 void 
-Multifovea< T >::matching( cv::Mat scene, cv::Mat model, std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors ){
+Multifovea< T >::matching( Mat scene, Mat model, vector< KeyPoint > modelKeypoints, Mat modelDescriptors ){
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif

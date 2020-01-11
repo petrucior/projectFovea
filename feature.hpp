@@ -31,12 +31,20 @@
 #include <vector> //std::vector
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-//#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
-//#include "opencv2/xfeatures2d/nonfree.hpp"
+#include "opencv2/xfeatures2d/nonfree.hpp"
+
+#include "foveatedHessianDetector.hpp"
+
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
+
+using namespace std;
+using namespace cv;
+using namespace cv::xfeatures2d;
+
 
 /**
  * \defgroup ProjectFovea Project Fovea
@@ -49,6 +57,7 @@
 #define _SURF_ 2
 #define _AKAZE_ 3
 #define _BRISK_ 4
+#define _FOVEATEDFEATURES_ 5
 
 /**
  * \class Feature
@@ -65,7 +74,7 @@ public:
   // Methods
   //
   /**
-   * \fn Feature( cv::Mat img, std::vector< Level< T > > levels, int method )
+   * \fn Feature( Mat img, vector< Level< T > > levels, int method )
    *
    * \brief Constructor default.
    *
@@ -73,8 +82,8 @@ public:
    * \param levels - Fovea levels
    * \param method - Feature specification configured (see settings features)
    */
-  Feature( cv::Mat img, std::vector< Level< T > > levels, int method );
-    
+  Feature( Mat img, vector< Level< T > > levels, int method );
+
   /**
    * \fn ~Feature()
    *
@@ -83,17 +92,17 @@ public:
   ~Feature();
   
   /**
-   * \fn void show( cv::Mat img, std::vector< Level< T > > levels )
+   * \fn void show( Mat img, vector< Level< T > > levels )
    *
    * \brief Display the multiresolution structure 
    * 
    * \param img - Image to be foveated
    * \param levels - Fovea levels
    */
-  void show( cv::Mat img, std::vector< Level< T > > levels );
+  void show( Mat img, vector< Level< T > > levels );
   
   /**
-   * \fn std::vector< cv::KeyPoint > getKeyPoints( int k );
+   * \fn vector< KeyPoint > getKeyPoints( int k );
    *
    * \brief This method have function to return keypoints.
    * 
@@ -101,10 +110,10 @@ public:
    *
    * \return Return keypoints of level k requested.
    */
-  std::vector< cv::KeyPoint > getKeyPoints( int k );
+  vector< KeyPoint > getKeyPoints( int k );
   
   /**
-   * \fn cv::Mat getDescriptors( int k );
+   * \fn Mat getDescriptors( int k );
    *
    * \brief This method have function to return descriptors.
    * 
@@ -112,22 +121,21 @@ public:
    *
    * \return Return descriptors of level k requested.
    */
-  cv::Mat getDescriptors( int k );
+  Mat getDescriptors( int k );
   
 private:
   //
   // Attributes
   //
-  std::vector< std::vector< cv::KeyPoint > > keypoints; ///< Contains all keypoints of levels
-  std::vector< cv::Mat > descriptors; ///< Contains all descriptors of levels
-  std::vector< float > inliersRate; ///< Relation of inliers with position of fovea by level
-  
+  vector< vector< KeyPoint > > keypoints; ///< Contains all keypoints of levels
+  vector< Mat > descriptors; ///< Contains all descriptors of levels
+  vector< float > inliersRate; ///< Relation of inliers with position of fovea by level  
 };
 
 #endif
 
 /**
- * \fn Feature( cv::Mat img, std::vector< Level< T > > levels, int method )
+ * \fn Feature( Mat img, vector< Level< T > > levels, int method )
  *
  * \brief Constructor default.
  *
@@ -136,9 +144,9 @@ private:
  * \param method - Feature specification configured (see settings features)
  */
 template <typename T, typename K>
-Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int method ){
-  cv::Ptr<cv::FeatureDetector> detector;
-  cv::Ptr<cv::DescriptorExtractor> descriptor;
+Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
+  Ptr< FeatureDetector > detector;
+  Ptr< DescriptorExtractor > descriptor;
   
   // ORB configuration
   int orb_nfeatures = 500;
@@ -147,7 +155,7 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   int orb_edgeThreshold = 31;
   int orb_firstLevel = 0;
   int orb_WTA_K = 2;
-  int orb_scoreType = cv::ORB::HARRIS_SCORE;
+  int orb_scoreType = ORB::HARRIS_SCORE;
   int orb_patchSize = 31;
   int orb_fastThreshold = 20;
 
@@ -157,16 +165,16 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   float kaze_threshold = 0.001f;
   int kaze_nOctaves = 4;
   int kaze_nOctaveLayers = 4;
-  int kaze_diffusivity = cv::KAZE::DIFF_PM_G2;
+  int kaze_diffusivity = KAZE::DIFF_PM_G2;
   
   // AKAZE Configuration
-  int akaze_descriptor_type = cv::AKAZE::DESCRIPTOR_MLDB;
+  int akaze_descriptor_type = AKAZE::DESCRIPTOR_MLDB;
   int akaze_descriptor_size = 0;
   int akaze_descriptor_channels = 3;
   float akaze_threshold = 0.001f;
   int akaze_nOctaves = 4;
   int akaze_nOctaveLayers = 4;
-  int akaze_diffusivity = cv::KAZE::DIFF_PM_G2; 
+  int akaze_diffusivity = KAZE::DIFF_PM_G2; 
 
   // BRISK Configuration
   int thresh = 30;
@@ -177,65 +185,77 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
   switch ( method ){
   case _ORB_ :
 #ifdef DEBUG
-    std::cout << "ORB feature actived" << std::endl;
+    cout << "ORB feature actived" << endl;
 #endif
-    detector = cv::ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
-    descriptor = cv::ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
+    detector = ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
+    descriptor = ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
     break;
   case _KAZE_:
 #ifdef DEBUG
-    std::cout << "KAZE feature actived" << std::endl;
+    cout << "KAZE feature actived" << endl;
 #endif
-    detector = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
-    descriptor = cv::KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
+    detector = KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
+    descriptor = KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     break;
   case _SURF_:
 #ifdef DEBUG
-    std::cout << "SURF feature actived" << std::endl;
+    cout << "SURF feature actived" << endl;
 #endif
-    detector = cv::xfeatures2d::SURF::create(400);
-    descriptor = cv::xfeatures2d::SURF::create(400);
+    detector = SURF::create(400);
+    descriptor = SURF::create(400);
     break;
   case _AKAZE_:
 #ifdef DEBUG
-    std::cout << "AKAZE feature actived" << std::endl;
+    cout << "AKAZE feature actived" << endl;
 #endif
-    detector = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
-    descriptor = cv::AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
+    detector = AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
+    descriptor = AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
     break;
   case _BRISK_:
 #ifdef DEBUG
-    std::cout << "BRISK feature actived" << std::endl;
+    cout << "BRISK feature actived" << endl;
 #endif
-    detector = cv::BRISK::create( thresh, octaves, patternScale );
-    descriptor = cv::BRISK::create( thresh, octaves, patternScale );
+    detector = BRISK::create( thresh, octaves, patternScale );
+    descriptor = BRISK::create( thresh, octaves, patternScale );
+    break;
+  case _FOVEATEDFEATURES_:
+#ifdef DEBUG
+    cout << "FoveatedFeatures actived" << endl;
+#endif
+    detector = SURF::create(400);
+    descriptor = SURF::create(400);
     break;
   default:
-    std::cout << "Feature wasn't configured" << std::endl;
+    cout << "Feature wasn't configured" << endl;
     break;
   }
-  std::vector< cv::KeyPoint > kp;
-  cv::Mat dp, output;
+  vector< KeyPoint > kp;
+  Mat dp, output;
   for ( int i = 0; i < levels.size(); i++ ){
-    cv::Mat level = levels[i].getLevel( img );
-    int64 t = cv::getTickCount();
-    detector->detect ( level, kp );
-    t = cv::getTickCount() - t;
+    Mat level = levels[i].getLevel( img );
+    int64 t = getTickCount();
+    if ( method == _FOVEATEDFEATURES_ )
+      foveatedHessianDetector(level, Mat(), kp, levels[i]);
+    else
+      detector->detect ( level, kp );
+    t = getTickCount() - t;
 #ifdef DEBUG
-    std::cout << "Feature extraction = " << t*1000/cv::getTickFrequency() << " ms, ";
+    cout << "Feature extraction = " << t*1000/getTickFrequency() << " ms, ";
 #endif
-    t = cv::getTickCount();
+    t = getTickCount();
     descriptor->compute ( level, kp, dp );
-    t = cv::getTickCount() - t;
+    t = getTickCount() - t;
 #ifdef DEBUG
-    std::cout << " Feature description = " << t*1000/cv::getTickFrequency() << " ms" << std::endl;
+    cout << " Feature description = " << t*1000/getTickFrequency() << " ms" << endl;
 #endif
     keypoints.push_back( kp );
     descriptors.push_back( dp );
+
+    vector< KeyPoint >().swap( kp ); // free the memory
   }
-  std::vector< cv::KeyPoint >().swap( kp ); // free the memory
+  //vector< KeyPoint >().swap( kp ); // free the memory
 }
-    
+
 /**
  * \fn ~Feature()
  *
@@ -244,13 +264,13 @@ Feature< T, K >::Feature(cv::Mat img, std::vector< Level< T > > levels, int meth
 template <typename T, typename K>
 Feature< T, K >::~Feature(){
   // free the memory
-  std::vector< std::vector< cv::KeyPoint > >().swap( keypoints );
-  std::vector< float >().swap( inliersRate );
-  std::vector< cv::Mat >().swap( descriptors );
+  vector< vector< KeyPoint > >().swap( keypoints );
+  vector< float >().swap( inliersRate );
+  vector< Mat >().swap( descriptors );
 }
   
 /**
- * \fn void show( cv::Mat img, std::vector< Level< T > > levels )
+ * \fn void show( Mat img, vector< Level< T > > levels )
  *
  * \brief Pure virtual method caracterize this class like abstract.
  * 
@@ -259,23 +279,23 @@ Feature< T, K >::~Feature(){
  */
 template <typename T, typename K>
 void 
-Feature< T, K >::show( cv::Mat img, std::vector< Level< T > > levels ){
-  cv::Mat output;
+Feature< T, K >::show( Mat img, vector< Level< T > > levels ){
+  Mat output;
   /*for ( int i = 0; i < levels.size(); i++ ){
-    cv::Mat level = levels[i].getLevel( img );
-    cv::drawKeypoints( level, keypoints[i], output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
-    cv::imshow( "keypoints", output);
-    cv::waitKey( 0 );
+    Mat level = levels[i].getLevel( img );
+    drawKeypoints( level, keypoints[i], output, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+    imshow( "keypoints", output);
+    waitKey( 0 );
   }*/
   for (int i = levels.size() - 1; i < levels.size(); i++ ){
-    cv::Mat level = levels[i].getLevel( img );
-    cv::drawKeypoints( level, keypoints[i], output, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );
-    cv::imshow( "keypoints", output);
+    Mat level = levels[i].getLevel( img );
+    drawKeypoints( level, keypoints[i], output, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+    imshow( "keypoints", output);
   }
 }  
 
 /**
- * \fn std::vector< cv::KeyPoint > getKeyPoints( int k );
+ * \fn vector< KeyPoint > getKeyPoints( int k );
  *
  * \brief This method have function to return keypoints.
  * 
@@ -284,13 +304,13 @@ Feature< T, K >::show( cv::Mat img, std::vector< Level< T > > levels ){
  * \return Return keypoints of level k requested.
  */
 template <typename T, typename K>
-std::vector< cv::KeyPoint > 
+vector< KeyPoint > 
 Feature< T, K >::getKeyPoints( int k ){
   return this->keypoints[k];
 }
 
 /**
- * \fn cv::Mat getDescriptors( int k );
+ * \fn Mat getDescriptors( int k );
  *
  * \brief This method have function to return descriptors.
  * 
@@ -299,7 +319,7 @@ Feature< T, K >::getKeyPoints( int k ){
  * \return Return descriptors of level k requested.
  */
 template <typename T, typename K>
-cv::Mat
+Mat
 Feature< T, K >::getDescriptors( int k ){
   return this->descriptors[k];
 }

@@ -33,6 +33,9 @@
 #include <omp.h> //#pragma omp parallel for
 #endif
 
+using namespace std;
+using namespace cv;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -44,7 +47,7 @@
  * \brief This class implements the Shape TAD to represent structure
  * of fovea.
  *
- * \tparam T - Generic representation for type cv::Point
+ * \tparam T - Generic representation for type Point
  */
 template < typename T > // cv::Point 
 class Rectangle : public Shape< T > {
@@ -53,7 +56,7 @@ public:
   // Methods
   //
   /**
-   * \fn Rectangle( std::vector< T > boundingBox )
+   * \fn Rectangle( vector< T > boundingBox )
    *
    * \brief Constructor default.
    * This method initialize all vertices of the shape.
@@ -62,7 +65,7 @@ public:
    * information the limits of rectangular region ( delta and size )
    * to create the fovea
    */
-  Rectangle( std::vector< T > boundingBox );
+  Rectangle( vector< T > boundingBox );
   
   /**
    * \fn ~Rectangle()
@@ -80,13 +83,13 @@ public:
   void printVertices();
   
   /**
-   * \fn virtual std::vector< T > getVertices()
+   * \fn virtual vector< T > getVertices()
    *
    * \brief This function informs the vertices of shape
    *
    * \return Return the shape constructed by level
    */
-  std::vector< T > getVertices();
+  vector< T > getVertices();
   
   //
   // It's necessary to make an overwrite in the function testIntersection
@@ -94,7 +97,7 @@ public:
   //
 
   /**
-   * \fn bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection )
+   * \fn bool intersectionShape( const Shape< T >& shape, const vector< T >& pointIntersection )
    *
    * \brief This method checks if the shape intersect the region delimited
    * by vertices and return the point of intersection.
@@ -104,7 +107,7 @@ public:
    *
    * \return True if shape intersect and false otherwise.
    */
-  //bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection );
+  //bool intersectionShape( const Shape< T >& shape, const vector< T >& pointIntersection );
   
 private:
   //
@@ -118,7 +121,7 @@ private:
 #endif
 
 /**
- * \fn Rectangle( std::vector< T > boundingBox )
+ * \fn Rectangle( vector< T > boundingBox )
  *
  * \brief Constructor default.
  * This method initialize all vertices of the shape.
@@ -129,10 +132,10 @@ private:
  * Format: [ (delta.x, delta.y), (size.x, delta.y), (size.x, size.y), (delta.x, size.y)]
  */
 template <typename T>
-Rectangle< T >::Rectangle( std::vector< T > boundingBox ) : Shape< T >( boundingBox ){
+Rectangle< T >::Rectangle( vector< T > boundingBox ) : Shape< T >( boundingBox ){
   delta = boundingBox[0];
   size = boundingBox[1];
-  std::vector< T > v;
+  vector< T > v;
   v.push_back( T( delta.x, delta.y) );
   v.push_back( T( size.x, delta.y) );
   v.push_back( T( size.x, size.y) );
@@ -147,7 +150,7 @@ Rectangle< T >::Rectangle( std::vector< T > boundingBox ) : Shape< T >( bounding
  */
 template <typename T>
 Rectangle< T >::~Rectangle(){
-  std::vector< T >().swap( this->vertices ); // Free the memory
+  vector< T >().swap( this->vertices ); // Free the memory
 }
 
 /**
@@ -159,27 +162,27 @@ Rectangle< T >::~Rectangle(){
 template <typename T>
 void 
 Rectangle< T >::printVertices(){
-  std::cout << "delta: " << delta << ", size: " << size << std::endl;
+  cout << "delta: " << delta << ", size: " << size << endl;
 }
 
 /**
- * \fn virtual std::vector< T > getVertices()
+ * \fn virtual vector< T > getVertices()
  *
  * \brief This function informs the vertices of shape
  *
  * \return Return the shape constructed by level
  */
 template <typename T>
-std::vector< T >
+vector< T >
 Rectangle< T >::getVertices(){
-  std::vector< T > boundingBox;
+  vector< T > boundingBox;
   boundingBox.push_back( delta );
   boundingBox.push_back( size );
   return boundingBox;
 }
 
 /**
- * \fn bool intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection )
+ * \fn bool intersectionShape( const Shape< T >& shape, const vector< T >& pointIntersection )
  *
  * \brief This method checks if the shape intersect the region delimited
  * by vertices and return the point of intersection.
@@ -190,7 +193,7 @@ Rectangle< T >::getVertices(){
  * \return True if shape intersect and false otherwise.
  */
 /*bool 
-Rectangle::intersectionShape( const Shape< T >& shape, const std::vector< T >& pointIntersection ){
+Rectangle::intersectionShape( const Shape< T >& shape, const vector< T >& pointIntersection ){
   // To do
 }*/
 

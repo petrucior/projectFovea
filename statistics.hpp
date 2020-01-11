@@ -44,6 +44,9 @@
 #include <omp.h> //#pragma omp parallel for
 #endif
 
+using namespace std;
+using namespace cv;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -69,8 +72,8 @@ public:
   //
   
   /**
-   * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int methodDetector,
-   * std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors, float threshold ) 
+   * \fn void plotProportion( Fovea< T >* fovea, Mat scene, Mat model, int methodDetector,
+   * vector< KeyPoint > modelKeypoints, Mat modelDescriptors, float threshold ) 
    *
    * \brief Plot the proportion of inliers/(inliers+outliers) in each level.
    *
@@ -82,9 +85,9 @@ public:
    * \param modelDescriptors - Model descriptors
    * \param threshold1, threshold2 - Filtering limits
    */
-  void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method,
-		       std::vector< cv::KeyPoint > modelKeypoints, 
-		       cv::Mat modelDescriptors, float threshold1, float threshold2 );
+  void plotProportion( Fovea< T >* fovea, Mat scene, Mat model, int method,
+		       vector< KeyPoint > modelKeypoints, 
+		       Mat modelDescriptors, float threshold1, float threshold2 );
   
   /**
    * \fn double functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 )
@@ -100,9 +103,24 @@ public:
    * \return A value that means the fovea's contribution to target detection.
    */
   double functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 );
+
+  /**
+   * \fn vector< double > functionMultiFovea( Multifovea< T >* multifovea, float threshold1, float threshold2 )
+   *
+   * \brief Calculate the function pondering levels 
+   * \f$ f_{nfovea} = \sum_{k = 0}^{k = m + 1} \alpha_{k} Ir_{k} \f$, 
+   * where \f$ \alpha \f$ represent the weight of the level and 
+   * \f$ Ir \f$ represent the inliers ratio in the level 
+   *
+   * \param multifovea - Foveas pointer to be analised
+   * \param threshold1, threshold2 - Filtering limits
+   *
+   * \return A values set that means the fovea's contribution to target detection.
+   */
+  vector< double > functionMultiFovea( Multifovea< T >* multifovea, float threshold1, float threshold2 );
   
   /**
-   * \fn std::vector< double > regionTransformed( T R_t, std::vector< T > R )
+   * \fn vector< double > regionTransformed( T R_t, vector< T > R )
    *
    * \brief Calculate the influence of each level. This function is calculated 
    * by following the following idea:
@@ -116,10 +134,10 @@ public:
    *
    * \return returns normalized weights for each level
    */
-  std::vector< double > regionTransformed( double R_t, std::vector< double > R );
+  vector< double > regionTransformed( double R_t, vector< double > R );
   
   /**
-   * \fn int localGradient( double referencePotential, std::vector< double > potentials )
+   * \fn int localGradient( double referencePotential, vector< double > potentials )
    *
    * \brief Computes the direction of local gradient
    *
@@ -128,10 +146,10 @@ public:
    *
    * \return Index related to increased local potential
    */
-  int localGradient( double referencePotential, std::vector< double > potentials );
+  int localGradient( double referencePotential, vector< double > potentials );
 
   /**
-   * \fn std::vector< T > reduceRegionByLocalGradient( int index, T px, std::vector< T > regionSearched, int configuration )
+   * \fn vector< T > reduceRegionByLocalGradient( int index, T px, vector< T > regionSearched, int configuration )
    *
    * \brief Reduces the region searched according with the highest potential local index
    *
@@ -144,12 +162,12 @@ public:
    *
    * \return Update region to position fovea
    */
-  std::vector< T > reduceRegionByLocalGradient( int index, T px, std::vector< T > regionSearched, int configuration );
+  vector< T > reduceRegionByLocalGradient( int index, T px, vector< T > regionSearched, int configuration );
 
 
   /**
-   * \fn T intersectionLocalGradient( std::vector< T > positionPotentialVectorA, 
-   *                                  std::vector< T > positionPotentialVectorB )
+   * \fn T intersectionLocalGradient( vector< T > positionPotentialVectorA, 
+   *                                  vector< T > positionPotentialVectorB )
    *
    * \brief Computes the intersection of local gradients.
    *
@@ -158,11 +176,11 @@ public:
    *
    * \return Point (x, y) that intersect the local gradients.
    */
-  T intersectionLocalGradient( std::vector< T > positionPotentialVectorA,
-			       std::vector< T > positionPotentialVectorB );
+  T intersectionLocalGradient( vector< T > positionPotentialVectorA,
+			       vector< T > positionPotentialVectorB );
 
   /**
-   * \fn T maximumLikelihoodEstimator( std::vector< T > samples, std::vector< double > potentials, int method )
+   * \fn T maximumLikelihoodEstimator( vector< T > samples, vector< double > potentials, int method )
    *
    * \brief Calculate the Maximum Likelihood Estimator (MLE)
    *
@@ -172,10 +190,10 @@ public:
    *
    * \return Point estimated through MLE
    */
-  T maximumLikelihoodEstimator( std::vector< T > samples, std::vector< double > potentials, int method );
+  T maximumLikelihoodEstimator( vector< T > samples, vector< double > potentials, int method );
   
   /**
-   * \fn T trilaterationEstimator( std::vector< T > foveae, std::vector< double > inverseDetectionRate )
+   * \fn T trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate )
    *
    * \brief Calculate the trilateration Estimator
    *
@@ -184,7 +202,7 @@ public:
    *
    * \return Point estimated through trilateration
    */
-  T trilaterationEstimator( std::vector< T > foveae, std::vector< double > inverseDetectionRate );
+  T trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate );
 
   
 };
@@ -192,8 +210,8 @@ public:
 #endif
 
 /**
- * \fn void plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method,
- * std::vector< cv::KeyPoint > modelKeypoints, cv::Mat modelDescriptors, 
+ * \fn void plotProportion( Fovea< T >* fovea, Mat scene, Mat model, int method,
+ * vector< KeyPoint > modelKeypoints, Mat modelDescriptors, 
  * float threshold1, float threshold2 ) 
  *
  * \brief Plot the proportion of inliers/(inliers+outliers) in each level.
@@ -208,10 +226,10 @@ public:
  */
 template <typename T>
 void 
-Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model, int method, 
-				 std::vector< cv::KeyPoint > modelKeypoints, 
-				 cv::Mat modelDescriptors, float threshold1, float threshold2 ){
-  std::vector< T > parameters = fovea->getParameters();
+Statistics< T >::plotProportion( Fovea< T >* fovea, Mat scene, Mat model, int method, 
+				 vector< KeyPoint > modelKeypoints, 
+				 Mat modelDescriptors, float threshold1, float threshold2 ){
+  vector< T > parameters = fovea->getParameters();
   int m = parameters[0].x;
   FILE *file;
   file = fopen ("data/graph3d.dat","w");
@@ -220,7 +238,7 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
     fprintf( file, "#%c #%c #%c \n", 'x', 'y', 'z');
     for ( int i = 0; i < scene.rows; i+=15 ){
       for ( int j = 0; j < scene.cols; j+=15 ){
-	fovea->updateFovea( cv::Point( i, j ) );
+	fovea->updateFovea( Point( i, j ) );
 	fovea->foveatedFeatures( scene, method, MRMF );
 	fovea->matching( scene, model, modelKeypoints, modelDescriptors );
 	
@@ -233,8 +251,8 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
 	    fprintf( file, "%f ", fovea->getInliersRatio( k ) );
 	    /*if ( maxInliersRatio < fovea->getInliersRatio( k ) ){
 	      maxInliersRatio = fovea->getInliersRatio( k );
-	      //std::cout << "level = " << k << std::endl; 
-	      //std::cout << "( x, y ) = ( " << i << ", " << j << " )" << std::endl;
+	      //cout << "level = " << k << endl; 
+	      //cout << "( x, y ) = ( " << i << ", " << j << " )" << endl;
 	    }*/
 	  }
 	  else{
@@ -250,8 +268,8 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
   Graph g;
   for ( int k = 0; k < m + 1; k++ ){
     g("set term postscript eps");
-    const std::string _file ("data/graph3d");
-    g("set output \"data/graph3d_"+std::to_string(k)+".eps\" ");
+    const string _file ("data/graph3d");
+    g("set output \"data/graph3d_"+to_string(k)+".eps\" ");
     // http://lowrank.net/gnuplot/plot3d2-e.html
     g("set view 75, 30, 1, 1");
     g("set xlabel \'x\'");
@@ -259,7 +277,7 @@ Statistics< T >::plotProportion( Fovea< T >* fovea, cv::Mat scene, cv::Mat model
     //g("set zrange [0:0.2]");
     g("set dgrid3d 30, 30");
     g("set hidden3d");
-    g("splot \'"+ _file +".dat\' u 1:2:"+std::to_string(k+3)+" with lines ");
+    g("splot \'"+ _file +".dat\' u 1:2:"+to_string(k+3)+" with lines ");
     //g("splot \'"+ _file +".dat\' u 1:2:3 with lines, \'"+ _file +".dat\' u 1:2:4 with lines, \'"+ _file +".dat\' u 1:2:5 with lines ");
   }
 }
@@ -283,37 +301,61 @@ template <typename T>
 double 
 Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float threshold2 ){
   double function = 0.0;
-  std::vector< T > parameters = fovea->getParameters();
+  vector< T > parameters = fovea->getParameters();
   int m = parameters[0].x;
   double totalRegionx = 0.0;
-  std::vector< double > regionsx;
+  vector< double > regionsx;
   //T totalRegion = T( 0.0, 0.0 );
-  //std::vector< T > regions;
+  //vector< T > regions;
   for ( int k = 0; k < m + 1; k++ ){
     /*if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
 	 ( fovea->getNumberMatches( k ) < threshold2 ) ){*/
       Level< T > level = fovea->getLevelFromFovea( k );
-      std::vector< T > boundingBox = level.boundingBox( k, m, parameters[1], parameters[2], parameters[3] );
+      vector< T > boundingBox = level.boundingBox( k, m, parameters[1], parameters[2], parameters[3] );
       totalRegionx += (1.0/( (boundingBox[0].x + boundingBox[1].x) * (boundingBox[0].y + boundingBox[1].y)) );
       regionsx.push_back( (1.0/( (boundingBox[0].x + boundingBox[1].x) * (boundingBox[0].y + boundingBox[1].y) ) ) );
       //totalRegion += T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) );
       //regions.push_back( T( (boundingBox[0].x + boundingBox[1].x), (boundingBox[0].y + boundingBox[1].y) ) );
     //}
   }
-  std::vector< double > alpha = regionTransformed( totalRegionx, regionsx );
-  //std::vector< double > alpha = regionTransformed( totalRegion, regions );
+  vector< double > alpha = regionTransformed( totalRegionx, regionsx );
+  //vector< double > alpha = regionTransformed( totalRegion, regions );
   for ( int k = 0; k < m + 1; k++ ){
     if ( ( fovea->getNumberMatches( k ) > threshold1 ) &&
 	 ( fovea->getNumberMatches( k ) < threshold2 ) ){
       function += alpha[k] * fovea->getInliersRatio( k );
-      //std::cout << "level = " << k << " , alfa = " << alpha[k] << " , function = " << fovea->getInliersRatio( k ) << std::endl;
+      //cout << "level = " << k << " , alfa = " << alpha[k] << " , function = " << fovea->getInliersRatio( k ) << endl;
     }
   }
   return function;
 }
 
 /**
- * \fn std::vector< double > regionTransformed( T R_t, std::vector< T > R )
+ * \fn vector< double > functionMultiFovea( Multifovea< T >* multifovea, float threshold1, float threshold2 )
+ *
+ * \brief Calculate the function pondering levels 
+ * \f$ f_{nfovea} = \sum_{k = 0}^{k = m + 1} \alpha_{k} Ir_{k} \f$, 
+ * where \f$ \alpha \f$ represent the weight of the level and 
+ * \f$ Ir \f$ represent the inliers ratio in the level 
+ *
+ * \param multifovea - Foveas pointer to be analised
+ * \param threshold1, threshold2 - Filtering limits
+ *
+ * \return A values set that means the fovea's contribution to target detection.
+ */
+template <typename T>
+vector< double >
+Statistics< T >::functionMultiFovea( Multifovea< T >* multifovea, float threshold1, float threshold2 ){
+  vector< double > functions;
+  vector< Fovea< T >* > foveas = multifovea->getFoveas();
+  for ( int i = 0; i < foveas.size(); i++ ){ // Remember that regionTransformed is being accessed every time
+    functions.push_back( functionFovea( foveas[i], threshold1, threshold2 ) ); 
+  }
+  return functions;
+}
+
+/**
+ * \fn vector< double > regionTransformed( T R_t, vector< T > R )
  *
  * \brief Calculate the influence of each level. This function is calculated 
  * by following the following idea: 
@@ -326,9 +368,9 @@ Statistics< T >::functionFovea( Fovea< T >* fovea, float threshold1, float thres
  * \return returns normalized weights for each level
  */
 template <typename T>
-std::vector< double >
-Statistics< T >::regionTransformed( double R_t, std::vector< double > R ){
-  std::vector< double > weights;
+vector< double >
+Statistics< T >::regionTransformed( double R_t, vector< double > R ){
+  vector< double > weights;
   /*for ( int analised = 0; analised < R.size(); analised++ ){
     double complementx = 0.0; double complementy = 0.0;
     for ( int notAnalised = 0; notAnalised < R.size(); notAnalised++ ){
@@ -372,7 +414,7 @@ Statistics< T >::regionTransformed( double R_t, std::vector< double > R ){
 }
 
 /**
- * \fn int localGradient( double referencePotential, std::vector< double > potentials )
+ * \fn int localGradient( double referencePotential, vector< double > potentials )
  *
  * \brief Computes the direction of local gradient
  *
@@ -383,7 +425,7 @@ Statistics< T >::regionTransformed( double R_t, std::vector< double > R ){
  */
 template <typename T>
 int 
-Statistics< T >::localGradient( double referencePotential, std::vector< double > potentials ){
+Statistics< T >::localGradient( double referencePotential, vector< double > potentials ){
   int positionMaxPotential = 0; // Find a position with the higher potential
   for (int i = 1; i < potentials.size(); i++){
     if ( potentials[i] - referencePotential > potentials[positionMaxPotential] - referencePotential )
@@ -391,12 +433,12 @@ Statistics< T >::localGradient( double referencePotential, std::vector< double >
   }
   // We can think that's possible to use referencePotential to inform the vector displacement..
   // If referencePotential is low, then the vector displacement is larger
-  std::cout << positionMaxPotential;
+  cout << positionMaxPotential;
   return positionMaxPotential;
 }
 
 /**
- * \fn std::vector< T > reduceRegionByLocalGradient( int index, T px, std::vector< T > regionSearched, int configuration )
+ * \fn vector< T > reduceRegionByLocalGradient( int index, T px, vector< T > regionSearched, int configuration )
  *
  * \brief Reduces the region searched according with the highest potential local index
  *
@@ -410,9 +452,9 @@ Statistics< T >::localGradient( double referencePotential, std::vector< double >
  * \return Update region to position fovea
  */
 template <typename T>
-std::vector< T > 
-Statistics< T >::reduceRegionByLocalGradient( int index, T px, std::vector< T > regionSearched, int configuration ){
-  std::vector< T > updatedRegion = regionSearched;
+vector< T > 
+Statistics< T >::reduceRegionByLocalGradient( int index, T px, vector< T > regionSearched, int configuration ){
+  vector< T > updatedRegion = regionSearched;
   T delta = regionSearched[0];
   T size = regionSearched[1];
   switch ( configuration ){
@@ -453,14 +495,14 @@ Statistics< T >::reduceRegionByLocalGradient( int index, T px, std::vector< T > 
     }
     break;
   default:
-    std::cout << "This configuration was not configured!" << std::endl;
+    cout << "This configuration was not configured!" << endl;
   }
   return updatedRegion;
 }
 
 /**
- * \fn T intersectionLocalGradient( std::vector< T > positionPotentialVectorA, 
- *                                  std::vector< T > positionPotentialVectorB )
+ * \fn T intersectionLocalGradient( vector< T > positionPotentialVectorA, 
+ *                                  vector< T > positionPotentialVectorB )
  *
  * \brief Computes the intersection of local gradients.
  *
@@ -471,8 +513,8 @@ Statistics< T >::reduceRegionByLocalGradient( int index, T px, std::vector< T > 
  */
 template <typename T>
 T
-Statistics< T >::intersectionLocalGradient( std::vector< T > positionPotentialVectorA,
-					    std::vector< T > positionPotentialVectorB ){
+Statistics< T >::intersectionLocalGradient( vector< T > positionPotentialVectorA,
+					    vector< T > positionPotentialVectorB ){
   // Points
   int xa = positionPotentialVectorA[0].x; int ya = positionPotentialVectorA[0].y;
   int xb = positionPotentialVectorA[1].x; int yb = positionPotentialVectorA[1].y;
@@ -483,27 +525,27 @@ Statistics< T >::intersectionLocalGradient( std::vector< T > positionPotentialVe
   if ( ( xb - xa != 0 ) || ( xd - xc != 0 ) ){
     double mA = (yb - ya)/(xb - xa);
     double mB = (yd - yc)/(xd - xc);
-    std::cout << "mA = " << mA << ", mB = " << mB << std::endl;
+    cout << "mA = " << mA << ", mB = " << mB << endl;
     // linear coefficient
     // y = mx - mx_{1} + y_{1} => y = mx + c
     double cA = mA * xa + ya;
     double cB = mB * xc + yc;
     if ( mA == mB ){
-      std::cout << "Angular coefficients are equals, then parallel " << std::endl;
+      cout << "Angular coefficients are equals, then parallel " << endl;
       if ( cA != cB )
-	std::cout << "and distintes lines" << std::endl;
+	cout << "and distintes lines" << endl;
       if ( cA == cB )
-	std::cout << "and coincident lines" << std::endl;
+	cout << "and coincident lines" << endl;
     }
     else{
       if ( mA * mB == -1 ){
-	std::cout << "Perpendicular lines" << std::endl;	
+	cout << "Perpendicular lines" << endl;	
 	x = ( yc - ya + (mA * xa) - (mB * xc) ) / (mA - mB);
 	y = mA * ( x - xa ) + ya;
 	
       }
       if ( ( mA == 0 ) || ( mB == 0 ) ){
-	std::cout << "Vertical parallel line" << std::endl;
+	cout << "Vertical parallel line" << endl;
 	x = ( yc - ya + (mA * xa) - (mB * xc) ) / (mA - mB);
 	y = mA * ( x - xa ) + ya;
       }
@@ -511,14 +553,14 @@ Statistics< T >::intersectionLocalGradient( std::vector< T > positionPotentialVe
     }
   }
   else{
-    std::cout << "Horizontal parallel lines" << std::endl;
+    cout << "Horizontal parallel lines" << endl;
   }
   
   return T(x, y);
 }
 
 /**
- * \fn T maximumLikelihoodEstimator( std::vector< T > samples, std::vector< double > potentials, int method )
+ * \fn T maximumLikelihoodEstimator( vector< T > samples, vector< double > potentials, int method )
  *
  * \brief Calculate the Maximum Likelihood Estimator (MLE)
  *
@@ -530,7 +572,7 @@ Statistics< T >::intersectionLocalGradient( std::vector< T > positionPotentialVe
  */
 template <typename T>
 T
-Statistics< T >::maximumLikelihoodEstimator( std::vector< T > samples, std::vector< double > potentials, int method ){
+Statistics< T >::maximumLikelihoodEstimator( vector< T > samples, vector< double > potentials, int method ){
   double x = 0.0; double y = 0.0; double n = 0.0;
   if ( method == 0 ){ // Arithmetic mean
     for (int i = 0; i < samples.size(); i++){
@@ -554,7 +596,7 @@ Statistics< T >::maximumLikelihoodEstimator( std::vector< T > samples, std::vect
 }
 
 /**
- * \fn T trilaterationEstimator( std::vector< T > foveae, std::vector< double > inverseDetectionRate )
+ * \fn T trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate )
  *
  * \brief Calculate the trilateration Estimator
  *
@@ -565,7 +607,7 @@ Statistics< T >::maximumLikelihoodEstimator( std::vector< T > samples, std::vect
  */
 template <typename T>
 T
-Statistics< T >::trilaterationEstimator( std::vector< T > foveae, std::vector< double > inverseDetectionRate ){
+Statistics< T >::trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate ){
   // Points
   int x1 = foveae[0].x; int y1 = foveae[0].y;
   int x2 = foveae[1].x; int y2 = foveae[1].y;

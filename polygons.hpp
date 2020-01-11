@@ -36,6 +36,9 @@
 
 #define PI 3.1415 ///< Defining value to PI
 
+using namespace std;
+using namespace cv;
+
 /**
  * \defgroup ProjectFovea Project Fovea
  * @{
@@ -56,7 +59,7 @@ public:
   // Methods
   //  
   /**
-   * \fn Polygons( std::vector< T > boundingBox, int nVertices )
+   * \fn Polygons( vector< T > boundingBox, int nVertices )
    *
    * \brief Constructor default.
    * This method initialize all vertices of the shape.
@@ -66,7 +69,7 @@ public:
    * to create the fovea
    *        nVertices - Number of vertices
    */
-  Polygons( std::vector< T > boundingBox, int nVertices );
+  Polygons( vector< T > boundingBox, int nVertices );
   
   /**
    * \fn ~Polygons()
@@ -88,7 +91,7 @@ public:
 #endif
 
 /**
- * \fn Polygons( std::vector< T > boundingBox, int nVertices )
+ * \fn Polygons( vector< T > boundingBox, int nVertices )
  *
  * \brief Constructor default.
  * This method initialize all vertices of the shape.
@@ -99,10 +102,10 @@ public:
  *        nVertices - Number of vertices
  */
 template< typename T >
-Polygons< T >:: Polygons( std::vector< T > boundingBox, int nVertices ) : Shape< T >( boundingBox ){
+Polygons< T >:: Polygons( vector< T > boundingBox, int nVertices ) : Shape< T >( boundingBox ){
   T delta = boundingBox[0];
   T size = boundingBox[1];
-  std::vector< T > v;
+  vector< T > v;
   for ( int i = 0; i < nVertices; i++ ){
     float angle = 2*PI*i/nVertices;
     //v.push_back( T((int)cos(angle), (int)sin(angle)) );
@@ -124,7 +127,7 @@ Polygons< T >:: Polygons( std::vector< T > boundingBox, int nVertices ) : Shape<
  */
 template< typename T >
 Polygons< T >::~Polygons(){
-  std::vector< T >().swap( this->vertices ); // Free the memory
+  vector< T >().swap( this->vertices ); // Free the memory
 }
 
 /**
@@ -137,7 +140,7 @@ template< typename T >
 void 
 Polygons< T >::printVertices(){
   for ( int i = 0; i < this->vertices.size(); i++ )
-    std::cout << "(x, y) = (" << this->vertices[i].x << ", " << this->vertices[i].y << ")" << std::endl;
+    cout << "(x, y) = (" << this->vertices[i].x << ", " << this->vertices[i].y << ")" << endl;
 }
 
 /** @} */ //end of group class.
