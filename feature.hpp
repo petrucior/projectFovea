@@ -29,11 +29,12 @@
 
 #include <iostream> //std::cout, std::endl
 #include <vector> //std::vector
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/xfeatures2d/nonfree.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
 
 #include "foveatedHessianDetector.hpp"
 
@@ -57,8 +58,7 @@ using namespace cv::xfeatures2d;
 #define _SURF_ 2
 #define _AKAZE_ 3
 #define _BRISK_ 4
-#define _FOVEATEDFEATURES_ 5
-
+  
 /**
  * \class Feature
  *
@@ -67,7 +67,7 @@ using namespace cv::xfeatures2d;
  * \tparam T - Generic representation for type cv::Point
  * \tparam K - Generic representation for type cv::ORB, cv::SURF
  */
-template < typename T, typename K > // cv::Point / cv::Ptr<ORB>, cv::Ptr<SURF>
+template < typename T, typename K > // cv::Point / cv::Ptr<ORB>, cv::Ptr<SURF> || Fovea< T >
 class Feature {
 public:
   //
@@ -84,6 +84,17 @@ public:
    */
   Feature( Mat img, vector< Level< T > > levels, int method );
 
+  /**
+   * \fn Feature( Mat img, K fovea, int method )
+   *
+   * \brief Constructor default.
+   *
+   * \param img - Image to be foveated
+   * \param fovea - Fovea structure
+   * \param method - Feature specification configured (see settings features)
+   */
+  Feature( Mat img, K fovea, int method );
+  
   /**
    * \fn ~Feature()
    *
@@ -130,6 +141,7 @@ private:
   vector< vector< KeyPoint > > keypoints; ///< Contains all keypoints of levels
   vector< Mat > descriptors; ///< Contains all descriptors of levels
   vector< float > inliersRate; ///< Relation of inliers with position of fovea by level  
+
 };
 
 #endif
@@ -166,6 +178,13 @@ Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
   int kaze_nOctaves = 4;
   int kaze_nOctaveLayers = 4;
   int kaze_diffusivity = KAZE::DIFF_PM_G2;
+
+  // SURF Configuration
+  double surf_hessianThreshold = 100;
+  int surf_nOctaves = 4;
+  int surf_nOctaveLayers = 3;
+  bool surf_extended = false;
+  bool surf_upright = false;
   
   // AKAZE Configuration
   int akaze_descriptor_type = AKAZE::DESCRIPTOR_MLDB;
@@ -201,8 +220,8 @@ Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
 #ifdef DEBUG
     cout << "SURF feature actived" << endl;
 #endif
-    detector = SURF::create(400);
-    descriptor = SURF::create(400);
+    detector = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
+    descriptor = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
     break;
   case _AKAZE_:
 #ifdef DEBUG
@@ -218,26 +237,16 @@ Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
     detector = BRISK::create( thresh, octaves, patternScale );
     descriptor = BRISK::create( thresh, octaves, patternScale );
     break;
-  case _FOVEATEDFEATURES_:
-#ifdef DEBUG
-    cout << "FoveatedFeatures actived" << endl;
-#endif
-    detector = SURF::create(400);
-    descriptor = SURF::create(400);
-    break;
   default:
     cout << "Feature wasn't configured" << endl;
     break;
   }
   vector< KeyPoint > kp;
-  Mat dp, output;
+  Mat dp;
   for ( int i = 0; i < levels.size(); i++ ){
     Mat level = levels[i].getLevel( img );
     int64 t = getTickCount();
-    if ( method == _FOVEATEDFEATURES_ )
-      foveatedHessianDetector(level, Mat(), kp, levels[i]);
-    else
-      detector->detect ( level, kp );
+    detector->detect ( level, kp );
     t = getTickCount() - t;
 #ifdef DEBUG
     cout << "Feature extraction = " << t*1000/getTickFrequency() << " ms, ";
@@ -254,6 +263,61 @@ Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
     vector< KeyPoint >().swap( kp ); // free the memory
   }
   //vector< KeyPoint >().swap( kp ); // free the memory
+}
+
+/**
+ * \fn Feature( Mat img, K fovea, int method )
+ *
+ * \brief Constructor default.
+ *
+ * \param img - Image to be foveated
+ * \param levels - Fovea structure
+ * \param method - Feature specification configured (see settings features)
+ */
+template <typename T, typename K>
+Feature< T, K >::Feature( Mat img, K fovea, int method ){
+  Ptr< FeatureDetector > detector;
+  Ptr< DescriptorExtractor > descriptor;
+
+  vector< double > parameters = fovea.getParametersFeature();
+
+  // SURF Configuration
+  double surf_hessianThreshold = 100;
+  int surf_nOctaves = 4;
+  int surf_nOctaveLayers = 3;
+  bool surf_extended = false;
+  bool surf_upright = false;
+
+  // nOctaveLayers
+  if ( parameters[0] != 0 ) surf_nOctaveLayers = (int)parameters[0];
+  // hessianThreshold
+  if ( parameters[1] != 0 ) surf_hessianThreshold = parameters[1];
+
+  // Detector
+  switch ( method ){
+  case _SURF_:
+#ifdef DEBUG
+    cout << "SURF was modified and FoveatedFeatures was actived" << endl;
+#endif
+    detector = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
+    descriptor = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
+    break;
+  default:
+    cout << "Feature wasn't configured" << endl;
+    break;
+  }
+
+  vector< KeyPoint > kp;
+  Mat dp;
+
+  foveatedHessianDetector< T, K >(img, Mat(), kp, fovea);
+  descriptor->detectAndCompute ( img, noArray(), kp, dp, true );
+  //descriptor->detectAndCompute ( img, noArray(), kp, dp, false );
+  keypoints.push_back( kp );
+  descriptors.push_back( dp );
+
+  vector< KeyPoint >().swap( kp ); // free the memory
+  
 }
 
 /**

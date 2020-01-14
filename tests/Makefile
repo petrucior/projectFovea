@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= teststatistics.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o testsurf.o
+OBJS= testsurf.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o testsurf.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: teststatistics #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
+all: testsurf #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
 
 #
 # Regra de compilação e ligação do executáveis
@@ -149,7 +149,7 @@ testsurf: $(OBJS)
 #
 # Regra de compilação do arquivo objeto testfunction.o
 #
-testsurf.o: testsurf.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/fovea.hpp #$(DIR)/multifovea.hpp $(DIR)/statistics.hpp $(DIR)/foveatedHessianDetector.hpp
+testsurf.o: testsurf.cpp $(DIR)/shape.hpp $(DIR)/rectangle.hpp $(DIR)/polygons.hpp $(DIR)/level.hpp $(DIR)/feature.hpp $(DIR)/foveatedHessianDetector.hpp $(DIR)/fovea.hpp 
 	$(CC) $(CFLAGS) testsurf.cpp -o testsurf.o
 
 

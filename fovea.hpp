@@ -31,13 +31,16 @@
 #include <iostream> //std::cout, std::endl
 #include <stdio.h>
 #include <vector> //std::vector
-#include "opencv2/opencv.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-//#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
+
 #include "level.hpp" //std::vector< Level >
 #include "feature.hpp"
+
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
 #endif
@@ -118,7 +121,7 @@ public:
    * \brief Destructor default of fovea class.
    */
   ~Fovea();
-
+  
   /**
    * \fn inline void fixFovea() 
    *
@@ -138,7 +141,7 @@ public:
   void setFovea( T px );
   
   /**
-   * \fn vector< T > getParameters();
+   * \fn const vector< T > getParameters();
    *
    * \brief Function that is responsible for informing the user of the fovea parameters
    *
@@ -146,7 +149,25 @@ public:
    *
    * \note The parameter "m" is replicated to coordinates of type T
    */
-  vector< T > getParameters();
+  const vector< T > getParameters();
+
+  /**
+   * \fn const vector< vector< int > > getVectorsFeature();
+   *
+   * \brief Function that is responsible for informing bvector, etavector and levelvector
+   *
+   * \return The parameters bvector, etavector and levelvector of the feature
+   */
+  const vector< vector< int > > getVectorsFeature();
+  
+  /**
+   * \fn const vector< double > getParametersFeature();
+   *
+   * \brief Function that is responsible for informing nOctaveLayers and hessianThreshold
+   *
+   * \return The parameters nOctaveLayers and hessianThreshold of the feature
+   */
+  const vector< double > getParametersFeature();
   
   /**
    * \fn void updateFovea(int m, T w, T u, T f)
@@ -177,7 +198,7 @@ public:
   Mat foveatedImage( Mat img, Scalar color );
   
   /**
-   * \fn bool foveatedFeatures( Mat img, int feature, int code )
+   * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
    *
    * \brief This method compute and extract features 
    * of foveated structure using MRMF or MMF.
@@ -193,8 +214,8 @@ public:
    * \return True if was done computed and extracted
    * features and False otherwise.
    */
-  bool foveatedFeatures( Mat img, int feature, int code );
-
+  bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea );
+  
   /**
    * \fn Level< T > getLevelFromFovea( int k )
    *
@@ -205,7 +226,7 @@ public:
    * \return Levels from fovea
    */
   Level< T > getLevelFromFovea( int k );
-
+  
   /**
    * \fn vector< T > getMapLevel2Image( int k )
    *
@@ -217,15 +238,15 @@ public:
    * \return Vector containing the boundingBox to map of level
    */
   vector< T > getMapLevel2Image( int k );
-
+  
   /**
-   * \fn Feature< T, int >* getFeatures()
+   * \fn Feature< T, Fovea< T > >* getFeatures()
    *
    * \brief This method return pointer to features
    *
    * \return Pointer from Features
    */
-   Feature< T, int >* getFeatures();
+  Feature< T, Fovea< T > >* getFeatures();
   
   /**
    * \fn void matching( vector< KeyPoint > modelKeypoints, Mat modelDescriptors )
@@ -296,16 +317,18 @@ private:
   // Attributes
   //
   vector< Level< T > > levels; ///< List of levels
-  Feature< T, int >* features = NULL; ///< Features
+  Feature< T, Fovea< T > >* features = NULL; ///< Features
   vector< double > inliersRatio; ///< Inliers Ratio
   vector< int > numberMatches; ///< Quantity of matches
   int m; ///< Number levels of fovea
   T w; ///< Size of levels
   T u; ///< Size of image
   T f; ///< Position (x, y) to build the fovea
-  vector< int > beta; // bvector: [b1, b2, ..., bn]: a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
-  vector< int > eta; // etavector: [e1, e2, ..., en]: a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
-  vector< int > level; // levelvector: [l1, l2, ..., ln]: a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
+  vector< int > bvector; // bvector: [b1, b2, ..., bn]: a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
+  vector< int > etavector; // etavector: [e1, e2, ..., en]: a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
+  vector< int > levelvector; // levelvector: [l1, l2, ..., ln]: a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
+  int nOctaveLayers;
+  int hessianThreshold;
 };
 
 #endif
@@ -323,6 +346,13 @@ private:
  */
 template <typename T>
 Fovea< T >::Fovea(Mat img, int m, T w, T f){
+  // Cleaning parameters
+  bvector.clear();
+  etavector.clear();
+  levelvector.clear();
+  nOctaveLayers = 0;
+  hessianThreshold = 0;
+    
   T u = T( img.cols, img.rows );
   this->checkParameters( m, w, u, f );
 #ifdef _OPENMP
@@ -350,6 +380,13 @@ Fovea< T >::Fovea(Mat img, int m, T w, T f){
  */
 template <typename T>
 Fovea< T >::Fovea(int m, T w, T u, T f){
+  // Cleaning parameters
+  bvector.clear();
+  etavector.clear();
+  levelvector.clear();
+  nOctaveLayers = 0;
+  hessianThreshold = 0;
+    
   this->checkParameters( m, w, u, f );
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
@@ -373,16 +410,25 @@ Fovea< T >::Fovea(int m, T w, T u, T f){
  */
 template <typename T>
 Fovea< T >::Fovea(Mat img, String ymlFile, int index){
+  // Cleaning parameters
+  bvector.clear();
+  etavector.clear();
+  levelvector.clear();
+  nOctaveLayers = 0;
+  hessianThreshold = 0;
+    
   T u = T( img.cols, img.rows );
   FileStorage fs(ymlFile, FileStorage::READ);
   int wx = (int) fs["smallestLevelWidth"];
   int wy = (int) fs["smallestLevelHeight"];
   T w = T( wx, wy );
-  fs["etavector"] >> eta;
-  fs["bvector"] >> beta;
-  fs["levelvector"] >> level;
+  fs["bvector"] >> bvector;
+  fs["etavector"] >> etavector;
+  fs["levelvector"] >> levelvector;
   int numberOfLevels = (int) fs["numberOfLevels"];
   m = numberOfLevels - 1;
+  fs["hessianThreshold"] >> hessianThreshold;
+  fs["nOctaveLayers"] >> nOctaveLayers;
   vector< int > fx, fy;
   fs["foveax"] >> fx;
   fs["foveay"] >> fy;
@@ -443,7 +489,7 @@ Fovea< T >::setFovea( T px ){
 }
 
 /**
- * \fn vector< T > getParameters();
+ * \fn const vector< T > getParameters();
  *
  * \brief Function that is responsible for informing the user of the fovea parameters
  *
@@ -452,7 +498,7 @@ Fovea< T >::setFovea( T px ){
  * \note The parameter "m" is replicated to coordinates of type T
  */
 template <typename T>
-vector< T > 
+const vector< T > 
 Fovea< T >::getParameters(){
   vector< T > parameters;
   parameters.push_back( T( this->m, this->m ) );
@@ -460,7 +506,40 @@ Fovea< T >::getParameters(){
   parameters.push_back( this->u );
   parameters.push_back( this->f );
   return parameters;
-} 
+}
+
+/**
+ * \fn const vector< vector< int > > getVectorsFeature();
+ *
+ * \brief Function that is responsible for informing bvector, etavector and levelvector
+ *
+ * \return The parameters bvector, etavector and levelvector of the feature
+ */
+template <typename T>
+const vector< vector< int > >
+Fovea< T >::getVectorsFeature(){
+  vector< vector< int > > parameters;
+  parameters.push_back( bvector );
+  parameters.push_back( etavector );
+  parameters.push_back( levelvector );
+  return parameters;
+}
+
+/**
+ * \fn const vector< double > getParametersFeature();
+ *
+ * \brief Function that is responsible for informing nOctaveLayers and hessianThreshold
+ *
+ * \return The parameters nOctaveLayers and hessianThreshold of the feature
+ */
+template <typename T>
+const vector< double >
+Fovea< T >::getParametersFeature(){
+  vector< double > parameters;
+  parameters.push_back( nOctaveLayers );
+  parameters.push_back( hessianThreshold );
+  return parameters;
+}
 
 /**
  * \fn void updateFovea(int m, T w, T u, T f)
@@ -549,7 +628,7 @@ Fovea< T >::foveatedImage( Mat img, Scalar color ){
 }  
 
 /**
- * \fn bool foveatedFeatures( Mat img, int feature, int code )
+ * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T >* fovea )
  *
  * \brief This method compute and extract features 
  * of foveated structure using MRMF or MMF.
@@ -567,17 +646,17 @@ Fovea< T >::foveatedImage( Mat img, Scalar color ){
  */
 template <typename T>
 bool
-Fovea< T >::foveatedFeatures( Mat img, int feature, int code ){
+Fovea< T >::foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea ){
   if ( code == MRMF ){
     //cout << "MRMF actived" << endl;
-    //int feature = _KAZE_;
-    features = new Feature< T, int >( img, levels, feature );
+    features = new Feature< T, Fovea< T > >( img, levels, feature );
 #ifdef DEBUG
     features->show( img, levels );
 #endif
   }
   if ( code == MMF ){
     //cout << "MMF actived" << endl;
+    features = new Feature< T, Fovea< T > >( img, fovea, feature );
   }
   return true;
 }
@@ -617,14 +696,14 @@ Fovea< T >::getMapLevel2Image( int k ){
 }
 
 /**
- * \fn Feature< T, int >* getFeatures()
+ * \fn Feature< T, Fovea< T > >* getFeatures()
  *
  * \brief This method return pointer to features
  *
  * \return Pointer from Features
  */
 template <typename T>
-Feature< T, int >* 
+Feature< T, Fovea< T > >* 
 Fovea< T >::getFeatures(){
   return features;
 }
