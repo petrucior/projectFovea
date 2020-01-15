@@ -120,7 +120,18 @@ public:
    * information the limits of rectangular region ( delta and size ).
    */
   vector< T > boundingBox( int k, int m, T w, T u, T f );
-  
+
+  /**
+   * \fn vector< T > boundingBox()
+   *
+   * \brief This method return the bounding box delimiting
+   * the region where will be created the shape.
+   *
+   * \return Vector containing 2 positions with tuple 
+   * information the limits of rectangular region ( delta and size ).
+   */
+  vector< T > boundingBox();
+    
 private:
   //
   // Methods
@@ -158,6 +169,7 @@ private:
   // Attributes
   //
   Shape< T >* shape; ///< Shape of level
+  vector< T > boundingBoxShape; ///< Bounding box
   int indexLevel; ///< Index of level
   T dimW; ///< Dimension of multiresolution
 };
@@ -183,6 +195,7 @@ Level< T >::Level( int k, int m, T w, T u, T f ){
   vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
   //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
+  boundingBoxShape = _boundingBox;
   shape = r;
 }
 
@@ -212,6 +225,7 @@ Level< T >::updateLevel( int m, T w, T u, T f ){
   vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
   Rectangle< T > *r = new Rectangle< T >( _boundingBox );
   //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
+  boundingBoxShape = _boundingBox;
   shape = r;
 }
 
@@ -259,7 +273,23 @@ Level< T >::boundingBox( int k, int m, T w, T u, T f ){
   vector< T > _boundingBox;  ///< Tuple vector containing delta and size
   _boundingBox.push_back( delta );
   _boundingBox.push_back( size );
+  boundingBoxShape = _boundingBox;
   return _boundingBox;
+}
+
+/**
+ * \fn vector< T > boundingBox()
+ *
+ * \brief This method return the bounding box delimiting
+ * the region where will be created the shape.
+ *
+ * \return Vector containing 2 positions with tuple 
+ * information the limits of rectangular region ( delta and size ).
+ */
+template <typename T>
+vector< T >
+Level< T >::boundingBox(){
+  return boundingBoxShape; ///< Tuple vector containing delta and size
 }
 
 /**

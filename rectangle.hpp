@@ -95,7 +95,7 @@ public:
   // It's necessary to make an overwrite in the function testIntersection
   // because this class implement a classic approach of fovea model
   //
-
+  
   /**
    * \fn bool intersectionShape( const Shape< T >& shape, const vector< T >& pointIntersection )
    *

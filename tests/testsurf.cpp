@@ -33,7 +33,7 @@ int main( int argc, char** argv ){
   Mat model = imread(argv[1]);//, CV_LOAD_IMAGE_GRAYSCALE);
   Mat scene = imread(argv[2]);//, CV_LOAD_IMAGE_GRAYSCALE):
   String ymlFile = argv[3];
-  Mat sceneFoveated;
+  Mat sceneFoveated = scene;
   Mat multifoveated = scene;
   vector< Point2f > fs;
   // Foveas simetrically positioned
@@ -100,9 +100,8 @@ int main( int argc, char** argv ){
   cv::namedWindow("sceneFoveated", 1);
   while ( true ){
     setMouseCallback( "sceneFoveated", on_mouse, &fscene );
-    // Function only can be used when MRMF is actived
-    //sceneFoveated = fscene.foveatedImage( scene, colors[0] );
-    //imshow("sceneFoveated", sceneFoveated );
+    //sceneFoveated = fscene.foveatedImage( scene, colors[0], MMF );
+    imshow("sceneFoveated", sceneFoveated );
     drawKeypoints( model, modelKeypoints, model, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
     imshow("modelFoveated", model );
     char key = waitKey( 0 );
@@ -111,6 +110,7 @@ int main( int argc, char** argv ){
       //fscene.foveatedFeatures( scene, _SURF_, MRMF, fscene );
       fscene.foveatedFeatures( scene, _SURF_, MMF, fscene );
       //fscene->matching( scene, model, modelKeypoints, modelDescriptors );
+      sceneFoveated = fscene.foveatedImage( scene, colors[0], MMF );
     }
   }
   

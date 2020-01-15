@@ -177,11 +177,47 @@ resizeHaarPattern( const int src[][5], SurfHF* dst, int n, int oldSize, int newS
 template <typename T, typename K>
 static void calcLayerDetAndTrace( const Mat& sum, int size, int sampleStep,
 				  Mat& det, Mat& trace, K fovea, int marginH, int foveaLevel ){
-  cout << "entrei no calcLayerDetAndTrace" << endl;
+  cout << "calc" << endl;
   const int NX=3, NY=3, NXY=4;
   const int dx_s[NX][5] = { {0, 2, 3, 7, 1}, {3, 2, 6, 7, -2}, {6, 2, 9, 7, 1} };
   const int dy_s[NY][5] = { {2, 0, 7, 3, 1}, {2, 3, 7, 6, -2}, {2, 6, 7, 9, 1} };
   const int dxy_s[NXY][5] = { {1, 1, 4, 4, 1}, {5, 1, 8, 4, -1}, {1, 5, 4, 8, -1}, {5, 5, 8, 8, 1} };
+
+  //foveated parameters
+  int k = foveaLevel;
+
+  vector< T > modelParameters = fovea.getParameters();
+  Level< T > levelFovea = fovea.getLevelFromFovea( k );
+  vector< T > params = levelFovea.boundingBox();
+
+  int deltax = params[0].x;
+  int deltay = params[0].y;
+  int skx = params[1].x;
+  int sky = params[1].y;
+
+  //margin ref: centro da wavelet
+  //margin_x ref: centro da wavelet
+  int margin_x = MAX(marginH, deltax);
+  int margin_y = MAX(marginH, deltay);
+
+  //limit_x ref: centro da wavelet
+  int limit_x = MIN(deltax + skx, modelParameters[2].x - marginH);
+  int limit_y = MIN(deltay + sky, modelParameters[2].y - marginH);
+
+  //sum_i ref: comeco da wavelet
+  int sum_i, sum_j;
+  sum_i = margin_y - size/2;
+
+  //DEBUG
+  /*
+    std::cout << "Computando a imagem Hessiana" << std::endl;
+    std::cout << "Margin H = " << marginH << std::endl;
+    std::cout << "foveaLevel = " << foveaLevel << std::endl;
+    std::cout << "fovea = " << modelParameters[3].x << " " << modelParameters[3].y << std::endl;
+    std::cout << "delta = " << deltax << " " << deltay << std::endl;
+    std::cout << "A wavelet vai de " << margin_x << " até " << limit_x << std::endl;
+    std::cout << "Pulando de " << sampleStep << " em " << sampleStep << std::endl;
+  */
   
   SurfHF Dx[NX], Dy[NY], Dxy[NXY];
   
@@ -191,19 +227,13 @@ static void calcLayerDetAndTrace( const Mat& sum, int size, int sampleStep,
   resizeHaarPattern( dx_s , Dx , NX , 9, size, sum.cols );
   resizeHaarPattern( dy_s , Dy , NY , 9, size, sum.cols );
   resizeHaarPattern( dxy_s, Dxy, NXY, 9, size, sum.cols );
-  
-  /* The integral image 'sum' is one pixel bigger than the source image */
-  int samples_i = 1+(sum.rows-1-size)/sampleStep;
-  int samples_j = 1+(sum.cols-1-size)/sampleStep;
-  
-  /* Ignore pixels where some of the kernel is outside the image */
-  int margin = (size/2)/sampleStep;
-  
-  for( int i = 0; i < samples_i; i++ ){
-    const int* sum_ptr = sum.ptr<int>(i*sampleStep);
-    float* det_ptr = &det.at<float>(i+margin, margin);
-    float* trace_ptr = &trace.at<float>(i+margin, margin);
-    for( int j = 0; j < samples_j; j++ ){
+
+  for(int i = 0; sum_i + size/2 <= limit_y; i++, sum_i += sampleStep ) {
+    sum_j = margin_x - size/2;
+    const int* sum_ptr = sum.ptr<int>(sum_i, sum_j);
+    float* det_ptr = &det.at<float>(i, 0);
+    float* trace_ptr = &trace.at<float>(i, 0);
+    for(int j = 0; sum_j + size/2 <= limit_x; sum_j += sampleStep, j++ ) {
       float dx  = calcHaarPattern( sum_ptr, Dx , 3 );
       float dy  = calcHaarPattern( sum_ptr, Dy , 3 );
       float dxy = calcHaarPattern( sum_ptr, Dxy, 4 );
@@ -381,8 +411,7 @@ SURFFindInvoker< T, K >::findMaximaInLayer( const Mat& sum, const Mat& mask_sum,
 					    const vector<int>& sizes, vector<KeyPoint>& keypoints,
 					    int octave, int layer, float hessianThreshold, int sampleStep,
 					    K fovea, int marginH, int foveaLevel ){
-  
-  cout << " ----- entrei no findMaximaInLayer" << endl;
+  cout << "find" << endl;
   // Wavelet Data
   const int NM=1;
   const int dm[NM][5] = { {0, 0, 9, 9, 1} };
@@ -591,5 +620,7 @@ static void foveatedHessianDetector( InputArray _img, InputArray _mask, vector<K
   
   fastFoveatedHessianDetector< T, K >(sum, msum, keypoints, fovea);
 }
+
+
 
 #endif

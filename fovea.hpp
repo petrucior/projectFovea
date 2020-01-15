@@ -196,6 +196,21 @@ public:
    * \return Image foveated created by levels
    */
   Mat foveatedImage( Mat img, Scalar color );
+
+  /**
+   * \fn Mat foveatedImage( Mat img, Scalar color, int code )
+   *
+   * \brief This function builds the focused image.
+   *
+   * \param img - Image to be foveated
+   * \param color - Color to paint levels
+   * \param code - This code indicates which method
+   * to foveation will be used. If code is zero, then
+   * MRMF is chosen, otherwise MMF. ( see fovea.hp )
+   *
+   * \return Image foveated created by levels
+   */
+  Mat foveatedImage( Mat img, Scalar color, int code );
   
   /**
    * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
@@ -625,7 +640,48 @@ Fovea< T >::foveatedImage( Mat img, Scalar color ){
   
   features = NULL;
   return imgFoveated;
-}  
+}
+
+/**
+ * \fn Mat foveatedImage( Mat img, Scalar color, int code )
+ *
+ * \brief This function builds the focused image.
+ *
+ * \param img - Image to be foveated
+ * \param color - Color to paint levels
+ * \param code - This code indicates which method
+ * to foveation will be used. If code is zero, then
+ * MRMF is chosen, otherwise MMF. ( see fovea.hp )
+ *
+ * \return Image foveated created by levels
+ */
+template <typename T>
+Mat
+Fovea< T >::foveatedImage( Mat img, Scalar color, int code ){
+  Mat imgFoveated = img.clone();
+  if ( code == MRMF ){
+    //cout << "MRMF actived" << endl;
+    imgFoveated = foveatedImage( img, color );
+  }
+  if ( code == MMF ){
+    //cout << "MMF actived" << endl;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static, this->m) // Schedule(static, m) keeps the order
+#endif
+    for ( int k = 0; k < levels.size(); k++ ){ // Levels
+      vector< T > params = levels[k].boundingBox();
+      int dx = params[0].x;
+      int dy = params[0].y;
+      int sx = params[1].x;
+      int sy = params[1].y;
+      rectangle( imgFoveated, Point(dx, dy), Point(dx+sx, dy+sy), Scalar(255, 255, 255) );
+    }
+    vector< KeyPoint > kp = features->getKeyPoints( 0 );
+    if ( kp.size() != 0 )
+      drawKeypoints( imgFoveated, kp, imgFoveated, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
+  }
+  return imgFoveated;
+}
 
 /**
  * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T >* fovea )
