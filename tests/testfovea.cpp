@@ -34,13 +34,13 @@ int main( int argc, char** argv ){
   while ( true ){
     setMouseCallback( "image", on_mouse, f );
     foveated = f->foveatedImage( img, cv::Scalar(255, 255, 255) );
-    f->foveatedFeatures( img, _ORB_, MRMF );
+    f->foveatedFeatures( img, _ORB_, MRMF, *f );
     //f->foveatedFeatures( img, _KAZE_, MRMF );
     imshow("image", foveated );
     char key = waitKey( 0 );
     if ( key == 'q' ) break;
     if ( key == 'u' ){
-      f->foveatedFeatures( img, _KAZE_, MRMF );
+      f->foveatedFeatures( img, _KAZE_, MRMF, *f );
     }
   }
     

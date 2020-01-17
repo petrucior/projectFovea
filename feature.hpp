@@ -202,41 +202,46 @@ Feature< T, K >::Feature(Mat img, vector< Level< T > > levels, int method ){
 
   // Detector
   switch ( method ){
-  case _ORB_ :
+  case _ORB_ : {
 #ifdef DEBUG
     cout << "ORB feature actived" << endl;
 #endif
     detector = ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
     descriptor = ORB::create(orb_nfeatures, orb_scaleFactor, orb_nlevels, orb_edgeThreshold, orb_firstLevel, orb_WTA_K, orb_scoreType, orb_patchSize, orb_fastThreshold);
     break;
-  case _KAZE_:
+  }
+  case _KAZE_: {
 #ifdef DEBUG
     cout << "KAZE feature actived" << endl;
 #endif
     detector = KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     descriptor = KAZE::create(kaze_extended, kaze_upright, kaze_threshold, kaze_nOctaves, kaze_nOctaveLayers, kaze_diffusivity);
     break;
-  case _SURF_:
+  }
+  case _SURF_: {
 #ifdef DEBUG
     cout << "SURF feature actived" << endl;
 #endif
     detector = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
     descriptor = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
     break;
-  case _AKAZE_:
+  }
+  case _AKAZE_: {
 #ifdef DEBUG
     cout << "AKAZE feature actived" << endl;
 #endif
     detector = AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
     descriptor = AKAZE::create(akaze_descriptor_type, akaze_descriptor_size, akaze_descriptor_channels, akaze_threshold, akaze_nOctaves, akaze_nOctaveLayers, akaze_diffusivity);
     break;
-  case _BRISK_:
+  }
+  case _BRISK_: {
 #ifdef DEBUG
     cout << "BRISK feature actived" << endl;
 #endif
     detector = BRISK::create( thresh, octaves, patternScale );
     descriptor = BRISK::create( thresh, octaves, patternScale );
     break;
+  }
   default:
     cout << "Feature wasn't configured" << endl;
     break;
@@ -295,13 +300,14 @@ Feature< T, K >::Feature( Mat img, K fovea, int method ){
 
   // Detector
   switch ( method ){
-  case _SURF_:
+  case _SURF_: {
 #ifdef DEBUG
     cout << "SURF was modified and FoveatedFeatures was actived" << endl;
 #endif
     detector = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
     descriptor = SURF::create(surf_hessianThreshold, surf_nOctaves, surf_nOctaveLayers, surf_extended, surf_upright);
     break;
+  }
   default:
     cout << "Feature wasn't configured" << endl;
     break;

@@ -225,6 +225,7 @@ Blocks< T >::breakBlocks( vector< Shape< T >* > shapes ){
 #endif
     
     vector< T > newBoundingBox;
+    newBoundingBox.clear();
     T newDelta = T( lowerBound[0], delta.y );
     T newSize = T( upperBound[0] - lowerBound[0], vertexVector[0].intersectionPoint.y - newDelta.y );  
     if ( ( newSize.x > 0 ) && ( newSize.y > 0 ) ){

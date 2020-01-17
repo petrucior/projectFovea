@@ -79,6 +79,22 @@ public:
    * \param f - Position (x, y) to build the fovea
    */
   Level( int k, int m, T w, T u, T f );
+
+  /**
+   * \fn Level( int k, int m, T w, T u, T f, int shapeMode )
+   *
+   * \brief Default constructor for Level class which will create 
+   * a level of Rectangle shape.
+   *
+   * \param k - Level of fovea
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
+   * \param shapeMode - Feature specification configured (see settings 
+   * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+   */
+  Level( int k, int m, T w, T u, T f, int shapeMode );
   
   /**
    * \fn ~Level()
@@ -99,7 +115,32 @@ public:
    * \param f - Position (x, y) to build the fovea
    */
   void updateLevel( int m, T w, T u, T f );
-    
+  
+  /**
+   * \fn void updateLevel( int m, T w, T u, T f, int shapeMode )
+   *
+   * \brief Default constructor for Level class which will create 
+   * a level of anyone shape.
+   *
+   * \param m - Number levels of fovea
+   * \param w - Size of levels
+   * \param u - Size of image
+   * \param f - Position (x, y) to build the fovea
+   * \param shapeMode - Feature specification configured (see settings 
+   * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+   */
+  void updateLevel( int m, T w, T u, T f, int shapeMode );
+
+  /**
+   * \fn void updateLevel( vector< Level< T > > levels  )
+   *
+   * \brief Default constructor for Level class which will create 
+   * a level of Blocks shape.
+   *
+   * \param levels - List of all previously processed levels
+   */
+  void updateLevel( vector< Level< T > > levels );
+  
   /**
    * \fn Mat getLevel( Mat img )
    *
@@ -111,6 +152,18 @@ public:
    * \return Image that represent the level
    */
   Mat getLevel( Mat img );
+
+  /**
+   * \fn vector< Mat > getLevel2Render( Mat img )
+   *
+   * \brief Method responsable to create an image with 
+   * with level dimension
+   *
+   * \param img - Image will be foveated
+   *
+   * \return Image that represent the level
+   */
+  vector< Mat > getLevel2Render( Mat img );
   
   /**
    * \fn vector< T > boundingBox( int k, int m, T w, T u, T f )
@@ -128,7 +181,7 @@ public:
    * information the limits of rectangular region ( delta and size ).
    */
   vector< T > boundingBox( int k, int m, T w, T u, T f );
-
+  
   /**
    * \fn vector< T > boundingBox()
    *
@@ -139,6 +192,24 @@ public:
    * information the limits of rectangular region ( delta and size ).
    */
   vector< T > boundingBox();
+  
+  /**
+   * \fn Shape< T >* getShape()
+   *
+   * \brief This method return the shape associated
+   *
+   * \return The shape level constructed.
+   */
+  Shape< T >* getShape();
+
+  /**
+   * \fn int getTypeShape()
+   *
+   * \brief This method return the type of shape associated
+   *
+   * \return Type of shape constructed.
+   */
+  int getTypeShape();
     
 private:
   //
@@ -176,7 +247,8 @@ private:
   //
   // Attributes
   //
-  Shape< T >* shape; ///< Shape of level
+  Shape< T >* shape = NULL; ///< Shape of level
+  int shapeSaveMode; ///< Block shape 
   vector< T > boundingBoxShape; ///< Bounding box
   int indexLevel; ///< Index of level
   T dimW; ///< Dimension of multiresolution
@@ -206,6 +278,59 @@ Level< T >::Level( int k, int m, T w, T u, T f ){
   boundingBoxShape = _boundingBox;
   shape = r;
 }
+
+/**
+ * \fn Level( int k, int m, T w, T u, T f, int shapeMode )
+ *
+ * \brief Default constructor for Level class which will create 
+ * a level of Rectangle shape.
+ *
+ * \param k - Level of fovea
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
+ * \param shapeMode - Feature specification configured (see settings 
+ * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+ */
+template <typename T>
+Level< T >::Level( int k, int m, T w, T u, T f, int shapeMode ){
+  shapeSaveMode = shapeMode;
+  indexLevel = k;
+  dimW = w;
+  vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
+  switch ( shapeMode ){
+  case _BLOCKS_: {
+#ifdef DEBUG
+    cout << "Blocks shape actived" << endl;
+#endif
+    Blocks< T >* block = new Blocks< T >( _boundingBox );
+    shape = block;
+    break;
+  }
+  case _RECTANGLE_: {
+#ifdef DEBUG
+    cout << "Rectangle shape actived" << endl;
+#endif
+    Rectangle< T >* rectangle = new Rectangle< T >( _boundingBox );
+    shape = rectangle;
+    break;
+  }
+  case _POLYGONS_: {
+#ifdef DEBUG
+    cout << "Polygons shape actived" << endl;
+#endif
+    Polygons< T >* polygons = new Polygons< T >( _boundingBox, 2 );
+    shape = polygons;
+      break;
+  }
+  default:
+    cout << "Shape wasn't configured" << endl;
+    break;
+  }
+  boundingBoxShape = _boundingBox;
+}
+
 
 /**
  * \fn ~Level()
@@ -238,6 +363,105 @@ Level< T >::updateLevel( int m, T w, T u, T f ){
 }
 
 /**
+ * \fn void updateLevel( int m, T w, T u, T f, int shapeMode )
+ *
+ * \brief Default constructor for Level class which will create 
+ * a level of Rectangle shape.
+ *
+ * \param m - Number levels of fovea
+ * \param w - Size of levels
+ * \param u - Size of image
+ * \param f - Position (x, y) to build the fovea
+ * \param shapeMode - Feature specification configured (see settings 
+ * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+ */
+template <typename T>
+void
+Level< T >::updateLevel( int m, T w, T u, T f, int shapeMode ){
+  shapeSaveMode = shapeMode;
+  vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
+  switch ( shapeMode ){
+  case _BLOCKS_: {
+#ifdef DEBUG
+    cout << "Blocks shape actived" << endl;
+#endif
+    Blocks< T >* block = new Blocks< T >( _boundingBox );
+    shape = block;
+    break;
+  }
+  case _RECTANGLE_: {
+#ifdef DEBUG
+    cout << "Rectangle shape actived" << endl;
+#endif
+    Rectangle< T >* rectangle = new Rectangle< T >( _boundingBox );
+    shape = rectangle;
+    break;
+  }
+  case _POLYGONS_: {
+#ifdef DEBUG
+    cout << "Polygons shape actived" << endl;
+#endif
+    Polygons< T >* polygons = new Polygons< T >( _boundingBox, 2 );
+    shape = &polygons;
+    break;
+  }
+  default:
+    cout << "Shape wasn't configured" << endl;
+    break;
+  }
+  boundingBoxShape = _boundingBox;
+}
+
+/**
+ * \fn void updateLevel( vector< Level< T > > levels  )
+ *
+ * \brief Default constructor for Level class which will create 
+ * a level of Blocks shape.
+ *
+ * \param levels - List of all previously processed levels
+ */
+template <typename T>
+void
+Level< T >::updateLevel( vector< Level< T > > levels ){
+  switch ( shapeSaveMode ){
+  case _BLOCKS_: {
+#ifdef DEBUG
+    cout << "Update approach using blocks shape" << endl;
+#endif
+    vector< Shape< T >* > shapes;
+    for ( int l = 0; l < levels.size(); l++ ){
+      // Consider only Blocks shape
+      shapes.push_back( levels[l].getShape() );
+    }
+    Blocks< T > s = dynamic_cast<Blocks< T >& >(*shape);
+    cout << "Vertices before update" << endl;
+    s.printVertices();
+    s.breakBlocks( shapes );
+    cout << "Vertices after update" << endl;
+    s.printVertices();
+    shape->updateVertices( s.getVertices() );
+    //shape = dynamic_cast< Shape< T >* >(&s);
+    break;
+  }
+  case _RECTANGLE_: {
+#ifdef DEBUG
+    cout << "Rectangle wasn't configured to update yet" << endl;
+#endif
+    break;
+  }
+  case _POLYGONS_: {
+#ifdef DEBUG
+    cout << "Polygons wasn't configured to update yet" << endl;
+#endif
+    break;
+  }
+  default:
+    cout << "Shape wasn't configured" << endl;
+    break;
+  }
+}
+
+/**
  * \fn Mat getLevel( Mat img )
  *
  * \brief Method responsable to create an image with 
@@ -251,11 +475,44 @@ template <typename T>
 Mat
 Level< T >::getLevel( Mat img ){
   // It's necessary cut the image depending of vertices him
-  vector< T > boundingBox = shape->getVertices();
-  Rect roi((int)boundingBox[0].x, (int)boundingBox[0].y, (int)boundingBox[1].x, (int)boundingBox[1].y);
-  Mat croppedImage = img( roi );
-  resize(croppedImage, croppedImage, Size((int)dimW.x, (int)dimW.y), 0, 0, INTER_AREA);
+  vector< T > boundingBox = shape->getBoundingBox();
+  Rect roi((int)boundingBox[0].x, (int)boundingBox[0].y, (int)boundingBox[1].x - 1, (int)boundingBox[1].y - 1);
+  Mat croppedImage = img;
+  if ( roi.x >= 0 && roi.y >= 0 && roi.width + roi.x < img.cols && roi.height + roi.y < img.rows ) {
+    croppedImage = img( roi );
+    resize(croppedImage, croppedImage, Size((int)dimW.x, (int)dimW.y), 0, 0, INTER_AREA);
+  }
   return croppedImage;
+}
+
+/**
+ * \fn vector< Mat > getLevel2Render( Mat img )
+ *
+ * \brief Method responsable to create an image with 
+ * with level dimension
+ *
+ * \param img - Image will be foveated
+ *
+ * \return Image that represent the level
+ */
+template <typename T>
+vector< Mat >
+Level< T >::getLevel2Render( Mat img ){
+  vector< T > boundingBox = shape->getBoundingBox();
+  if ( shapeSaveMode == _BLOCKS_ )
+    boundingBox = shape->getVertices();
+  /*else
+  boundingBox = shape->getBoundingBox();*/
+  vector< Mat > output;
+  for ( int r = 0; r < boundingBox.size(); r+=2 ){
+    Rect roi((int)boundingBox[r].x, (int)boundingBox[r].y, (int)boundingBox[r+1].x - 1, (int)boundingBox[r+1].y - 1);
+    if ( roi.x >= 0 && roi.y >= 0 && roi.width + roi.x < img.cols && roi.height + roi.y < img.rows ) {
+      Mat croppedImage = img( roi );
+      resize(croppedImage, croppedImage, Size((int)dimW.x, (int)dimW.y), 0, 0, INTER_AREA);
+      output.push_back( croppedImage );
+    }
+  }      
+  return output;
 }
 
 /**
@@ -298,6 +555,32 @@ template <typename T>
 vector< T >
 Level< T >::boundingBox(){
   return boundingBoxShape; ///< Tuple vector containing delta and size
+}
+
+/**
+ * \fn Shape< T >* getShape()
+ *
+ * \brief This method return the shape associated
+ *
+ * \return The shape level constructed.
+ */
+template <typename T>
+Shape< T >*
+Level< T >::getShape(){
+  return shape;
+}
+
+/**
+ * \fn int getTypeShape()
+ *
+ * \brief This method return the type of shape associated
+ *
+ * \return Type of shape constructed.
+ */
+template <typename T>
+int
+Level< T >::getTypeShape(){
+  return shapeSaveMode;
 }
 
 /**

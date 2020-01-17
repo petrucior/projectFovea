@@ -143,7 +143,7 @@ public:
   void updateMultifovea(vector< T > fs);
 
   /**
-   * \fn bool foveatedFeatures( Mat img, int feature, int code )
+   * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
    *
    * \brief This method compute and extract features
    * of foveated structures using MRMF or MMF.
@@ -159,7 +159,7 @@ public:
    * \return True if was done computed and extracted
    * features and False otherwise.
    */
-  bool foveatedFeatures( Mat img, int feature, int code );
+  bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea );
   
   /**
    * \fn Mat multifoveatedImage( Mat img )
@@ -251,7 +251,7 @@ Multifovea< T >::Multifovea(Mat img, int m, T w, vector< T > fs, int mode){
   this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
-  case REEXECUTION:
+  case REEXECUTION: {
     cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
@@ -261,15 +261,19 @@ Multifovea< T >::Multifovea(Mat img, int m, T w, vector< T > fs, int mode){
       foveas.push_back( fovea );
     }
     break;
-  case PIXELBYPIXEL:
+  }
+  case PIXELBYPIXEL: {
     cout << "pixel by pixel processing approach" << endl;
     break;
-  case BITMAP:
+  }
+  case BITMAP: {
     cout << "bitmap approach" << endl;
     break;
-  case BLOCKS:
+  }
+  case BLOCKS: {
     cout << "Block-based processing approach" << endl;
     break;
+  }
   default:
     cout << "There was not configured the mode" << endl;
     break;
@@ -299,7 +303,7 @@ Multifovea< T >::Multifovea(Mat img, String ymlFile, int mode){
   fs.release();
   Fovea< T > *fovea;
   switch ( mode ){
-  case REEXECUTION:
+  case REEXECUTION: {
     cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
@@ -309,15 +313,19 @@ Multifovea< T >::Multifovea(Mat img, String ymlFile, int mode){
       foveas.push_back( fovea );
     }
     break;
-  case PIXELBYPIXEL:
+  }
+  case PIXELBYPIXEL: {
     cout << "pixel by pixel processing approach" << endl;
     break;
-  case BITMAP:
+  }
+  case BITMAP: {
     cout << "bitmap approach" << endl;
     break;
-  case BLOCKS:
+  }
+  case BLOCKS: {
     cout << "Block-based processing approach" << endl;
     break;
+  }
   default:
     cout << "There was not configured the mode" << endl;
     break;
@@ -346,7 +354,7 @@ Multifovea< T >::Multifovea(int m, T w, T u, vector< T > fs, int mode){
   this->m = m;
   Fovea< T > *fovea;
   switch ( mode ){
-  case REEXECUTION:
+  case REEXECUTION: {
     cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
@@ -356,15 +364,19 @@ Multifovea< T >::Multifovea(int m, T w, T u, vector< T > fs, int mode){
       foveas.push_back( fovea );
     }
     break;
-  case PIXELBYPIXEL:
+  }
+  case PIXELBYPIXEL: {
     cout << "pixel by pixel processing approach" << endl;
     break;
-  case BITMAP:
+  }
+  case BITMAP: {
     cout << "bitmap approach" << endl;
     break;
-  case BLOCKS:
+  }
+  case BLOCKS: {
     cout << "Block-based processing approach" << endl;
     break;
+  }
   default:
     cout << "There was not configured the mode" << endl;
     break;
@@ -400,7 +412,7 @@ Multifovea< T >::updateMultifovea( vector< T > fs){
 }
 
 /**
- * \fn bool foveatedFeatures( Mat img, int feature, int code )
+ * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
  *
  * \brief This method compute and extract features
  * of foveated structures using MRMF or MMF.
@@ -418,9 +430,9 @@ Multifovea< T >::updateMultifovea( vector< T > fs){
  */
 template <typename T>
 bool
-Multifovea< T >::foveatedFeatures( Mat img, int feature, int code ){
+Multifovea< T >::foveatedFeatures( Mat img, int feature, int code, Multifovea< T > fovea ){
   for ( int f = 0; f < foveas.size(); f++ )
-    (this->foveas[f])->foveatedFeatures( img, feature, code );
+    (this->foveas[f])->foveatedFeatures( img, feature, code, this->foveas[f] );
   return true;
 }
 
