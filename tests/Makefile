@@ -35,13 +35,13 @@ LIBS= `pkg-config --libs opencv`
 #
 # A variável OBJS indica os arquivos objetos comuns a todos os executáveis
 #
-OBJS= testsurf.o #testrectangle.o testpolygons.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o testsurf.o
+OBJS= testblocks.o #testrectangle.o testpolygons.o testblocks.o testlevel.o testfovea.o testmulti.o testdetect.o teststatistics.o testfunction.o testsurf.o
 
 #
 # A variável ALL indica os arquivos executáveis
 #
 #all: match extract tracking multi
-all: testsurf #testrectangle testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
+all: testblocks #testrectangle testpolygons testblocks testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
 
 #
 # Regra de compilação e ligação do executáveis
@@ -66,6 +66,19 @@ testpolygons: $(OBJS)
 #
 testpolygons.o: testpolygons.cpp $(DIR)/shape.hpp $(DIR)/polygons.hpp
 	$(CC) $(CFLAGS) testpolygons.cpp -o testpolygons.o
+
+#
+# Regra de compilação e ligação do executáveis
+# 
+testblocks: $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o testblocks $(LIBS) -O3
+
+#
+# Regra de compilação do arquivo objeto testblocks.o
+#
+testblocks.o: testblocks.cpp $(DIR)/shape.hpp $(DIR)/blocks.hpp
+	$(CC) $(CFLAGS) testblocks.cpp -o testblocks.o
+
 
 #
 # Regra de compilação e ligação do executáveis
@@ -163,5 +176,5 @@ clean:
 # Regra que elimina arquivos intermediários e executável
 # 
 realclean:
-	rm -f *.o *.cpp~ testrectangular testpolygons testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
+	rm -f *.o *.cpp~ testrectangle testpolygons testblocks testlevel testfovea testmulti testdetect teststatistics testfunction testsurf
 

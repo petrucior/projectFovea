@@ -1,7 +1,7 @@
 #include <iostream>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-//#include "../shape.hpp"
+#include "../shape.hpp"
 #include "../rectangle.hpp"
 
 using namespace cv;
@@ -22,7 +22,7 @@ int main(){
   
   // Testing intersectionShape with point
   Point point = Point(3, 2);
-  std::cout << r.intersectionShape( point ) << std::endl;
+  std::cout << r.intersectionShapeByPoint( point ) << std::endl;
 
   // Testing intersectionShape with another shape
   std::vector< Point > boundingBox2;
@@ -30,6 +30,7 @@ int main(){
   boundingBox2.push_back( Point(0, 0) );
   boundingBox2.push_back( Point(4, 4) );
   Rectangle< Point > s( boundingBox2 );
-  std::cout << r.intersectionShape( s, points ) << std::endl;
+  int direction;
+  std::cout << r.intersectionShape( s, points, direction ) << std::endl;
   return 0;
 }

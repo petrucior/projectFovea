@@ -34,6 +34,9 @@
 #include "shape.hpp" //Shape
 #include "rectangle.hpp" // Shape< T >::Rectangle
 #include "polygons.hpp" // Shape< T >::Polygons
+#include "blocks.hpp" // Shape< T >::Blocks
+
+
 
 using namespace std;
 using namespace cv;
@@ -42,6 +45,11 @@ using namespace cv;
  * \defgroup ProjectFovea Project Fovea
  * @{
  */
+
+// Setting Shape
+#define _BLOCKS_ 0
+#define _RECTANGLE_ 1
+#define _POLYGONS_ 2
 
 /**
  * \class Level
