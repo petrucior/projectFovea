@@ -71,23 +71,7 @@ public:
   // Methods
   //
   /**
-   * \fn Fovea(Mat img, int m, T w, T f)
-   *
-   * \brief Constructor default of fovea class.
-   * This constructor create a fovea associeted to an image.
-   * This approcah can be applied to associate the fovea structure
-   * to unique image. 
-   *
-   * \param img - Image to be foveated
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param f - Position (x, y) of the fovea
-   */
-  Fovea(Mat img, int m, T w, T f);
-  
-  /**
-   * \fn Fovea(int m, T w, T u, T f)
+   * \fn Fovea( int m, T w, T u, T f, int shapeMode )
    *
    * \brief Constructor default of fovea class.
    * This constructor create a fovea associated to image parameters.
@@ -99,21 +83,24 @@ public:
    * \param w - Size of levels
    * \param u - Size of image
    * \param f - Position (x, y) of the fovea
+   * \param shapeMode - Feature specification configured (see settings 
+   * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
    */
-  Fovea(int m, T w, T u, T f);
+  Fovea( int m, T w, T u, T f, int shapeMode );
 
   /**
-   * \fn Fovea(Mat img, String ymlFile, int index)
+   * \fn Fovea( String ymlFile, int index, int shapeMode )
    *
    * \brief Constructor default of fovea class.
    * This constructor is used to configure multiple foveas using
    * a file yaml.
    *
-   * \param img - Image to be foveated
    * \param ymlFile - File that contains all information of configuration
    * \param index - Vector index with fovea position information
+   * \param shapeMode - Feature specification configured (see settings 
+   * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
    */
-  Fovea(Mat img, String ymlFile, int index);
+  Fovea( String ymlFile, int index, int shapeMode );
   
   /**
    * \fn ~Fovea()
@@ -347,38 +334,7 @@ private:
 #endif
 
 /**
- * \fn Fovea(Mat img, int m, T w, T f)
- *
- * \brief Constructor default of fovea class.
- *
- * \param img - Image to be foveated
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param f - Position (x, y) of the fovea
- */
-template <typename T>
-Fovea< T >::Fovea(Mat img, int m, T w, T f){
-  // Cleaning parameters
-  bvector.clear();
-  etavector.clear();
-  levelvector.clear();
-  nOctaveLayers = 0;
-  hessianThreshold = 0;
-    
-  T u = T( img.cols, img.rows );
-  this->checkParameters( m, w, u, f );
-#ifdef _OPENMP
-#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
-#endif
-  for ( int k = 0; k < m + 1; k++ ){
-    Level< T > l( k, m, w, u, f );
-    levels.push_back( l );
-  }
-}
-
-/**
- * \fn Fovea(int m, T w, T u, T f)
+ * \fn Fovea( int m, T w, T u, T f, int shapeMode )
  *
  * \brief Constructor default of fovea class.
  * This constructor create a fovea associated to image parameters.
@@ -390,9 +346,11 @@ Fovea< T >::Fovea(Mat img, int m, T w, T f){
  * \param w - Size of levels
  * \param u - Size of image
  * \param f - Position (x, y) of the fovea
+ * \param shapeMode - Feature specification configured (see settings 
+ * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
-Fovea< T >::Fovea(int m, T w, T u, T f){
+Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
   // Cleaning parameters
   bvector.clear();
   etavector.clear();
@@ -405,24 +363,25 @@ Fovea< T >::Fovea(int m, T w, T u, T f){
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
   for ( int k = 0; k < m + 1; k++ ){
-    Level< T > l( k, m, w, u, f );
+    Level< T > l( k, m, w, u, f, shapeMode );
     levels.push_back( l );
   }
 }
 
 /**
- * \fn Fovea(Mat img, String ymlFile, int index)
+ * \fn Fovea( String ymlFile, int index, int shapeMode )
  *
  * \brief Constructor default of fovea class.
  * This constructor is used to configure multiple foveas using
  * a file yaml.
  *
- * \param img - Image to be foveated
  * \param ymlFile - File that contains all information of configuration
  * \param index - Vector index with fovea position information
+ * \param shapeMode - Feature specification configured (see settings 
+ * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
-Fovea< T >::Fovea(Mat img, String ymlFile, int index){
+Fovea< T >::Fovea( String ymlFile, int index, int shapeMode ){
   // Cleaning parameters
   bvector.clear();
   etavector.clear();
@@ -430,8 +389,10 @@ Fovea< T >::Fovea(Mat img, String ymlFile, int index){
   nOctaveLayers = 0;
   hessianThreshold = 0;
     
-  T u = T( img.cols, img.rows );
   FileStorage fs(ymlFile, FileStorage::READ);
+  int ux = (int) fs["imageWidth"]; // img.cols
+  int uy = (int) fs["imageHeight"]; // img.rows
+  T u = T( ux, uy );
   int wx = (int) fs["smallestLevelWidth"];
   int wy = (int) fs["smallestLevelHeight"];
   T w = T( wx, wy );
@@ -455,7 +416,7 @@ Fovea< T >::Fovea(Mat img, String ymlFile, int index){
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
   for ( int k = 0; k < m + 1; k++ ){
-    Level< T > l( k, m, w, u, f );
+    Level< T > l( k, m, w, u, f, shapeMode );
     levels.push_back( l );
   }
 }
@@ -484,7 +445,7 @@ Fovea< T >::fixFovea(){
   f.x = MAX((w.x - u.x)/2, f.x);
   f.y = MIN((u.y - w.y)/2, f.y);
   f.y = MAX((w.y - u.y)/2, f.y);
-}  
+}
 
 /**
  * \fn inline void setFovea( T px )
