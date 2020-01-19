@@ -34,7 +34,7 @@ int main( int argc, char** argv ){
   Level< Point > A2( 4, 4, Point(100, 100), Point( img.cols, img.rows ), Point( 40, 40 ), _BLOCKS_ );
   Level< Point > A3( 4, 4, Point(100, 100), Point( img.cols, img.rows ), Point( 40, -40 ), _BLOCKS_ );
   Level< Point > A4( 4, 4, Point(100, 100), Point( img.cols, img.rows ), Point( -40, -40 ), _BLOCKS_ );
-  Level< Point > B( 0, 4, Point(100, 100), Point( img.cols, img.rows ), Point( 0, 0 ), _BLOCKS_ );
+  Level< Point > B( 4, 4, Point(100, 100), Point( img.cols, img.rows ), Point( 0, 0 ), _BLOCKS_ );
 
   /*Level< Point > l( 0, 4, Point(100, 100), Point( img.cols, img.rows ), Point( 0, 0 ), _BLOCKS_ );
   img = l.getLevel( img );
@@ -53,12 +53,12 @@ int main( int argc, char** argv ){
     
   vector< Level< Point > > levels;
   levels.push_back( A1 );
-  //levels.push_back( A2 );
+  levels.push_back( A2 );
   //levels.push_back( A3 );
-  //levels.push_back( A4 );
+  levels.push_back( A4 );
   B.updateLevel( levels );
 
-  vector< Mat > vecMat = B.getLevel2Render( img );
+  vector< Mat > vecMat = B.getLevelParts( img );
   cout << "vecMat: " << vecMat.size() << endl;
   for ( int i = 0; i < vecMat.size(); i++ ){
     std::cout << "image " << i << std::endl;

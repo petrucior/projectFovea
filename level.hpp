@@ -65,26 +65,11 @@ public:
   //
   // Methods
   //
-
-  /**
-   * \fn Level( int k, int m, T w, T u, T f )
-   *
-   * \brief Default constructor for Level class which will create 
-   * a level of Rectangle shape.
-   *
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
-   */
-  Level( int k, int m, T w, T u, T f );
-
   /**
    * \fn Level( int k, int m, T w, T u, T f, int shapeMode )
    *
    * \brief Default constructor for Level class which will create 
-   * a level of Rectangle shape.
+   * a level of anyone shape.
    *
    * \param k - Level of fovea
    * \param m - Number levels of fovea
@@ -103,19 +88,6 @@ public:
    */
   ~Level();
 
-  /**
-   * \fn void updateLevel( int m, T w, T u, T f )
-   *
-   * \brief Default constructor for Level class which will create 
-   * a level of Rectangle shape.
-   *
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param u - Size of image
-   * \param f - Position (x, y) to build the fovea
-   */
-  void updateLevel( int m, T w, T u, T f );
-  
   /**
    * \fn void updateLevel( int m, T w, T u, T f, int shapeMode )
    *
@@ -154,16 +126,16 @@ public:
   Mat getLevel( Mat img );
 
   /**
-   * \fn vector< Mat > getLevel2Render( Mat img )
+   * \fn vector< Mat > getLevelParts( Mat img )
    *
    * \brief Method responsable to create an image with 
-   * with level dimension
+   * with parts of level
    *
    * \param img - Image will be foveated
    *
    * \return Image that represent the level
    */
-  vector< Mat > getLevel2Render( Mat img );
+  vector< Mat > getLevelParts( Mat img );
   
   /**
    * \fn vector< T > boundingBox( int k, int m, T w, T u, T f )
@@ -257,29 +229,6 @@ private:
 #endif
 
 /**
- * \fn Level( int k, int m, T w, T u, T f )
- *
- * \brief Default constructor for Level class which will create 
- * a level of Rectangle shape.
- *
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- * \param f - Position (x, y) to build the fovea
- */
-template <typename T>
-Level< T >::Level( int k, int m, T w, T u, T f ){
-  indexLevel = k;
-  dimW = w;
-  vector< T > _boundingBox = this->boundingBox( k, m, w, u, f );
-  Rectangle< T > *r = new Rectangle< T >( _boundingBox );
-  //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
-  boundingBoxShape = _boundingBox;
-  shape = r;
-}
-
-/**
  * \fn Level( int k, int m, T w, T u, T f, int shapeMode )
  *
  * \brief Default constructor for Level class which will create 
@@ -340,26 +289,6 @@ Level< T >::Level( int k, int m, T w, T u, T f, int shapeMode ){
 template <typename T>
 Level< T >::~Level(){
   // It does not need to be implemented
-}
-
-/**
- * \fn void updateLevel( int m, T w, T u, T f )
- *
- * \brief This method update the parameters of level
- *
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param u - Size of image
- * \param f - Position (x, y) to build the fovea
- */
-template <typename T>
-void
-Level< T >::updateLevel( int m, T w, T u, T f ){
-  vector< T > _boundingBox = this->boundingBox( indexLevel, m, w, u, f );
-  Rectangle< T > *r = new Rectangle< T >( _boundingBox );
-  //Polygons< T > *p = new Polygons< T >( _boundingBox, 2 );
-  boundingBoxShape = _boundingBox;
-  shape = r;
 }
 
 /**
@@ -486,10 +415,10 @@ Level< T >::getLevel( Mat img ){
 }
 
 /**
- * \fn vector< Mat > getLevel2Render( Mat img )
+ * \fn vector< Mat > getLevelParts( Mat img )
  *
  * \brief Method responsable to create an image with 
- * with level dimension
+ * with parts of level
  *
  * \param img - Image will be foveated
  *
@@ -497,12 +426,10 @@ Level< T >::getLevel( Mat img ){
  */
 template <typename T>
 vector< Mat >
-Level< T >::getLevel2Render( Mat img ){
+Level< T >::getLevelParts( Mat img ){
   vector< T > boundingBox = shape->getBoundingBox();
   if ( shapeSaveMode == _BLOCKS_ )
     boundingBox = shape->getVertices();
-  /*else
-  boundingBox = shape->getBoundingBox();*/
   vector< Mat > output;
   for ( int r = 0; r < boundingBox.size(); r+=2 ){
     Rect roi((int)boundingBox[r].x, (int)boundingBox[r].y, (int)boundingBox[r+1].x - 1, (int)boundingBox[r+1].y - 1);
