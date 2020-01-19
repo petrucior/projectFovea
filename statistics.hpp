@@ -204,6 +204,17 @@ public:
    */
   T trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate );
 
+  /**
+   * \fn T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate )
+   *
+   * \brief Calculate the baricentric coordinates estimator
+   *
+   * \param foveae - Contains all points of the foveae
+   *        detectionRate - Contain detection rate of each fovea
+   *
+   * \return Point estimated through baricentric coordinates
+   */
+  T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate );
   
 };
 
@@ -629,6 +640,29 @@ Statistics< T >::trilaterationEstimator( vector< T > foveae, vector< double > in
   double y = ((a * f) - (c * d)) / den;
   
   return T(x, y);
+}
+
+/**
+ * \fn T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate )
+ *
+ * \brief Calculate the baricentric coordinates estimator
+ *
+ * \param foveae - Contains all points of the foveae
+ *        detectionRate - Contain detection rate of each fovea
+ *
+ * \return Point estimated through baricentric coordinates
+ */
+template <typename T>
+T
+Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > detectionRate ){
+  T pointEstimated;
+  double detectionRateTotal = 0.0;
+  for ( int d = 0; d < detectionRate.size(); d++ )
+    detectionRateTotal += detectionRate[d];
+  for ( int f = 0; f < foveae.size(); f++ ){
+    pointEstimated += ( detectionRate[f] * foveae[f] ) / detectionRateTotal;
+  }
+  return pointEstimated;
 }
 
 /** @} */ //end of group class.

@@ -143,7 +143,7 @@ public:
   void updateMultifovea(vector< T > fs);
 
   /**
-   * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
+   * \fn void foveatedFeatures( Mat img, int feature, int code )
    *
    * \brief This method compute and extract features
    * of foveated structures using MRMF or MMF.
@@ -155,11 +155,8 @@ public:
    * \param code - This code indicates which method
    * to foveation will be used. If code is zero, then
    * MRMF is chosen, otherwise MMF. ( see fovea.hp )
-   *
-   * \return True if was done computed and extracted
-   * features and False otherwise.
    */
-  bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea );
+  void foveatedFeatures( Mat img, int feature, int code );
   
   /**
    * \fn Mat multifoveatedImage( Mat img )
@@ -412,7 +409,7 @@ Multifovea< T >::updateMultifovea( vector< T > fs){
 }
 
 /**
- * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
+ * \fn void foveatedFeatures( Mat img, int feature, int code )
  *
  * \brief This method compute and extract features
  * of foveated structures using MRMF or MMF.
@@ -424,16 +421,12 @@ Multifovea< T >::updateMultifovea( vector< T > fs){
  * \param code - This code indicates which method
  * to foveation will be used. If code is zero, then
  * MRMF is chosen, otherwise MMF. ( see fovea.hp )
- *
- * \return True if was done computed and extracted
- * features and False otherwise.
  */
 template <typename T>
-bool
-Multifovea< T >::foveatedFeatures( Mat img, int feature, int code, Multifovea< T > fovea ){
-  for ( int f = 0; f < foveas.size(); f++ )
-    (this->foveas[f])->foveatedFeatures( img, feature, code, this->foveas[f] );
-  return true;
+void
+Multifovea< T >::foveatedFeatures( Mat img, int feature, int code  ){
+  for ( int f = 0; f < this->foveas.size(); f++ )
+    (this->foveas[f])->foveatedFeatures( img, feature, code, *(this->foveas[f]) );
 }
 
 /**

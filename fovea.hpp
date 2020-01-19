@@ -213,7 +213,7 @@ public:
   Mat foveatedImage( Mat img, Scalar color, int code );
   
   /**
-   * \fn bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
+   * \fn void foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
    *
    * \brief This method compute and extract features 
    * of foveated structure using MRMF or MMF.
@@ -225,11 +225,9 @@ public:
    * \param code - This code indicates which method
    * to foveation will be used. If code is zero, then
    * MRMF is chosen, otherwise MMF. ( see fovea.hp )
-   *
-   * \return True if was done computed and extracted
-   * features and False otherwise.
+   * \param fovea - Fovea pointer
    */
-  bool foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea );
+  void foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea );
   
   /**
    * \fn Level< T > getLevelFromFovea( int k )
@@ -696,12 +694,10 @@ Fovea< T >::foveatedImage( Mat img, Scalar color, int code ){
  * \param code - This code indicates which method
  * to foveation will be used. If code is zero, then
  * MRMF is chosen, otherwise MMF. ( see fovea.hp )
- *
- * \return True if was done computed and extracted
- * features and False otherwise.
+ * \param fovea - Fovea pointer
  */
 template <typename T>
-bool
+void
 Fovea< T >::foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea ){
   if ( code == MRMF ){
     //cout << "MRMF actived" << endl;
@@ -714,7 +710,6 @@ Fovea< T >::foveatedFeatures( Mat img, int feature, int code, Fovea< T > fovea )
     //cout << "MMF actived" << endl;
     features = new Feature< T, Fovea< T > >( img, fovea, feature );
   }
-  return true;
 }
 
 /**
