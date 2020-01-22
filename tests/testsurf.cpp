@@ -57,7 +57,7 @@ int main( int argc, char** argv ){
   descriptor = SURF::create();
   //Fovea< Point2f > *fscene = new Fovea< Point2f >( 4, Point2f(120, 120), Point2f( scene.cols, scene.rows ), fs[0] );
   //Fovea< Point2f > fscene( 4, Point2f(120, 120), Point2f( scene.cols, scene.rows ), fs[0] );
-  Fovea< Point2f > fscene( scene, ymlFile, 0);
+  Fovea< Point2f > fscene( ymlFile, 0, _BLOCKS_ );
   
   // -----------------------
   // Configuration to _ORB_

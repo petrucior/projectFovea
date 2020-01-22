@@ -76,7 +76,7 @@ int main( int argc, char** argv ){
   // -----------------------
   detector = cv::xfeatures2d::SURF::create();
   descriptor = cv::xfeatures2d::SURF::create();
-  Multifovea< cv::Point2f > *m = new Multifovea< cv::Point2f >( 5, cv::Point2f(120, 120), cv::Point2f( scene.cols, scene.rows ), fs, REEXECUTION );
+  Multifovea< cv::Point2f > *m = new Multifovea< cv::Point2f >( 5, cv::Point2f(80, 80), cv::Point2f( scene.cols, scene.rows ), fs, _REEXECUTION_, _BLOCKS_ );
     
   // -----------------------
   // Configuration to _ORB_
@@ -256,6 +256,8 @@ int main( int argc, char** argv ){
   //invpotentials.push_back(1.41);
   cv::Point2f pointEstimated = s->trilaterationEstimator(points, invpotentials);
   std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;*/
+
+  
   
   
   return 0;

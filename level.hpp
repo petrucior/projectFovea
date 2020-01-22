@@ -331,7 +331,7 @@ Level< T >::updateLevel( int m, T w, T u, T f, int shapeMode ){
     cout << "Polygons shape actived" << endl;
 #endif
     Polygons< T >* polygons = new Polygons< T >( _boundingBox, 2 );
-    shape = &polygons;
+    shape = polygons;
     break;
   }
   default:

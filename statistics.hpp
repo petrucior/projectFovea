@@ -198,7 +198,7 @@ public:
    * \brief Calculate the trilateration Estimator
    *
    * \param foveae - Contains all points of the foveae
-   *        inverseDetectionRate - Contain inverse detection rate of each fovea
+   * \param inverseDetectionRate - Contain inverse detection rate of each fovea
    *
    * \return Point estimated through trilateration
    */
@@ -210,11 +210,34 @@ public:
    * \brief Calculate the baricentric coordinates estimator
    *
    * \param foveae - Contains all points of the foveae
-   *        detectionRate - Contain detection rate of each fovea
+   * \param detectionRate - Contain detection rate of each fovea
    *
    * \return Point estimated through baricentric coordinates
    */
   T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate );
+
+  /**
+   * \fn vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b )
+   *
+   * \brief Calculate the system \f$ Ax = b \f$ upper triangular
+   *
+   * \param A - Matrix upper triangular
+   * \param b - Independent terms
+   *
+   * \return The solution to system \f$ Ax = b \f$
+   */  
+  vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b );
+
+  /**
+   * \fn vector< vector< double > > gauss( vector< vector< double > > Ab )
+   *
+   * \brief Calculate the staggering of the system \f$ A|b \f$ by gauss elimination 
+   *
+   * \param Ab - Augmented matrix
+   *
+   * \return Staggering matrix of the augmented matrix
+   */  
+  vector< vector< double > > gauss( vector< vector< double > > Ab );
   
 };
 
@@ -612,7 +635,7 @@ Statistics< T >::maximumLikelihoodEstimator( vector< T > samples, vector< double
  * \brief Calculate the trilateration Estimator
  *
  * \param foveae - Contains all points of the foveae
- *        inverseDetectionRate - Contain inverse of detection rate for each fovea
+ * \param inverseDetectionRate - Contain inverse of detection rate for each fovea
  *
  * \return Point estimated through trilateration
  */
@@ -648,7 +671,7 @@ Statistics< T >::trilaterationEstimator( vector< T > foveae, vector< double > in
  * \brief Calculate the baricentric coordinates estimator
  *
  * \param foveae - Contains all points of the foveae
- *        detectionRate - Contain detection rate of each fovea
+ * \param detectionRate - Contain detection rate of each fovea
  *
  * \return Point estimated through baricentric coordinates
  */
@@ -663,6 +686,56 @@ Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > de
     pointEstimated += ( detectionRate[f] * foveae[f] ) / detectionRateTotal;
   }
   return pointEstimated;
+}
+
+/**
+ * \fn vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b )
+ *
+ * \brief Calculate the system \f$ Ax = b \f$ upper triangular
+ *
+ * \param A - Matrix upper triangular
+ * \param b - Independent terms
+ *
+ * \return The solution to system \f$ Ax = b \f$
+ */
+template <typename T>
+vector< double >
+Statistics< T >::retroactiveSubstitution( vector< vector< double > > A, vector< double > b ){
+  int n = A.size() - 1;
+  vector< double > x ( n, 0.0 );
+  if ( A[n][n] != 0 )
+    x[n] = ( b[n] / A[n][n] );
+  for ( int r = n - 1; r > 0; r-- ){
+    double sum = 0.0;
+    for ( int j = r + 1; j < n; j++ )
+      sum += A[r][j] * x[j];
+    if ( A[r][r] != 0 )
+      x[r] = ( (b[r] - sum) / A[r][r] );
+  }
+}
+
+/**
+ * \fn vector< vector< double > > gauss( vector< vector< double > > Ab )
+ *
+ * \brief Calculate the staggering of the system \f$ A|b \f$ by gauss elimination 
+ *
+ * \param Ab - Augmented matrix
+ *
+ * \return Staggering matrix of the augmented matrix
+ */
+template <typename T>
+vector< vector< double > >
+Statistics< T >::gauss( vector< vector< double > > Ab ){
+  int n = Ab.size() - 1;
+  for ( int p = 0; p < n - 1; p++ ){
+    for ( int r = p+1; r < n ; r++ ){
+      double m = Ab[r][p] / Ab[p][p];
+      Ab[r][p] = 0;
+      for ( int c = p+1; c < n + 1; c++ )
+	Ab[r][c] = Ab[r][c] - ( m * Ab[p][c] );
+    }
+  }
+  return Ab;
 }
 
 /** @} */ //end of group class.

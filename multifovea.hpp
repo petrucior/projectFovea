@@ -42,10 +42,10 @@
 #endif
 
 // Setting Multifovea Approaches
-#define REEXECUTION 0 ///< Identify the use of reexecution approach
-#define PIXELBYPIXEL 1 ///< Identify the use of pixel-by-pixel processing approach
-#define BITMAP 2 ///< Identify the use of bitmap approach
-#define BLOCKS 3 ///< Identify the use of block-based processing approach
+#define _REEXECUTION_ 0 ///< Identify the use of reexecution approach
+#define _PIXELBYPIXEL_ 1 ///< Identify the use of pixel-by-pixel processing approach
+#define _BITMAP_ 2 ///< Identify the use of bitmap approach
+#define _SENDINGBLOCKS_ 3 ///< Identify the use of block-based processing approach
 
 using namespace std;
 using namespace cv;
@@ -73,39 +73,7 @@ public:
   // Methods
   //
   /**
-   * \fn Multifovea(Mat img, int m, T w, vector< T > fs, int mode)
-   *
-   * \brief Constructor default of multifovea class.
-   * This constructor create many foveas associeted to an image.
-   * This approcah can be applied to associate the foveas structure
-   * to unique image. 
-   *
-   * \param img - Image to be foveated
-   * \param k - Level of fovea
-   * \param m - Number levels of fovea
-   * \param w - Size of levels
-   * \param fs - Vector with positions (x, y) of the foveas
-   * \param mode - identify the approach: reexecution, pixel-by-pixel, 
-   * bitmap or block-based (see settings multifovea approaches )
-   */
-  Multifovea(Mat img, int m, T w, vector< T > fs, int mode);
-  
-  /**
-   * \fn Multifovea(Mat img, String ymlFile, int mode)
-   *
-   * \brief Constructor default of multifovea class.
-   * This constructor is used to configure multiple foveas using
-   * a file yaml.
-   * 
-   * \param img - Image to be foveated
-   * \param ymlFile - File that contains all information of configuration
-   * \param mode - identify the approach: reexecution, pixel-by-pixel, 
-   * bitmap or block-based (see settings multifovea approaches )
-   */
-  Multifovea(Mat img, String ymlFile, int mode);
-  
-  /**
-   * \fn Multifovea(int m, T w, T u, vector< T > fs, int mode)
+   * \fn Multifovea(int m, T w, T u, vector< T > fs, int multiMode, int shapeMode)
    *
    * \brief Constructor default of multifovea class.
    * This constructor create many foveas associated to image parameters.
@@ -117,10 +85,27 @@ public:
    * \param w - Size of levels
    * \param u - Size of image
    * \param fs - Vector with positions (x, y) of the foveas
-   * \param mode - identify the approach: reexecution, pixel-by-pixel, 
+   * \param multiMode - identify the approach: reexecution, pixel-by-pixel, 
    * bitmap or block-based (see settings multifovea approaches )
+   * \param shapeMode - Feature specification configured (see settings
+   * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
    */
-  Multifovea(int m, T w, T u, vector< T > fs, int mode);
+  Multifovea(int m, T w, T u, vector< T > fs, int multiMode, int shapeMode);
+  
+  /**
+   * \fn Multifovea(String ymlFile, int multiMode, int shapeMode)
+   *
+   * \brief Constructor default of multifovea class.
+   * This constructor is used to configure multiple foveas using
+   * a file yaml.
+   * 
+   * \param ymlFile - File that contains all information of configuration
+   * \param multiMode - identify the approach: reexecution, pixel-by-pixel, 
+   * bitmap or block-based (see settings multifovea approaches )
+   * \param shapeMode - Feature specification configured (see settings
+   * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+   */
+  Multifovea(String ymlFile, int multiMode, int shapeMode);
   
   /**
    * \fn ~Multifovea()
@@ -227,110 +212,7 @@ private:
 #endif
 
 /**
- * \fn Multifovea(Mat img, int m, T w, vector< T > fs, int mode)
- *
- * \brief Constructor default of multifovea class.
- * This constructor create many foveas associeted to an image.
- * This approcah can be applied to associate the foveas structure
- * to unique image. 
- *
- * \param img - Image to be foveated
- * \param k - Level of fovea
- * \param m - Number levels of fovea
- * \param w - Size of levels
- * \param fs - Vector with positions (x, y) of the foveas
- * \param mode - identify the approach: reexecution, pixel-by-pixel, 
- * bitmap or block-based (see settings multifovea approaches )
- */
-template <typename T>
-Multifovea< T >::Multifovea(Mat img, int m, T w, vector< T > fs, int mode){
-  // Keeping value of quantity levels
-  this->m = m;
-  Fovea< T > *fovea;
-  switch ( mode ){
-  case REEXECUTION: {
-    cout << "reexecution approach" << endl;
-#ifdef _OPENMP
-#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
-#endif
-    for ( int f = 0; f < fs.size(); f++ ){
-      fovea = new Fovea< T >( img, m, w, fs[f] );
-      foveas.push_back( fovea );
-    }
-    break;
-  }
-  case PIXELBYPIXEL: {
-    cout << "pixel by pixel processing approach" << endl;
-    break;
-  }
-  case BITMAP: {
-    cout << "bitmap approach" << endl;
-    break;
-  }
-  case BLOCKS: {
-    cout << "Block-based processing approach" << endl;
-    break;
-  }
-  default:
-    cout << "There was not configured the mode" << endl;
-    break;
-  }
-}
-
-/**
- * \fn Multifovea(Mat img, String ymlFile, int mode)
- *
- * \brief Constructor default of multifovea class.
- * This constructor is used to configure multiple foveas using
- * a file yaml.
- * 
- * \param img - Image to be foveated
- * \param ymlFile - File that contains all information of configuration
- * \param mode - identify the approach: reexecution, pixel-by-pixel, 
- * bitmap or block-based (see settings multifovea approaches )
- */
-template <typename T>
-Multifovea< T >::Multifovea(Mat img, String ymlFile, int mode){
-  vector< int > fx;
-  FileStorage fs(ymlFile, FileStorage::READ);
-  int numberOfLevels = (int) fs["numberOfLevels"];
-  // Keeping value of quantity levels
-  this->m = numberOfLevels - 1;
-  fs["foveax"] >> fx;
-  fs.release();
-  Fovea< T > *fovea;
-  switch ( mode ){
-  case REEXECUTION: {
-    cout << "reexecution approach" << endl;
-#ifdef _OPENMP
-#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
-#endif
-    for ( int f = 0; f < fx.size(); f++ ){
-      fovea = new Fovea< T >( img, ymlFile, f );
-      foveas.push_back( fovea );
-    }
-    break;
-  }
-  case PIXELBYPIXEL: {
-    cout << "pixel by pixel processing approach" << endl;
-    break;
-  }
-  case BITMAP: {
-    cout << "bitmap approach" << endl;
-    break;
-  }
-  case BLOCKS: {
-    cout << "Block-based processing approach" << endl;
-    break;
-  }
-  default:
-    cout << "There was not configured the mode" << endl;
-    break;
-  }
-}
-
-/**
- * \fn Multifovea(int m, T w, T u, vector< T > fs, int mode)
+ * \fn Multifovea(int m, T w, T u, vector< T > fs, int multiMode, int shapeMode)
  *
  * \brief Constructor default of multifovea class.
  * This constructor create many foveas associated to image parameters.
@@ -342,35 +224,91 @@ Multifovea< T >::Multifovea(Mat img, String ymlFile, int mode){
  * \param w - Size of levels
  * \param u - Size of image
  * \param fs - Vector with positions (x, y) of the foveas
- * \param mode - identify the approach: reexecution, pixel-by-pixel, 
+ * \param multiMode - identify the approach: reexecution, pixel-by-pixel, 
  * bitmap or block-based (see settings multifovea approaches )
+ * \param shapeMode - Feature specification configured (see settings
+ * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
-Multifovea< T >::Multifovea(int m, T w, T u, vector< T > fs, int mode){
+Multifovea< T >::Multifovea(int m, T w, T u, vector< T > fs, int multiMode, int shapeMode){
   // Keeping value of quantity levels
   this->m = m;
   Fovea< T > *fovea;
-  switch ( mode ){
-  case REEXECUTION: {
+  switch ( multiMode ){
+  case _REEXECUTION_: {
     cout << "reexecution approach" << endl;
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
     for ( int f = 0; f < fs.size(); f++ ){
-      fovea = new Fovea< T >( m, w, u, fs[f] );
+      fovea = new Fovea< T >( m, w, u, fs[f], shapeMode );
       foveas.push_back( fovea );
     }
     break;
   }
-  case PIXELBYPIXEL: {
+  case _PIXELBYPIXEL_: {
     cout << "pixel by pixel processing approach" << endl;
     break;
   }
-  case BITMAP: {
+  case _BITMAP_: {
     cout << "bitmap approach" << endl;
     break;
   }
-  case BLOCKS: {
+  case _SENDINGBLOCKS_: {
+    cout << "Block-based processing approach" << endl;
+    break;
+  }
+  default:
+    cout << "There was not configured the mode" << endl;
+    break;
+  }
+}
+
+
+/**
+ * \fn Multifovea(String ymlFile, int multiMode, int shapeMode)
+ *
+ * \brief Constructor default of multifovea class.
+ * This constructor is used to configure multiple foveas using
+ * a file yaml.
+ * 
+ * \param ymlFile - File that contains all information of configuration
+ * \param multiMode - identify the approach: reexecution, pixel-by-pixel, 
+ * bitmap or block-based (see settings multifovea approaches )
+ * \param shapeMode - Feature specification configured (see settings
+ * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+ */
+template <typename T>
+Multifovea< T >::Multifovea(String ymlFile, int multiMode, int shapeMode){
+  vector< int > fx;
+  FileStorage fs(ymlFile, FileStorage::READ);
+  int numberOfLevels = (int) fs["numberOfLevels"];
+  // Keeping value of quantity levels
+  this->m = numberOfLevels - 1;
+  fs["foveax"] >> fx;
+  fs.release();
+  Fovea< T > *fovea;
+  switch ( multiMode ){
+  case _REEXECUTION_: {
+    cout << "reexecution approach" << endl;
+#ifdef _OPENMP
+#pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
+#endif
+    for ( int f = 0; f < fx.size(); f++ ){
+      fovea = new Fovea< T >( ymlFile, f, shapeMode );
+      foveas.push_back( fovea );
+    }
+    break;
+  }
+  case _PIXELBYPIXEL_: {
+    cout << "pixel by pixel processing approach" << endl;
+    break;
+  }
+  case _BITMAP_: {
+    cout << "bitmap approach" << endl;
+    break;
+  }
+  case _SENDINGBLOCKS_: {
     cout << "Block-based processing approach" << endl;
     break;
   }

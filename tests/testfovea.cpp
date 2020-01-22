@@ -25,7 +25,7 @@ int main( int argc, char** argv ){
   // Configuration to _KAZE_
   //Fovea< Point > *f = new Fovea< Point >( 4, Point(60, 60), Point( img.cols, img.rows ), Point( 0, 0 ) );
   // Configuration to _ORB_
-  Fovea< Point > *f = new Fovea< Point >( 4, Point(80, 80), Point( img.cols, img.rows ), Point( 0, 0 ) );
+  Fovea< Point > *f = new Fovea< Point >( 4, Point(80, 80), Point( img.cols, img.rows ), Point( 0, 0 ), _BLOCKS_ );
   //f.foveatedFeatures( img, _ORB_, MRMF );
   //f->foveatedFeatures( img, _KAZE_, MRMF );
   //img = l.get( img );

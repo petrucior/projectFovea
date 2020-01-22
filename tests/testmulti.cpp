@@ -9,20 +9,19 @@
 
 using namespace cv;
 
-/*static void on_mouse(int event, int x, int y, int flags, void *_fovea) {
+static void on_mouse(int event, int x, int y, int flags, void *_fovea) {
   if ( event == EVENT_MOUSEMOVE ){
     Fovea< Point > *fovea = (Fovea< Point > *) _fovea;
     fovea->updateFovea( Point(x, y ) );
     //std::cout << "( " << x << ", " << y << " )" << std::endl;
   }
-}*/
+}
 
 int main( int argc, char** argv ){
   
   // Testing constructor and print functions
   std::cout << argv[1] << std::endl;
   Mat img = imread(argv[1]);//, CV_LOAD_IMAGE_GRAYSCALE);
-  namedWindow("image", 1);
   Mat multifoveated;
   std::vector< Point > fs;
   // Foveas centralized position
@@ -46,11 +45,11 @@ int main( int argc, char** argv ){
     colors.push_back(cv::Scalar(b, g, r));
   }
   // Configuration to _KAZE_
-  Multifovea< Point > *m = new Multifovea< Point >( 4, Point(60, 60), Point( img.cols, img.rows ), fs, REEXECUTION );
+  Multifovea< Point > *m = new Multifovea< Point >( 4, Point(20, 20), Point( img.cols, img.rows ), fs, _REEXECUTION_, _BLOCKS_ );
   while ( true ){
-    //setMouseCallback( "image", on_mouse, f );
-    //multifoveated = m->multifoveatedImage( img );
-    multifoveated = m->multifoveaLevelsImage( img, colors );
+    //setMouseCallback( "image", on_mouse, m->getFovea(0) );
+    multifoveated = m->multifoveatedImage( img );
+    //multifoveated = m->multifoveaLevelsImage( img, colors );
     imshow("image", multifoveated );
     waitKey( 0 );
     char key = waitKey( 0 );

@@ -329,6 +329,7 @@ private:
   vector< int > levelvector; // levelvector: [l1, l2, ..., ln]: a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
   int nOctaveLayers;
   int hessianThreshold;
+  int shape = 0; ///< Initialization shape
 };
 
 #endif
@@ -347,7 +348,7 @@ private:
  * \param u - Size of image
  * \param f - Position (x, y) of the fovea
  * \param shapeMode - Feature specification configured (see settings 
- * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+ * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
 Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
@@ -357,7 +358,8 @@ Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
   levelvector.clear();
   nOctaveLayers = 0;
   hessianThreshold = 0;
-    
+  shape = shapeMode;
+  
   this->checkParameters( m, w, u, f );
 #ifdef _OPENMP
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
@@ -378,7 +380,7 @@ Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
  * \param ymlFile - File that contains all information of configuration
  * \param index - Vector index with fovea position information
  * \param shapeMode - Feature specification configured (see settings 
- * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
+ * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
 Fovea< T >::Fovea( String ymlFile, int index, int shapeMode ){
@@ -388,6 +390,7 @@ Fovea< T >::Fovea( String ymlFile, int index, int shapeMode ){
   levelvector.clear();
   nOctaveLayers = 0;
   hessianThreshold = 0;
+  shape = shapeMode;
     
   FileStorage fs(ymlFile, FileStorage::READ);
   int ux = (int) fs["imageWidth"]; // img.cols
@@ -538,7 +541,7 @@ Fovea< T >::updateFovea(T f){
 #pragma omp parallel for // reference http://ppc.cs.aalto.fi/ch3/nested/
 #endif
   for ( int k = 0; k < m + 1; k++ ){
-    levels[k].updateLevel( m, w, u, this->f );
+    levels[k].updateLevel( m, w, u, this->f, shape );
   }
 }
 
