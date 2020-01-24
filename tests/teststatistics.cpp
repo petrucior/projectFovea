@@ -115,7 +115,6 @@ int main( int argc, char** argv ){
   detector->detect ( model, modelKeypoints );
   descriptor->compute ( model, modelKeypoints, modelDescriptors );
   
-  
   Statistics< cv::Point2f > *s = new Statistics< cv::Point2f >();
   //Statistics< cv::Point > *s = new Statistics< cv::Point >();
   //s->plotProportion( fscene, scene, model, _SURF_, modelKeypoints, modelDescriptors, 0.0, 1000.0 );
@@ -170,6 +169,14 @@ int main( int argc, char** argv ){
       std::cout << "Trilateration" << std::endl;
       std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
       cv::circle( multifoveated, cv::Point( (int)pointEstimated.x /*+ scene.cols/2*/, (int)pointEstimated.y /*+ scene.rows/2*/  ), 4, cv::Scalar(0, 255, 255 ), -1, 8, 0);
+
+      pointEstimated = s->baricentricCoordinates( fr, potentials );
+      std::cout << "Baricentric Coordinates" << std::endl;
+      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
+
+      pointEstimated = s->multilateration( points, invpotentials );
+      std::cout << "Multilateration" << std::endl;
+      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
       
     }
 

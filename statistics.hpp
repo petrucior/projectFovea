@@ -195,7 +195,7 @@ public:
   /**
    * \fn T trilaterationEstimator( vector< T > foveae, vector< double > inverseDetectionRate )
    *
-   * \brief Calculate the trilateration Estimator
+   * \brief Calculate the trilateration estimator
    *
    * \param foveae - Contains all points of the foveae
    * \param inverseDetectionRate - Contain inverse detection rate of each fovea
@@ -217,7 +217,7 @@ public:
   T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate );
 
   /**
-   * \fn vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b )
+   * \fn vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b )
    *
    * \brief Calculate the system \f$ Ax = b \f$ upper triangular
    *
@@ -226,10 +226,10 @@ public:
    *
    * \return The solution to system \f$ Ax = b \f$
    */  
-  vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b );
+  vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b );
 
   /**
-   * \fn vector< vector< double > > gauss( vector< vector< double > > Ab )
+   * \fn vector< vector< double > > gauss( vector< vector< double > >& Ab )
    *
    * \brief Calculate the staggering of the system \f$ A|b \f$ by gauss elimination 
    *
@@ -237,7 +237,19 @@ public:
    *
    * \return Staggering matrix of the augmented matrix
    */  
-  vector< vector< double > > gauss( vector< vector< double > > Ab );
+  vector< vector< double > > gauss( vector< vector< double > >& Ab );
+
+  /**
+   * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
+   *
+   * \brief Calculate the multilateration estimator
+   *
+   * \param foveae - Contains all points of the foveae
+   * \param inverseDetectionRate - Contain inverse detection rate of each fovea
+   *
+   * \return Point estimated through multilateration
+   */
+  T multilateration( vector< T > foveae, vector< double > inverseDetectionRate );
   
 };
 
@@ -650,7 +662,7 @@ Statistics< T >::trilaterationEstimator( vector< T > foveae, vector< double > in
   double r1 = inverseDetectionRate[0];
   double r2 = inverseDetectionRate[1];
   double r3 = inverseDetectionRate[2];
-
+  
   double a = (-2 * x1) + (2 * x2);
   double b = (-2 * y1) + (2 * y2);
   double c = (r1*r1) - (r2*r2) - (x1*x1) + (x2*x2) - (y1*y1) + (y2*y2);
@@ -689,7 +701,7 @@ Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > de
 }
 
 /**
- * \fn vector< double > retroactiveSubstitution( vector< vector< double > > A, vector< double > b )
+ * \fn vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b )
  *
  * \brief Calculate the system \f$ Ax = b \f$ upper triangular
  *
@@ -700,7 +712,7 @@ Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > de
  */
 template <typename T>
 vector< double >
-Statistics< T >::retroactiveSubstitution( vector< vector< double > > A, vector< double > b ){
+Statistics< T >::retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b ){
   int n = A.size() - 1;
   vector< double > x ( n, 0.0 );
   if ( A[n][n] != 0 )
@@ -715,7 +727,7 @@ Statistics< T >::retroactiveSubstitution( vector< vector< double > > A, vector< 
 }
 
 /**
- * \fn vector< vector< double > > gauss( vector< vector< double > > Ab )
+ * \fn vector< vector< double > > gauss( vector< vector< double > >& Ab )
  *
  * \brief Calculate the staggering of the system \f$ A|b \f$ by gauss elimination 
  *
@@ -725,8 +737,8 @@ Statistics< T >::retroactiveSubstitution( vector< vector< double > > A, vector< 
  */
 template <typename T>
 vector< vector< double > >
-Statistics< T >::gauss( vector< vector< double > > Ab ){
-  int n = Ab.size() - 1;
+Statistics< T >::gauss( vector< vector< double > >& Ab ){
+  int n = Ab.size();
   for ( int p = 0; p < n - 1; p++ ){
     for ( int r = p+1; r < n ; r++ ){
       double m = Ab[r][p] / Ab[p][p];
@@ -736,6 +748,53 @@ Statistics< T >::gauss( vector< vector< double > > Ab ){
     }
   }
   return Ab;
+}
+
+/**
+ * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
+ *
+ * \brief Calculate the multilateration estimator
+ *
+ * \param foveae - Contains all points of the foveae
+ * \param inverseDetectionRate - Contain inverse detection rate of each fovea
+ *
+ * \return Point estimated through multilateration
+ */
+template <typename T>
+T
+Statistics< T >::multilateration( vector< T > foveae, vector< double > inverseDetectionRate ){
+  if ( foveae.size() == 0 ) return T(0, 0);
+  int m = foveae.size();
+  vector< double > b( m );
+  vector< vector< double > > A ( m - 1, vector< double >(2) );
+  vector< vector< double > > Ab ( m - 1, vector< double >(3) );
+  for( int i = 0; i < m - 1; i++ ){
+    cout << "fovea i: " << foveae[i] << ", fovea i+1: " << foveae[i+1] << endl;
+    cout << "b i: " << inverseDetectionRate[i] << endl;
+    T value = (-2 * foveae[i]) + (2*foveae[i+1]);
+    // Separating the coordinates
+    A[i][0] = value.x; Ab[i][0] = value.x;
+    A[i][1] = value.y; Ab[i][1] = value.y;
+    b[i] = inverseDetectionRate[i];
+    Ab[i][2] = inverseDetectionRate[i];
+  }
+
+  cout << "matriz aumentada" << endl;
+  for ( int i = 0; i < Ab.size(); i++ ){
+    for ( int j = 0; j < Ab[0].size(); j++ )
+      cout << Ab[i][j] << " ";
+    cout << endl;
+  }
+
+  vector< vector< double > > matrix = gauss( Ab );
+  cout << "matriz escalonada" << endl;
+  for ( int i = 0; i < matrix.size(); i++ ){
+    for ( int j = 0; j < matrix[0].size(); j++ )
+      cout << matrix[i][j] << " ";
+    cout << endl;
+  }
+  
+  return T( 0, 0 );
 }
 
 /** @} */ //end of group class.
