@@ -217,16 +217,15 @@ public:
   T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate );
 
   /**
-   * \fn vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b )
+   * \fn T retroactiveSubstitution( vector< vector< double > >& Ab )
    *
    * \brief Calculate the system \f$ Ax = b \f$ upper triangular
    *
-   * \param A - Matrix upper triangular
-   * \param b - Independent terms
+   * \param Ab - Augmented matrix upper triangular
    *
    * \return The solution to system \f$ Ax = b \f$
    */  
-  vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b );
+  T retroactiveSubstitution( vector< vector< double > >& Ab );
 
   /**
    * \fn vector< vector< double > > gauss( vector< vector< double > >& Ab )
@@ -701,29 +700,30 @@ Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > de
 }
 
 /**
- * \fn vector< double > retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b )
+ * \fn T retroactiveSubstitution( vector< vector< double > >& Ab )
  *
  * \brief Calculate the system \f$ Ax = b \f$ upper triangular
  *
- * \param A - Matrix upper triangular
- * \param b - Independent terms
+ * \param Ab - Augmented matrix upper triangular
  *
  * \return The solution to system \f$ Ax = b \f$
  */
 template <typename T>
-vector< double >
-Statistics< T >::retroactiveSubstitution( vector< vector< double > >& A, vector< double >& b ){
-  int n = A.size() - 1;
-  vector< double > x ( n, 0.0 );
-  if ( A[n][n] != 0 )
-    x[n] = ( b[n] / A[n][n] );
+T
+Statistics< T >::retroactiveSubstitution( vector< vector< double > >& Ab ){
+  int n = Ab.size() - 1;
+  vector< double > x ( 2, 0.0 );
+  if ( Ab[n][n] != 0 )
+    x[n] = ( Ab[n][n+1] / Ab[n][n] );
   for ( int r = n - 1; r > 0; r-- ){
     double sum = 0.0;
     for ( int j = r + 1; j < n; j++ )
-      sum += A[r][j] * x[j];
-    if ( A[r][r] != 0 )
-      x[r] = ( (b[r] - sum) / A[r][r] );
+      sum += Ab[r][j] * x[j];
+    if ( Ab[r][r] != 0 )
+      x[r] = ( (Ab[r][n+1] - sum) / Ab[r][r] );
   }
+  T result = T( x[0], x[1] );
+  return result;
 }
 
 /**
@@ -793,8 +793,9 @@ Statistics< T >::multilateration( vector< T > foveae, vector< double > inverseDe
       cout << matrix[i][j] << " ";
     cout << endl;
   }
+  T result = retroactiveSubstitution( matrix );
   
-  return T( 0, 0 );
+  return result;
 }
 
 /** @} */ //end of group class.
