@@ -249,6 +249,39 @@ public:
    * \return Point estimated through multilateration
    */
   T multilateration( vector< T > foveae, vector< double > inverseDetectionRate );
+
+  /**
+   * \fn vector< vector< double > > multiplication( vector< vector< double > >& a, vector< vector< double > >& b )
+   *
+   * \brief Calculates the multiplication \f$ a*b \f$
+   *
+   * \param a, b - matrix to be multiplicated
+   *
+   * \return Multiplication between a and b
+   */
+  vector< vector< double > > multiplication( vector< vector< double > >& a, vector< vector< double > >& b );
+
+  /**
+   * \fn vector< vector< double > > transposed( vector< vector< double > >& a )
+   *
+   * \brief Calculates the transposed \f$ a^{T} \f$
+   *
+   * \param a - matrix to be transposed
+   *
+   * \return Transposed from a
+   */
+  vector< vector< double > > transposed( vector< vector< double > >& a );
+
+  /**
+   * \fn vector< vector< double > > inverse( vector< vector< double > >& a )
+   *
+   * \brief Calculate the inverse through staggering  of the system \f$ A|I \f$ by gauss elimination 
+   *
+   * \param a - matrix to be invertible
+   *
+   * \return Inverse matrix of a
+   */  
+  vector< vector< double > > inverse( vector< vector< double > >& a );
   
 };
 
@@ -796,6 +829,135 @@ Statistics< T >::multilateration( vector< T > foveae, vector< double > inverseDe
   T result = retroactiveSubstitution( matrix );
   
   return result;
+}
+
+/**
+ * \fn vector< vector< double > > multiplication( vector< vector< double > >& a, vector< vector< double > >& b )
+ *
+ * \brief Calculates the multiplication \f$ a*b \f$
+ *
+ * \param a, b - matrix to be multiplicated
+ *
+ * \return Multiplication between a and b
+ */
+template <typename T>
+vector< vector< double > >
+Statistics< T >::multiplication( vector< vector< double > >& a, vector< vector< double > >& b ){
+  vector< vector< double > > result ( a.size(), vector< double >( b[0].size() ) );
+  if ( a[0].size() != b.size() ) return result; // A cols different of B rows
+  for ( int i = 0; i < a.size(); i++ ){
+    for ( int j = 0; j < b[0].size(); j++ ){
+      for ( int l = 0; l < a[0].size(); l++ ){
+	result[i][j] += a[i][l] * b[l][j];
+      }
+    }
+  }
+#ifdef DEBUG
+  for ( int i = 0; i < result.size(); i++ ){
+    for ( int j = 0; j < result[0].size(); j++ )
+      cout << result[i][j] << " ";
+    cout << endl;
+  }
+#endif				       
+  return result;
+}
+
+/**
+ * \fn vector< vector< double > > transposed( vector< vector< double > >& a )
+ *
+ * \brief Calculates the transposed \f$ a^{T} \f$
+ *
+ * \param a - matrix to be transposed
+ *
+ * \return Transposed from a
+ */
+template <typename T>
+vector< vector< double > >
+Statistics< T >::transposed( vector< vector< double > >& a ){
+  vector< vector< double > > result ( a[0].size(), vector< double >( a.size() ) );
+  for ( int i = 0; i < a.size(); i++ )
+    for ( int j = 0; j < a[0].size(); j++ )
+      result[j][i] = a[i][j];
+#ifdef DEBUG
+  for ( int i = 0; i < result.size(); i++ ){
+    for ( int j = 0; j < result[0].size(); j++ )
+      cout << result[i][j] << " ";
+    cout << endl;
+  }
+#endif
+  return result;
+}
+
+/**
+ * \fn vector< vector< double > > inverse( vector< vector< double > >& a )
+ *
+ * \brief Calculate the inverse through staggering  of the system \f$ A|I \f$ by gauss elimination 
+ *
+ * \param a - matrix to be invertible
+ *
+ * \return Inverse matrix of a
+ */
+template <typename T>
+vector< vector< double > >
+Statistics< T >::inverse( vector< vector< double > >& a ){
+  vector< vector< double > > output ( a.size(), vector< double >( a[0].size() ) );
+  vector< vector< double > > result ( a.size(), vector< double >( 2 * a[0].size() ) );
+  for ( int i = 0; i < a.size(); i++ ){
+    for ( int j = 0; j < a[0].size(); j++ ){
+      result[i][j] = a[i][j];
+    }
+    for ( int j = a[0].size(); j < result[0].size(); j++ )
+      if ( i == j - a[0].size() )
+	result[i][j] = 1.0;
+  }
+
+#ifdef DEBUG
+  for ( int i = 0; i < result.size(); i++ ){
+    for ( int j = 0; j < result[0].size(); j++ )
+      cout << result[i][j] << " ";
+    cout << endl;
+  }
+#endif
+  
+  int ni = result.size();
+  int nj = result[0].size();
+  for ( int i = 0; i < ni; i++ ){
+    for ( int j = 0; j < nj; j++ ){
+      if ( i == j ){
+	double m = result[i][j];
+	for ( int c = i; c < nj; c++ ){
+	  result[i][c] = result[i][c] / m;
+	}
+      }
+      if ( ( i < j ) && ( j < a[0].size() ) && ( i < a.size() ) ) {
+	double m = result[j][i] / result[i][i];
+	for ( int c = i; c < nj; c++ ){
+	  result[j][c] = result[j][c] - (m * result[i][c]);
+	}
+      }
+      if ( ( i > j ) && ( j < a[0].size() ) && ( i < a.size() ) ) {
+	double m = result[j][i] / result[i][i];
+	for ( int c = i; c < nj; c++ ){
+	  result[j][c] = result[j][c] - (m * result[i][c]);
+	}
+      }
+    }
+  }	
+  
+#ifdef DEBUG
+  for ( int i = 0; i < result.size(); i++ ){
+    for ( int j = 0; j < result[0].size(); j++ )
+      cout << result[i][j] << " ";
+    cout << endl;
+  }
+#endif
+
+  
+  for ( int i = 0; i < a.size(); i++ )
+    for ( int j = a[0].size(); j < result[0].size(); j++ )
+      output[i][j - a[0].size()] = result[i][j];
+  
+  return output;
 }
 
 /** @} */ //end of group class.

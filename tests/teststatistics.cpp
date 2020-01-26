@@ -1,4 +1,4 @@
-/*#include <iostream>AOA
+/*#include <iostream>
 #include <string>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -174,12 +174,41 @@ int main( int argc, char** argv ){
       std::cout << "Baricentric Coordinates" << std::endl;
       std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
 
+      points.clear();
+      invpotentials.clear();
+      points.push_back( cv::Point2f( 4, 8 ) );
+      points.push_back( cv::Point2f( 9, 6 ) );
+      points.push_back( cv::Point2f( 5, 5 ) );
+      invpotentials.push_back( 2.82 );
+      invpotentials.push_back( 3.0 );
+      invpotentials.push_back( 1.41 );
       pointEstimated = s->multilateration( points, invpotentials );
       std::cout << "Multilateration" << std::endl;
       std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
+
+      vector< vector< double > > a ( 3, vector< double >(3) );
+      a[0][0] = 2; a[0][1] = 3; a[0][2] = 4;
+      a[1][0] = 7; a[1][1] = 1; a[1][2] = -3;
+      a[2][0] = 4; a[2][1] = 3; a[2][2] = -2;
+      vector< vector< double > > b ( 3, vector< double >(1) );
+      b[0][0] = -1;
+      b[1][0] = 5;
+      b[2][0] = 3;
+      vector< vector< double > > ab = s->multiplication( a, b );
+      vector< vector< double > > at = s->transposed( a );
+      vector< vector< double > > w ( 3, vector< double >(3) );
+      w[0][0] = 13; w[0][1] = 24; w[0][2] = 11;
+      w[1][0] = 22; w[1][1] = 47; w[1][2] = 33;
+      w[2][0] = 42; w[2][1] = 38; w[2][2] = -6;
+      vector< vector< double > > ainv = s->inverse( w );
+      for ( int i = 0; i < ainv.size(); i++ ){
+	for ( int j = 0; j < ainv[0].size(); j++ )
+	  std::cout << ainv[i][j] << "    ";
+	std::cout << endl;
+      }
       
     }
-
+    
   }
   
   /*double referencePotential = 0.8;
