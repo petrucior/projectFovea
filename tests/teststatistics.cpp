@@ -136,7 +136,7 @@ int main( int argc, char** argv ){
       
     }*/
     
-    setMouseCallback( "sceneFoveated", on_mouse, (m->getFoveas())[0]);
+    //setMouseCallback( "sceneFoveated", on_mouse, (m->getFoveas())[0]);
     multifoveated = m->multifoveatedImage( scene );
     //multifoveated = m->multifoveaLevelsImage( scene, colors );
     imshow("sceneFoveated", multifoveated );
@@ -148,6 +148,8 @@ int main( int argc, char** argv ){
       std::vector< double > potentials = s->functionMultiFovea( m, 15.0, 1000.0 );
       std::vector< cv::Point2f > points;
       std::vector< double > invpotentials;
+      std::vector< cv::Point2f > pointsMulti;
+      std::vector< double > invpotentialsMulti;
       for ( int f = 0; f < fs.size(); f++ ){
 	std::cout << "potentials: " << potentials[f];
 	fr.push_back( cv::Point2f( scene.cols/2 + fs[f].x, scene.rows/2 + fs[f].y ) );
@@ -156,6 +158,11 @@ int main( int argc, char** argv ){
 	  points.push_back( cv::Point2f( scene.cols/2 + fs[f].x, scene.rows/2 + fs[f].y ) );
 	  std::cout << ", invpotentials: " << invpotentials[f];
 	}
+	if ( f < 8 ){
+	  invpotentialsMulti.push_back( ((1.0 - potentials[f]) * 0.001 )/ 0.0001 );
+	  pointsMulti.push_back( cv::Point2f( scene.cols/2 + fs[f].x, scene.rows/2 + fs[f].y ) );
+	}
+	
 	std::cout << std::endl;
       }
       
@@ -174,7 +181,12 @@ int main( int argc, char** argv ){
       std::cout << "Baricentric Coordinates" << std::endl;
       std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
 
-      points.clear();
+      pointEstimated = s->multilateration(pointsMulti, invpotentialsMulti);
+      std::cout << "Multiteration" << std::endl;
+      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
+      //cv::circle( multifoveated, cv::Point( (int)pointEstimated.x /*+ scene.cols/2*/, (int)pointEstimated.y /*+ scene.rows/2*/  ), 4, cv::Scalar(0, 255, 255 ), -1, 8, 0);
+
+      /*points.clear();
       invpotentials.clear();
       points.push_back( cv::Point2f( 4, 8 ) );
       points.push_back( cv::Point2f( 9, 6 ) );
@@ -184,8 +196,9 @@ int main( int argc, char** argv ){
       invpotentials.push_back( 1.41 );
       pointEstimated = s->multilateration( points, invpotentials );
       std::cout << "Multilateration" << std::endl;
-      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;
+      std::cout << "( " << pointEstimated.x << ", " << pointEstimated.y << " ) " << std::endl;*/
 
+      /*
       vector< vector< double > > a ( 3, vector< double >(3) );
       a[0][0] = 2; a[0][1] = 3; a[0][2] = 4;
       a[1][0] = 7; a[1][1] = 1; a[1][2] = -3;
@@ -206,7 +219,7 @@ int main( int argc, char** argv ){
 	  std::cout << ainv[i][j] << "    ";
 	std::cout << endl;
       }
-      
+      */
     }
     
   }

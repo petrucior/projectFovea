@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
+#include <math.h> //pow
 #include <vector> //std::vector
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
@@ -215,7 +216,28 @@ public:
    * \return Point estimated through baricentric coordinates
    */
   T baricentricCoordinates( vector< T > foveae, vector< double > detectionRate );
+  
+  /**
+   * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
+   *
+   * \brief Calculate the multilateration estimator
+   *
+   * \param foveae - Contains all points of the foveae
+   * \param inverseDetectionRate - Contain inverse detection rate of each fovea
+   *
+   * \return Point estimated through multilateration
+   */
+  T multilateration( vector< T > foveae, vector< double > inverseDetectionRate );
 
+private:
+
+  /**
+   * \fn void printMatrix( vector< vector< double > >& A )
+   *
+   * \brief Print matrix
+   */  
+  void printMatrix( vector< vector< double > >& A );
+  
   /**
    * \fn T retroactiveSubstitution( vector< vector< double > >& Ab )
    *
@@ -237,19 +259,7 @@ public:
    * \return Staggering matrix of the augmented matrix
    */  
   vector< vector< double > > gauss( vector< vector< double > >& Ab );
-
-  /**
-   * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
-   *
-   * \brief Calculate the multilateration estimator
-   *
-   * \param foveae - Contains all points of the foveae
-   * \param inverseDetectionRate - Contain inverse detection rate of each fovea
-   *
-   * \return Point estimated through multilateration
-   */
-  T multilateration( vector< T > foveae, vector< double > inverseDetectionRate );
-
+  
   /**
    * \fn vector< vector< double > > multiplication( vector< vector< double > >& a, vector< vector< double > >& b )
    *
@@ -733,6 +743,74 @@ Statistics< T >::baricentricCoordinates( vector< T > foveae, vector< double > de
 }
 
 /**
+ * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
+ *
+ * \brief Calculate the multilateration estimator
+ *
+ * \param foveae - Contains all points of the foveae
+ * \param inverseDetectionRate - Contain inverse detection rate of each fovea
+ *
+ * \return Point estimated through multilateration
+ */
+template <typename T>
+T
+Statistics< T >::multilateration( vector< T > foveae, vector< double > inverseDetectionRate ){
+  T result = T( 0, 0 );
+  if ( foveae.size() == 0 ) return result;
+  int m = foveae.size();
+  vector< vector< double > > b( m - 1, vector< double >(1) );
+  vector< vector< double > > A ( m - 1, vector< double >(2) );
+  for( int i = 0; i < m - 1; i++ ){
+    T value = (-2 * foveae[i]) + (2*foveae[i+1]);
+    // Separating the coordinates
+    A[i][0] = value.x;
+    A[i][1] = value.y;
+    b[i][0] = pow( inverseDetectionRate[i], 2.0 ) -  pow( inverseDetectionRate[i+1], 2.0 ) - pow( foveae[i].x, 2.0 ) + pow( foveae[i+1].x, 2.0 ) - pow( foveae[i].y, 2.0 ) + pow( foveae[i+1].y, 2.0 );
+  }
+
+  vector< vector< double > > at = transposed( A );
+  vector< vector< double > > mult = multiplication( at, A );
+  vector< vector< double > > inv = inverse( mult );
+  vector< vector< double > > multInv = multiplication( inv, at );
+  vector< vector< double > > estimated = multiplication( multInv, b );
+
+#ifdef DEBUG
+  cout << "Matriz b" << endl;
+  printMatrix( b );
+  cout << "Matrix A" << endl;
+  printMatrix( A );
+  cout << "Transposed A" << endl;
+  printMatrix( at );
+  cout << "Multiplication between transposed A and A" << endl;
+  printMatrix( mult );
+  cout << "Inverse of the multiplication" << endl;
+  printMatrix( inv );
+  cout << "Multiplication between inv and transposed A" << endl;
+  printMatrix( multInv );
+  cout << "Multiplication between multInv and b" << endl;
+  printMatrix( estimated );
+#endif
+
+  result = T( estimated[0][0], estimated[1][0] );
+  return result;
+}
+
+/**
+ * \fn void printMatrix( vector< vector< double > >& A )
+ *
+ * \brief Print matrix
+ */
+template <typename T>
+void
+Statistics< T >::printMatrix( vector< vector< double > >& A ){
+  for ( int i = 0; i < A.size(); i++ ){
+    for ( int j = 0; j < A[0].size(); j++ )
+      cout << A[i][j] << "   ";
+    cout << endl;
+  }
+}
+
+/**
  * \fn T retroactiveSubstitution( vector< vector< double > >& Ab )
  *
  * \brief Calculate the system \f$ Ax = b \f$ upper triangular
@@ -783,53 +861,6 @@ Statistics< T >::gauss( vector< vector< double > >& Ab ){
   return Ab;
 }
 
-/**
- * \fn T multilateration( vector< T > foveae, vector< double > inverseDetectionRate )
- *
- * \brief Calculate the multilateration estimator
- *
- * \param foveae - Contains all points of the foveae
- * \param inverseDetectionRate - Contain inverse detection rate of each fovea
- *
- * \return Point estimated through multilateration
- */
-template <typename T>
-T
-Statistics< T >::multilateration( vector< T > foveae, vector< double > inverseDetectionRate ){
-  if ( foveae.size() == 0 ) return T(0, 0);
-  int m = foveae.size();
-  vector< double > b( m );
-  vector< vector< double > > A ( m - 1, vector< double >(2) );
-  vector< vector< double > > Ab ( m - 1, vector< double >(3) );
-  for( int i = 0; i < m - 1; i++ ){
-    cout << "fovea i: " << foveae[i] << ", fovea i+1: " << foveae[i+1] << endl;
-    cout << "b i: " << inverseDetectionRate[i] << endl;
-    T value = (-2 * foveae[i]) + (2*foveae[i+1]);
-    // Separating the coordinates
-    A[i][0] = value.x; Ab[i][0] = value.x;
-    A[i][1] = value.y; Ab[i][1] = value.y;
-    b[i] = inverseDetectionRate[i];
-    Ab[i][2] = inverseDetectionRate[i];
-  }
-
-  cout << "matriz aumentada" << endl;
-  for ( int i = 0; i < Ab.size(); i++ ){
-    for ( int j = 0; j < Ab[0].size(); j++ )
-      cout << Ab[i][j] << " ";
-    cout << endl;
-  }
-
-  vector< vector< double > > matrix = gauss( Ab );
-  cout << "matriz escalonada" << endl;
-  for ( int i = 0; i < matrix.size(); i++ ){
-    for ( int j = 0; j < matrix[0].size(); j++ )
-      cout << matrix[i][j] << " ";
-    cout << endl;
-  }
-  T result = retroactiveSubstitution( matrix );
-  
-  return result;
-}
 
 /**
  * \fn vector< vector< double > > multiplication( vector< vector< double > >& a, vector< vector< double > >& b )
@@ -853,11 +884,7 @@ Statistics< T >::multiplication( vector< vector< double > >& a, vector< vector< 
     }
   }
 #ifdef DEBUG
-  for ( int i = 0; i < result.size(); i++ ){
-    for ( int j = 0; j < result[0].size(); j++ )
-      cout << result[i][j] << " ";
-    cout << endl;
-  }
+  printMatrix( result );
 #endif				       
   return result;
 }
@@ -879,11 +906,7 @@ Statistics< T >::transposed( vector< vector< double > >& a ){
     for ( int j = 0; j < a[0].size(); j++ )
       result[j][i] = a[i][j];
 #ifdef DEBUG
-  for ( int i = 0; i < result.size(); i++ ){
-    for ( int j = 0; j < result[0].size(); j++ )
-      cout << result[i][j] << " ";
-    cout << endl;
-  }
+  printMatrix( result );
 #endif
   return result;
 }
@@ -912,11 +935,7 @@ Statistics< T >::inverse( vector< vector< double > >& a ){
   }
 
 #ifdef DEBUG
-  for ( int i = 0; i < result.size(); i++ ){
-    for ( int j = 0; j < result[0].size(); j++ )
-      cout << result[i][j] << " ";
-    cout << endl;
-  }
+  printMatrix( result );
 #endif
   
   int ni = result.size();
@@ -945,11 +964,7 @@ Statistics< T >::inverse( vector< vector< double > >& a ){
   }	
   
 #ifdef DEBUG
-  for ( int i = 0; i < result.size(); i++ ){
-    for ( int j = 0; j < result[0].size(); j++ )
-      cout << result[i][j] << " ";
-    cout << endl;
-  }
+  printMatrix( result );
 #endif
 
   
