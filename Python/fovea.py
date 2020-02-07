@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 '''
-\file level.py
+\file fovea.py
 
-\brief This file contains the prototype of levels.
+\brief This file contains the prototype of fovea.
 
 \author
 Petrucio Ricardo Tavares de Medeiros \n
@@ -26,65 +26,29 @@ details. You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from shape import Shape
-from blocks import Blocks
 from parameters import Parameters
+from level import Level
 
-class Level :
+class Fovea :
     '''
-    \class Level
+    \class Fovea
     
-    \brief This class implements the Level TAD to represent levels
+    \brief This class implements the Fovea TAD
     '''
     
-    def __init__( self, k, parameters ):
+    def __init__( self, u, parameters ):
         '''
-        \fn Level(u, parameters)
+        \fn Fovea( u, parameters )
         
         \brief Constructor default
     
-        \param k - Level of fovea
+        \param u - Size of image
         \param parameters - Parameters of fovea structure
         '''
-        # Updating the image size parameter ( U ) was done in configuration of fovea         
-        
-        if ( parameters.typeShape == 0 ): # Blocks
-            self.boundingBox = [] # Clear boundingBox
-            self.shapeLevel = [] # Clear shapeLevel
-            self.boundingBox.append( self.getDelta( k, parameters ) )
-            self.boundingBox.append( self.getSize( k, parameters ) )
-            block = Blocks( self.boundingBox )
-            block.printVertices()
-            self.shapeLevel.append( block )
-        else: # Polygons
-            print( "Shape wasn't configured" )
+        # Updating the image size parameter ( U )
+        parameters.updateParameterSizeImage( u )
 
-
-    #def __init__( self, k, u, parameters ):
-    #    '''
-    #    \fn Level(u, parameters)
-    #    
-    #    \brief Constructor default
-    #
-    #    \param k - Level of fovea
-    #    \param u - Size of image
-    #    \param parameters - Parameters of fovea structure
-    #    '''
-    #    # Updating the image size parameter ( U )
-    #    parameters.updateParameterSizeImage( u )
-    #    
-    #    if ( parameters.typeShape == 0 ): # Blocks
-    #        self.boundingBox = [] # Clear boundingBox
-    #        self.shapeLevel = [] # Clear shapeLevel
-    #        self.boundingBox.append( self.getDelta( k, parameters ) )
-    #        self.boundingBox.append( self.getSize( k, parameters ) )
-    #        block = Blocks( self.boundingBox )
-    #        block.printVertices()
-    #        self.shapeLevel.append( block )
-    #    else: # Polygons
-    #        print( "Shape wasn't configured" )
-
-        
+        ----> COMPLETE CODE <----
 
     def getDelta( self, k, parameters ):
         '''
