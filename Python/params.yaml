@@ -1,0 +1,12 @@
+numberOfLevels: 4
+smallestLevel: [ 40, 40 ]
+foveas: [ 0, 0 ]
+bvector: [ 0, 0, 1, 1 ]
+etavector: [ 4, 3, 2, 1 ]
+levelvector: [ 0, 1, 2, 3 ]
+nOctaveLayers: 3
+hessianThreshold: 100
+growthfactor: 10
+typeShape: 0
+typeFovea: 0
+typeMultifovea: 0
