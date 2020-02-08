@@ -106,7 +106,22 @@ class Fovea :
         pointx = ( (k * p.w[0]) * (p.u[0] - p.w[0]) + (2 * k * p.w[0] * p.f[0]) + (2 * px[0]) * ( (p.m * p.u[0]) - (k * p.u[0]) + (k * p.w[0]) ) )/ (2 * p.m * p.w[0]);
         pointy = ( (k * p.w[1]) * (p.u[1] - p.w[1]) + (2 * k * p.w[1] * p.f[1]) + (2 * px[1]) * ( (p.m * p.u[1]) - (k * p.u[1]) + (k * p.w[1]) ) )/ (2 * p.m * p.w[1]);
         return [ pointx, pointy ]
+
     
+    def saveLevels( self, name, img, parameters ):
+        '''
+        \fn saveLevels()
+
+        \brief Saves all levels to a PNG file
+
+        \param name - Image name
+        \param img - Image file
+        \param parameters - Parameters of fovea structure
+        '''
+        print('saving images')
+        for k in range(0, len(self.levels)):
+            cv2.imwrite( "midia/" + name + str( k ) + ".png", self.levels[k].getLevel( img, parameters ) )
+        
 
 #How to instantiate and use this class
 #if __name__ == '__main__':

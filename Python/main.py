@@ -75,8 +75,11 @@ def main():
         output = fovea.foveatedImage( img, params, color )
         cv2.imshow( winname, output ) 
         key = cv2.waitKey( 2 )
-        if ( key == 27 ):
+        if ( key == ord('q') ):
             break
+        
+        if ( key == ord('s') ):
+            fovea.saveLevels( "teste", img, params )
 
     cv2.destroyAllWindows()
 
