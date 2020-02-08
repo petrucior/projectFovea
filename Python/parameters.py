@@ -63,7 +63,7 @@ class Parameters:
             self.typeShape = data['typeShape'] # typeShape = Blocks (0) | Polygons (1)
             self.typeFovea = data['typeFovea'] # typeFovea = MRMF (0) | MMF (1)
             self.typeMultifovea = data['typeMultifovea'] # typeMultifovea = REEXECUTION (0) | PIXELBYPIXEL (1) | BITMAP (2) | SENDINGBLOCKS (3)
-
+            
     def updateParameterSizeImage( self, u ):
         '''
         \fn updateParameterSizeImage( u )
@@ -73,6 +73,41 @@ class Parameters:
         \param u - Size of image
         '''
         self.u = u
+        # checking parameters
+        self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
+                              self.nOctaveLayers, self.hessianThreshold, self.growthfactor, self.typeShape, \
+                              self.typeFovea, self.typeMultifovea )
+
+
+    def fixFovea( self ):
+        '''
+        \fn fixFovea()
+
+        \brief Fix the fovea position: if fovea is outsite image domain, snap it to the closest valid position independently for each coordinate
+        '''
+        self.f[0] = min((self.u[0] - self.w[0])/2, self.f[0])
+        self.f[0] = max((self.w[0] - self.u[0])/2, self.f[0])
+        self.f[1] = min((self.u[1] - self.w[1])/2, self.f[1])
+        self.f[1] = max((self.w[1] - self.u[1])/2, self.f[1])
+        
+    
+    def setFovea( self, px ):
+        '''
+        \fn setFovea( px )
+
+        \brief Convert image points to axis fovea.
+
+        \param px - Image points ( x, y )
+        '''
+        self.f[0] = px[0] - (self.u[0]/2)
+        self.f[1] = px[1] - (self.u[1]/2)
+        self.fixFovea()
+        
+        # checking parameters
+        self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
+                              self.nOctaveLayers, self.hessianThreshold, self.growthfactor, self.typeShape, \
+                              self.typeFovea, self.typeMultifovea )
+
 
     def updateParameters( self, m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea ):
         '''
@@ -94,6 +129,9 @@ class Parameters:
         \param typeFovea - This code indicates which method to foveation will be used. If code is zero, then MRMF is chosen, otherwise MMF
         \param typeMultifovea - identify the approach: reexecution, pixel-by-pixel, bitmap or block-based
         '''
+        # Checking parameters
+        self.checkParameters( m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea )
+        
         self.m = m
         self.w = w
         self.u = u
@@ -107,6 +145,36 @@ class Parameters:
         self.typeShape = typeShape
         self.typeFovea = typeFovea
         self.typeMultifovea = typeMultifovea
+
+
+    def checkParameters( self, m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea ):
+        '''
+        \fn checkParameters( m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea )
+
+        \brief This method check the parameters to build a fovea
+        
+        \param m - Number levels of fovea
+        \param w - Size of levels
+        \param u - Size of image
+        \param f - Position (x, y) to build the fovea
+        \param bvector: [b1, b2, ..., bn] - a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
+        \param etavector: [e1, e2, ..., en] - a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
+        \param levelvector: [l1, l2, ..., ln] - a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
+        \param nOctaveLayers - Number of octaves associated the SURF feature
+        \param hessianThreshold - Threshold associated the SURF feature
+        \param growthfactor - Growth factor associated the SURF feature 
+        \param typeShape - Feature specification configured, where is selected blocks or polygons
+        \param typeFovea - This code indicates which method to foveation will be used. If code is zero, then MRMF is chosen, otherwise MMF
+        \param typeMultifovea - identify the approach: reexecution, pixel-by-pixel, bitmap or block-based
+        '''
+        assert( m >= 1 )
+        # Verify if w is bigger than zero and lower than image size
+        assert( ( w[0] > 0 ) and ( w[0] < u[0] ) )
+        assert( ( w[1] > 0 ) and ( w[1] < u[1] ) )
+        # Verify if u is bigger than zero
+        assert( ( u[0] > 0 ) and ( u[1] > 0 ) )
+        # Verify if bvector, etavector and levelvector have size equal to m
+        assert( ( len( bvector ) == m ) and ( len( etavector ) == m ) and ( len( levelvector ) == m ) )
 
 
 #How to instantiate and use this class

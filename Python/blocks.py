@@ -57,7 +57,7 @@ class Blocks( Shape ) :
             
 
 #How to instantiate and use this class
-if __name__ == '__main__':
-    boundingBox = [ [0, 0], [3, 2] ]
-    block = Blocks( boundingBox )
-    block.printVertices()
+#if __name__ == '__main__':
+#    boundingBox = [ [0, 0], [3, 2] ]
+#    block = Blocks( boundingBox )
+#    block.printVertices()
