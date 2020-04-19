@@ -80,7 +80,7 @@ def main():
 
         # Controls from fovea
         if ( key == ord('d') ):
-            params.w[0] = min( params.u[0] - 1, params.w[0] + 10 )
+            params.w[0] = min( params.u[0], params.w[0] + 10 )
         if ( key == ord('a') ):
             params.w[0] = max( 1, params.w[0] - 10 )
         if ( key == ord('c') ):

@@ -12,15 +12,57 @@
 #typeMultifovea: 0
 
 
-numberOfLevels: 4
+numberOfLevels: 3
 smallestLevel: [ 40, 40 ]
 foveas: [ 0, 0 ]
-bvector: [ 0, 0, 1, 1 ]
-etavector: [ 4, 3, 2, 1 ]
-levelvector: [ 0, 1, 2, 3 ]
-nOctaveLayers: 3
-hessianThreshold: 100
+bvector: [ 1, 0, 1 ]
+etavector: [ 3, 2, 1 ]
+levelvector: [ 0, 1, 2 ]
+#nOctaveLayers: 3
+#hessianThreshold: 100
 growthfactor: 10
 typeShape: 0
 typeFovea: 0
 typeMultifovea: 0
+
+# Features
+# ORB configuration
+orb_nfeatures: 500
+orb_scaleFactor: 1.2f
+orb_nlevels: 1
+orb_edgeThreshold: 31
+orb_firstLevel: 0
+orb_WTA_K: 2
+orb_scoreType: ORB::HARRIS_SCORE
+orb_patchSize: 31
+orb_fastThreshold: 20
+
+# KAZE Configuration
+kaze_extended: false
+kaze_upright: false
+kaze_threshold: 0.001f
+kaze_nOctaves: 4
+kaze_nOctaveLayers: 4
+kaze_diffusivity: KAZE::DIFF_PM_G2
+
+# SURF Configuration
+surf_hessianThreshold: 100
+surf_nOctaves: 4
+surf_nOctaveLayers: 3
+surf_extended: false
+surf_upright: false  
+
+# AKAZE Configuration
+akaze_descriptor_type: AKAZE::DESCRIPTOR_MLDB
+akaze_descriptor_size: 0
+akaze_descriptor_channels: 3
+akaze_threshold: 0.001f
+akaze_nOctaves: 4
+akaze_nOctaveLayers: 4
+akaze_diffusivity: KAZE::DIFF_PM_G2 
+
+# BRISK Configuration
+brisk_thresh: 30
+brisk_octaves: 3
+brisk_patternScale: 1.0f
+

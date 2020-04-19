@@ -54,15 +54,57 @@ class Parameters:
             self.m = data['numberOfLevels'] # numberOfLevels = m
             self.w = data['smallestLevel'] # smallestLevel = [ wx, wy ]
             self.f = data['foveas'] # foveas = [ fx1, fy1, fx2, fy2, ..., fxk, fyk ]
-            self.bvector = data['bvector'] # bvector = [ b1, b2, ..., bk ]
-            self.etavector = data['etavector'] # etavector = [ e1, e2, ..., ek ]
-            self.levelvector = data['levelvector'] # levelvector = [ l1, l2, ..., lk ]
-            self.nOctaveLayers = data['nOctaveLayers'] # nOctaveLayers = x
-            self.hessianThreshold = data['hessianThreshold'] # hessianThreshold = x
-            self.growthfactor = data['growthfactor'] # growthfactor = x
             self.typeShape = data['typeShape'] # typeShape = Blocks (0) | Polygons (1)
             self.typeFovea = data['typeFovea'] # typeFovea = MRMF (0) | MMF (1)
             self.typeMultifovea = data['typeMultifovea'] # typeMultifovea = REEXECUTION (0) | PIXELBYPIXEL (1) | BITMAP (2) | SENDINGBLOCKS (3)
+
+            # MMF in foveatedHessian
+            self.bvector = data['bvector'] # bvector = [ b1, b2, ..., bk ]
+            self.etavector = data['etavector'] # etavector = [ e1, e2, ..., ek ]
+            self.levelvector = data['levelvector'] # levelvector = [ l1, l2, ..., lk ]
+            self.growthfactor = data['growthfactor'] # growthfactor = x
+            
+            # Features
+            # ORB configuration
+            self.orb_nfeatures = data['orb_nfeatures']
+            self.orb_scaleFactor = data['orb_scaleFactor']
+            self.orb_nlevels = data['orb_nlevels']
+            self.orb_edgeThreshold = data['orb_edgeThreshold']
+            self.orb_firstLevel = data['orb_firstLevel']
+            self.orb_WTA_K = data['orb_WTA_K']
+            self.orb_scoreType = data['orb_scoreType']
+            self.orb_patchSize = data['orb_patchSize']
+            self.orb_fastThreshold = data['orb_fastThreshold']
+
+            # KAZE Configuration
+            self.kaze_extended = data['kaze_extended']
+            self.kaze_upright = data['kaze_upright']
+            self.kaze_threshold = data['kaze_threshold']
+            self.kaze_nOctaves = data['kaze_nOctaves']
+            self.kaze_nOctaveLayers = data['kaze_nOctaves']
+            self.kaze_diffusivity = data['kaze_diffusivity']
+
+            # SURF Configuration
+            self.surf_hessianThreshold = data['surf_hessianThreshold']
+            self.surf_nOctaves = data['surf_nOctaves']
+            self.surf_nOctaveLayers = data['surf_nOctaveLayers']
+            self.surf_extended = data['surf_extended']
+            self.surf_upright = data['surf_upright']
+  
+            # AKAZE Configuration
+            self.akaze_descriptor_type = data['akaze_descriptor_type']
+            self.akaze_descriptor_size = data['akaze_descriptor_size']
+            self.akaze_descriptor_channels = data['akaze_descriptor_channels']
+            self.akaze_threshold = data['akaze_threshold']
+            self.akaze_nOctaves = data['akaze_nOctaves']
+            self.akaze_nOctaveLayers = data['akaze_nOctaveLayers']
+            self.akaze_diffusivity = data['akaze_diffusivity']
+
+            # BRISK Configuration
+            self.brisk_thresh = data['brisk_thresh']
+            self.brisk_octaves = data['brisk_octaves']
+            self.brisk_patternScale = data['brisk_patternScale']
+            
             
     def updateParameterSizeImage( self, u ):
         '''
@@ -75,8 +117,7 @@ class Parameters:
         self.u = u
         # checking parameters
         self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
-                              self.nOctaveLayers, self.hessianThreshold, self.growthfactor, self.typeShape, \
-                              self.typeFovea, self.typeMultifovea )
+                              self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
 
 
     def fixFovea( self ):
@@ -105,13 +146,12 @@ class Parameters:
         
         # checking parameters
         self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
-                              self.nOctaveLayers, self.hessianThreshold, self.growthfactor, self.typeShape, \
-                              self.typeFovea, self.typeMultifovea )
+                              self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
 
 
-    def updateParameters( self, m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea ):
+    def updateParameters( self, m, w, u, f, bvector, etavector, levelvector, growthfactor, typeShape, typeFovea, typeMultifovea ):
         '''
-        \fn updateParameters( m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea )
+        \fn updateParameters( m, w, u, f, bvector, etavector, levelvector, growthfactor, typeShape, typeFovea, typeMultifovea )
 
         \brief Updating all parameters to fovea structure
         
@@ -122,15 +162,13 @@ class Parameters:
         \param bvector: [b1, b2, ..., bn] - a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
         \param etavector: [e1, e2, ..., en] - a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
         \param levelvector: [l1, l2, ..., ln] - a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
-        \param nOctaveLayers - Number of octaves associated the SURF feature
-        \param hessianThreshold - Threshold associated the SURF feature
         \param growthfactor - Growth factor associated the SURF feature 
         \param typeShape - Feature specification configured, where is selected blocks or polygons
         \param typeFovea - This code indicates which method to foveation will be used. If code is zero, then MRMF is chosen, otherwise MMF
         \param typeMultifovea - identify the approach: reexecution, pixel-by-pixel, bitmap or block-based
         '''
         # Checking parameters
-        self.checkParameters( m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea )
+        self.checkParameters( m, w, u, f, bvector, etavector, levelvector, growthfactor, typeShape, typeFovea, typeMultifovea )
         
         self.m = m
         self.w = w
@@ -139,17 +177,15 @@ class Parameters:
         self.bvector = bvector
         self.etavector = etavector
         self.levelvector = levelvector
-        self.nOctaveLayers = nOctaveLayers
-        self.hessianThreshold = hessianThreshold
         self.growthfactor = growthfactor
         self.typeShape = typeShape
         self.typeFovea = typeFovea
         self.typeMultifovea = typeMultifovea
 
 
-    def checkParameters( self, m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea ):
+    def checkParameters( self, m, w, u, f, bvector, etavector, levelvector, growthfactor, typeShape, typeFovea, typeMultifovea ):
         '''
-        \fn checkParameters( m, w, u, f, bvector, etavector, levelvector, nOctaveLayers, hessianThreshold, growthfactor, typeShape, typeFovea, typeMultifovea )
+        \fn checkParameters( m, w, u, f, bvector, etavector, levelvector, growthfactor, typeShape, typeFovea, typeMultifovea )
 
         \brief This method check the parameters to build a fovea
         
@@ -160,8 +196,6 @@ class Parameters:
         \param bvector: [b1, b2, ..., bn] - a vector where bi is 0 if the feature extraction step number i should be discarded or 1, otherwise
         \param etavector: [e1, e2, ..., en] - a vector where ei is the octave (> 0) for which the feature extraction step number i should be performed
         \param levelvector: [l1, l2, ..., ln] - a vector where li is the foveated model level (>= 0 and < numberOfLevels) for which the feature extraction step number should be performed
-        \param nOctaveLayers - Number of octaves associated the SURF feature
-        \param hessianThreshold - Threshold associated the SURF feature
         \param growthfactor - Growth factor associated the SURF feature 
         \param typeShape - Feature specification configured, where is selected blocks or polygons
         \param typeFovea - This code indicates which method to foveation will be used. If code is zero, then MRMF is chosen, otherwise MMF

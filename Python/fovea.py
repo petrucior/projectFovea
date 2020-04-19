@@ -87,7 +87,7 @@ class Fovea :
             pi = self.mapLevel2Image( k, p, [0, 0] )
             pf = self.mapLevel2Image( k, p, p.w )
             if ( k < p.m ):
-                imgFoveated[ int(pi[1]):int(pf[1]), int(pi[0]):int(pf[0]) ] = cv2.resize( imgLevel, ( int(pf[0] - pi[0]), int(pf[1] - pi[1]) ) )
+                imgFoveated[ int(pi[1]):int(pf[1]), int(pi[0]):int(pf[0]) ] = cv2.resize( imgLevel, ( int(pf[0]) - int(pi[0]), int(pf[1]) - int(pi[1]) ) )
             else:
                 imgFoveated[ int(pi[1]):int(pf[1]), int(pi[0]):int(pf[0]) ] = imgLevel
             imgFoveated = cv2.rectangle(imgFoveated, (int(pi[0]), int(pi[1])), (int(pf[0]-1), int(pf[1]-1)), color )
@@ -140,13 +140,13 @@ class Fovea :
         
 
 #How to instantiate and use this class
-#if __name__ == '__main__':
-#    params = Parameters('params.yaml')
-#    img = cv2.imread('../../box_in_scene.png')
-#    rows,cols = img.shape[:2]
-#    u = [ cols, rows ]
-#    fovea = Fovea( u, params )
-#    color = (255, 255, 255) # B G R
-#    output = fovea.foveatedImage( img, params, color )
-#    cv2.imshow( "foveated image", output )
-#    cv2.waitKey( 0 )
+if __name__ == '__main__':
+    params = Parameters('params.yaml')
+    img = cv2.imread('../../box_in_scene.png')
+    rows,cols = img.shape[:2]
+    u = [ cols, rows ]
+    fovea = Fovea( u, params )
+    color = (255, 255, 255) # B G R
+    output = fovea.foveatedImage( img, params, color )
+    cv2.imshow( "foveated image", output )
+    cv2.waitKey( 0 )
