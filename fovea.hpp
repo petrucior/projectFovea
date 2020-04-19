@@ -89,18 +89,19 @@ public:
   Fovea( int m, T w, T u, T f, int shapeMode );
 
   /**
-   * \fn Fovea( String ymlFile, int index, int shapeMode )
+   * \fn Fovea( T u, String ymlFile, int index, int shapeMode )
    *
    * \brief Constructor default of fovea class.
    * This constructor is used to configure multiple foveas using
    * a file yaml.
    *
+   * \param u - Size of image
    * \param ymlFile - File that contains all information of configuration
    * \param index - Vector index with fovea position information
    * \param shapeMode - Feature specification configured (see settings 
    * above), where 0 (blocks), 1 (rectangle) or 2 (polygons)
    */
-  Fovea( String ymlFile, int index, int shapeMode );
+  Fovea( T u, String ymlFile, int index, int shapeMode );
   
   /**
    * \fn ~Fovea()
@@ -356,8 +357,8 @@ Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
   bvector.clear();
   etavector.clear();
   levelvector.clear();
-  nOctaveLayers = 0;
-  hessianThreshold = 0;
+  nOctaveLayers = 3;
+  hessianThreshold = 100;
   shape = shapeMode;
   
   this->checkParameters( m, w, u, f );
@@ -371,31 +372,32 @@ Fovea< T >::Fovea( int m, T w, T u, T f, int shapeMode ){
 }
 
 /**
- * \fn Fovea( String ymlFile, int index, int shapeMode )
+ * \fn Fovea( T u, String ymlFile, int index, int shapeMode )
  *
  * \brief Constructor default of fovea class.
  * This constructor is used to configure multiple foveas using
  * a file yaml.
  *
+ * \param u - Size of image
  * \param ymlFile - File that contains all information of configuration
  * \param index - Vector index with fovea position information
  * \param shapeMode - Feature specification configured (see settings 
  * in level.hpp), where 0 (blocks), 1 (rectangle) or 2 (polygons)
  */
 template <typename T>
-Fovea< T >::Fovea( String ymlFile, int index, int shapeMode ){
+Fovea< T >::Fovea( T u, String ymlFile, int index, int shapeMode ){
   // Cleaning parameters
   bvector.clear();
   etavector.clear();
   levelvector.clear();
-  nOctaveLayers = 0;
-  hessianThreshold = 0;
+  nOctaveLayers = 3;
+  hessianThreshold = 100;
   shape = shapeMode;
     
   FileStorage fs(ymlFile, FileStorage::READ);
-  int ux = (int) fs["imageWidth"]; // img.cols
-  int uy = (int) fs["imageHeight"]; // img.rows
-  T u = T( ux, uy );
+  //int ux = (int) fs["imageWidth"]; // img.cols
+  //int uy = (int) fs["imageHeight"]; // img.rows
+  //T u = T( ux, uy );
   int wx = (int) fs["smallestLevelWidth"];
   int wy = (int) fs["smallestLevelHeight"];
   T w = T( wx, wy );

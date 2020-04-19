@@ -57,7 +57,7 @@ int main( int argc, char** argv ){
   descriptor = SURF::create();
   //Fovea< Point2f > *fscene = new Fovea< Point2f >( 4, Point2f(120, 120), Point2f( scene.cols, scene.rows ), fs[0] );
   //Fovea< Point2f > fscene( 4, Point2f(120, 120), Point2f( scene.cols, scene.rows ), fs[0] );
-  Fovea< Point2f > fscene( ymlFile, 0, _BLOCKS_ );
+  Fovea< Point2f > fscene( cv::Point2f( scene.cols, scene.rows ), ymlFile, 0, _BLOCKS_ );
   
   // -----------------------
   // Configuration to _ORB_
@@ -99,7 +99,7 @@ int main( int argc, char** argv ){
   
   cv::namedWindow("sceneFoveated", 1);
   while ( true ){
-    setMouseCallback( "sceneFoveated", on_mouse, &fscene );
+    //setMouseCallback( "sceneFoveated", on_mouse, &fscene );
     //sceneFoveated = fscene.foveatedImage( scene, colors[0], MMF );
     imshow("sceneFoveated", sceneFoveated );
     drawKeypoints( model, modelKeypoints, model, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
@@ -109,8 +109,8 @@ int main( int argc, char** argv ){
     if ( key == 'e' ){
       //fscene.foveatedFeatures( scene, _SURF_, MRMF, fscene );
       fscene.foveatedFeatures( scene, _SURF_, MMF, fscene );
-      //fscene->matching( scene, model, modelKeypoints, modelDescriptors );
-      sceneFoveated = fscene.foveatedImage( scene, colors[0], MMF );
+      //fscene.matching( scene, model, modelKeypoints, modelDescriptors );
+      //sceneFoveated = fscene.foveatedImage( scene, colors[0], MMF );
     }
   }
   

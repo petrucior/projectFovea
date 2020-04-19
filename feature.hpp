@@ -37,6 +37,7 @@
 #include "opencv2/xfeatures2d.hpp"
 
 #include "foveatedHessianDetector.hpp"
+//#include "surfFoveated.hpp"
 
 #ifdef _OPENMP
 #include <omp.h> //#pragma omp parallel for
@@ -317,6 +318,7 @@ Feature< T, K >::Feature( Mat img, K fovea, int method ){
   Mat dp;
 
   foveatedHessianDetector< T, K >(img, Mat(), kp, fovea);
+  //foveatedHessianDetector(img, Mat(), kp);
   descriptor->detectAndCompute ( img, noArray(), kp, dp, true );
   //descriptor->detectAndCompute ( img, noArray(), kp, dp, false );
   keypoints.push_back( kp );

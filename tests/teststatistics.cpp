@@ -44,7 +44,7 @@ int main( int argc, char** argv ){
     fs.push_back( cv::Point2f(x, y) );
   }*/
   // Foveas simetrically positioned
-  fs.push_back( cv::Point2f( -150, 70.0 ) );
+  /*fs.push_back( cv::Point2f( -150, 70.0 ) );
   fs.push_back( cv::Point2f( -80, 70.0 ) );
   fs.push_back( cv::Point2f( -115, -20.0 ) );
   fs.push_back( cv::Point2f( -40.0, 40.0 ) );
@@ -58,7 +58,41 @@ int main( int argc, char** argv ){
   fs.push_back( cv::Point2f( -90.0, 50.0 ) );
   fs.push_back( cv::Point2f( 90.0, 50.0 ) );
   fs.push_back( cv::Point2f( 90.0, -50.0 ) );
-  fs.push_back( cv::Point2f( -90.0, -50.0 ) );
+  fs.push_back( cv::Point2f( -90.0, -50.0 ) );*/
+
+  // Configuracao 4 foveas
+  //fs.push_back( cv::Point2f( -128.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 128.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 128.0, 96.0 ) );
+  //fs.push_back( cv::Point2f( -128.0, 96.0 ) );
+
+  // Configuracao 5 foveas
+  //fs.push_back( cv::Point2f( -128.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 128.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 128.0, 96.0 ) );
+  //fs.push_back( cv::Point2f( -128.0, 96.0 ) );
+  //fs.push_back( cv::Point2f( 0.0, 0.0 ) );
+  
+  // Configuracao 6 foveas
+  //fs.push_back( cv::Point2f( -170.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 0.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 170.0, -96.0 ) );
+  //fs.push_back( cv::Point2f( 170.0, 96.0 ) );
+  //fs.push_back( cv::Point2f( 0.0, 96.0 ) );
+  //fs.push_back( cv::Point2f( -170.0, 96.0 ) );
+
+  // Configuracao 9 foveas
+  fs.push_back( cv::Point2f( -170.0, -128.0 ) );
+  fs.push_back( cv::Point2f( 0.0, -128.0 ) );
+  fs.push_back( cv::Point2f( 170.0, -128.0 ) );
+  fs.push_back( cv::Point2f( 170.0, 0.0 ) );
+  fs.push_back( cv::Point2f( 0.0, 0.0 ) );
+  fs.push_back( cv::Point2f( -170.0, 0.0 ) );
+  fs.push_back( cv::Point2f( -170.0, 128.0 ) );
+  fs.push_back( cv::Point2f( 0.0, 128.0 ) );
+  fs.push_back( cv::Point2f( 170.0, 128.0 ) );
+  
+  
   std::vector< cv::Scalar > colors;
   srand (time(NULL)); // Initialize random seed                                                                                                                                                 
   for (int i = 0; i < fs.size(); i++){
@@ -145,6 +179,7 @@ int main( int argc, char** argv ){
     if ( key == 'e' ){
       m->foveatedFeatures( scene, _SURF_, MRMF );
       m->matching( scene, model, modelKeypoints, modelDescriptors );
+
       std::vector< double > potentials = s->functionMultiFovea( m, 15.0, 1000.0 );
       std::vector< cv::Point2f > points;
       std::vector< double > invpotentials;

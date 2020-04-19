@@ -38,7 +38,7 @@ class Structure:
         self.fovea = fovea
 
     def update( self, position ):
-        print( str(position[0]) + ", " + str(position[1]) )
+        #print( str(position[0]) + ", " + str(position[1]) )
         self.parameters.setFovea( position )
         self.fovea.updateFovea( self.parameters )
 
@@ -49,7 +49,7 @@ def callback( event, x, y, flags, params ):
     
     \brief This function is responsible for controlling all actions with the user's mouse
     '''
-    print( str(x) + ", " + str(y) )
+    #print( str(x) + ", " + str(y) )
     position = [ x, y ]
     params.update( position )
 
@@ -77,8 +77,21 @@ def main():
         key = cv2.waitKey( 2 )
         if ( key == ord('q') ):
             break
+
+        # Controls from fovea
+        if ( key == ord('d') ):
+            params.w[0] = min( params.u[0] - 1, params.w[0] + 10 )
+        if ( key == ord('a') ):
+            params.w[0] = max( 1, params.w[0] - 10 )
+        if ( key == ord('c') ):
+            params.w[1] = min( params.u[1] - 1, params.w[1] + 10 )
+        if ( key == ord('z') ):
+            params.w[1] = max( 1, params.w[1] - 10 )
         
         if ( key == ord('s') ):
+            fovea.saveFoveatedImage( "output", output, params )
+
+        if ( key == ord('l') ):
             fovea.saveLevels( "teste", img, params )
 
     cv2.destroyAllWindows()

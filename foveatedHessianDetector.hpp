@@ -177,7 +177,6 @@ resizeHaarPattern( const int src[][5], SurfHF* dst, int n, int oldSize, int newS
 template <typename T, typename K>
 static void calcLayerDetAndTrace( const Mat& sum, int size, int sampleStep,
 				  Mat& det, Mat& trace, K fovea, int marginH, int foveaLevel ){
-  cout << "calc" << endl;
   const int NX=3, NY=3, NXY=4;
   const int dx_s[NX][5] = { {0, 2, 3, 7, 1}, {3, 2, 6, 7, -2}, {6, 2, 9, 7, 1} };
   const int dy_s[NY][5] = { {2, 0, 7, 3, 1}, {2, 3, 7, 6, -2}, {2, 6, 7, 9, 1} };
@@ -335,12 +334,12 @@ struct SURFBuildInvoker : ParallelLoopBody {
 // Multi-threaded search of the scale-space pyramid for keypoints
 template <typename T, typename K>
 struct SURFFindInvoker : ParallelLoopBody {
-  SURFFindInvoker( const Mat& _sum, const Mat& _mask_sum,
-		   const std::vector<Mat>& _dets, const std::vector<Mat>& _traces,
-		   const std::vector<int>& _sizes, const std::vector<int>& _sampleSteps,
-		   const std::vector<int>& _middleIndices, std::vector<KeyPoint>& _keypoints,
-		   int _nOctaveLayers, float _hessianThreshold, K _fovea,
-		   vector<int>& _margin, vector<int>& _foveaLevel ) {
+  SURFFindInvoker< T, K >( const Mat& _sum, const Mat& _mask_sum,
+			   const std::vector<Mat>& _dets, const std::vector<Mat>& _traces,
+			   const std::vector<int>& _sizes, const std::vector<int>& _sampleSteps,
+			   const std::vector<int>& _middleIndices, std::vector<KeyPoint>& _keypoints,
+			   int _nOctaveLayers, float _hessianThreshold, K _fovea,
+			   vector<int>& _margin, vector<int>& _foveaLevel ) {
     sum = &_sum;
     mask_sum = &_mask_sum;
     dets = &_dets;
@@ -355,7 +354,7 @@ struct SURFFindInvoker : ParallelLoopBody {
     margin = &_margin;
     foveaLevel = &_foveaLevel;
   }
-  
+
   static void findMaximaInLayer( const Mat& sum, const Mat& mask_sum,
 				 const std::vector<Mat>& dets, const std::vector<Mat>& traces,
 				 const std::vector<int>& sizes, std::vector<KeyPoint>& keypoints,
@@ -367,16 +366,14 @@ struct SURFFindInvoker : ParallelLoopBody {
       int layer = (*middleIndices)[i];
       //int octave = i / nOctaveLayers;
       vector< vector< int > > featureVectorParameters = fovea->getVectorsFeature();
-      vector< int > bvec = featureVectorParameters[0];
+      //vector< int > bvec = featureVectorParameters[0];
       vector< int > etavec = featureVectorParameters[1];
-      vector< int > levelvec = featureVectorParameters[2];
-      int octave = etavec[layer];      
+      //vector< int > levelvec = featureVectorParameters[2];
+      int octave = etavec[layer];
       if((*foveaLevel)[layer] == -1) continue;
-      findMaximaInLayer( *sum, *mask_sum, *dets, *traces, *sizes,
-			 *keypoints, octave, layer, hessianThreshold,
-			 (*sampleSteps)[layer],
-			 *fovea, (*margin)[layer], (*foveaLevel)[layer] );
-    }
+      findMaximaInLayer( *sum, *mask_sum, *dets, *traces, *sizes, *keypoints, octave, layer, hessianThreshold,
+			 (*sampleSteps)[layer], *fovea, (*margin)[layer], (*foveaLevel)[layer] );
+     }
   }
   
   const Mat *sum;
@@ -411,38 +408,58 @@ SURFFindInvoker< T, K >::findMaximaInLayer( const Mat& sum, const Mat& mask_sum,
 					    const vector<int>& sizes, vector<KeyPoint>& keypoints,
 					    int octave, int layer, float hessianThreshold, int sampleStep,
 					    K fovea, int marginH, int foveaLevel ){
-  cout << "find" << endl;
   // Wavelet Data
   const int NM=1;
   const int dm[NM][5] = { {0, 0, 9, 9, 1} };
   SurfHF Dm;
-  
+
   int size = sizes[layer];
   
-  // The integral image 'sum' is one pixel bigger than the source image
-  int layer_rows = (sum.rows-1)/sampleStep;
-  int layer_cols = (sum.cols-1)/sampleStep;
+  //foveated parameters
+  int k = foveaLevel;
   
-  // Ignore pixels without a 3x3x3 neighbourhood in the layer above
-  int margin = (sizes[layer+1]/2)/sampleStep+1;
+  vector< T > modelParameters = fovea.getParameters();
+  Level< T > levelFovea = fovea.getLevelFromFovea( k );
+  vector< T > params = levelFovea.boundingBox();
+
+  int deltax = params[0].x;
+  int deltay = params[0].y;
+  int skx = params[1].x;
+  int sky = params[1].y;
+
+  //margin ref: centro da wavelet
+  //margin_x ref: centro da wavelet
+  int margin_x = MAX(marginH, deltax);
+  int margin_y = MAX(marginH, deltay);
+
+  //limit_x ref: centro da wavelet
+  int limit_x = MIN(deltax + skx, modelParameters[2].x - marginH);
+  int limit_y = MIN(deltay + sky, modelParameters[2].y - marginH);
+
+  //sum_i ref: comeco da wavelet
+  int sum_i, sum_j;
+  sum_i = margin_y - size/2;
+
+  //DEBUG
+  /*
+    std::cout << "Analisando o máximo da imagem Hessiana, na camada " << layer << std::endl;
+    std::cout << "A wavelet vai de " << margin_x << " até " << limit_x << std::endl;
+    std::cout << "Pulando de " << sampleStep << " em " << sampleStep << std::endl;
+  */
   
   if( !mask_sum.empty() )
     resizeHaarPattern( dm, &Dm, NM, 9, size, mask_sum.cols );
   
   int step = (int)(dets[layer].step/dets[layer].elemSize());
   
-  for( int i = margin; i < layer_rows - margin; i++ ) {
+  for( int i = 0; sum_i + size/2 <= limit_y; i++, sum_i += sampleStep ) {
+    sum_j = margin_x - size/2;
     const float* det_ptr = dets[layer].ptr<float>(i);
     const float* trace_ptr = traces[layer].ptr<float>(i);
-    for( int j = margin; j < layer_cols-margin; j++ ){
+    for(int j = 0; sum_j + size/2 <= limit_x; sum_j += sampleStep, j++ ) {
+
       float val0 = det_ptr[j];
       if( val0 > hessianThreshold ){
-	//Coordinates for the start of the wavelet in the sum image. There
-	//is some integer division involved, so don't try to simplify this
-	//(cancel out sampleStep) without checking the result is the same
-	int sum_i = sampleStep*(i-(size/2)/sampleStep);
-	int sum_j = sampleStep*(j-(size/2)/sampleStep);
-	
 	//The 3x3x3 neighbouring samples around the maxima.
 	//The maxima is included at N9[1][4]
 	const float *det1 = &dets[layer-1].at<float>(i, j);
@@ -531,14 +548,14 @@ static void fastFoveatedHessianDetector( const Mat& sum, const Mat& mask_sum, ve
   
   int nOctaveLayers = (int)featureParameters[0];
   float hessianThreshold = featureParameters[1];
-
+  
   vector< vector< int > > featureVectorParameters = fovea.getVectorsFeature();
   vector< int > bvec = featureVectorParameters[0];
   vector< int > etavec = featureVectorParameters[1];
   vector< int > levelvec = featureVectorParameters[2];
 
-  int nTotalLayers = (nOctaveLayers+2)*(bvec.size());
-  int nMiddleLayers = nOctaveLayers*(bvec.size());
+  int nTotalLayers = (int)(nOctaveLayers+2)*(bvec.size());
+  int nMiddleLayers = (int)nOctaveLayers*(bvec.size());
 
   vector<Mat> dets(nTotalLayers);
   vector<Mat> traces(nTotalLayers);
@@ -555,7 +572,7 @@ static void fastFoveatedHessianDetector( const Mat& sum, const Mat& mask_sum, ve
   int index = 0, middleIndex = 0, step = SAMPLE_STEP0;
 
   vector< T > modelParameters = fovea.getParameters();
-
+  
   for(unsigned int i = 0; i < (bvec.size()); i++) {
     for( int layer = 0; layer < nOctaveLayers+2; layer++ ) {
       // The integral image sum is one pixel bigger than the source image
@@ -566,7 +583,7 @@ static void fastFoveatedHessianDetector( const Mat& sum, const Mat& mask_sum, ve
 	foveaLevel[index] = levelvec[i];
       dets[index].create( (modelParameters[2]).y, (modelParameters[2]).x, CV_32F );
       traces[index].create( (modelParameters[2]).y, (modelParameters[2]).x, CV_32F );
-      sizes[index] = (SURF_HAAR_SIZE0 + SURF_HAAR_SIZE_INC*layer) << ( (featureVectorParameters[1])[i] - 1);
+      sizes[index] = (SURF_HAAR_SIZE0 + SURF_HAAR_SIZE_INC*layer) << ( etavec[i] - 1 );
       sampleSteps[index] = 1 << (etavec[i] - 1);
 
       if( 0 < layer && layer <= nOctaveLayers )
@@ -578,18 +595,18 @@ static void fastFoveatedHessianDetector( const Mat& sum, const Mat& mask_sum, ve
       index++;
     }
   }
-  
+
   // Calculate hessian determinant and trace samples in each layer
   parallel_for_( Range(0, nTotalLayers),
 		 SURFBuildInvoker< T, K >(sum, sizes, sampleSteps, dets, traces, fovea, margin, foveaLevel ) );
   
   // Find maxima in the determinant of the hessian
   parallel_for_( Range(0, nMiddleLayers),
-		 SURFFindInvoker< T, K >(sum, mask_sum, dets, traces, sizes,
-					 sampleSteps, middleIndices, keypoints,
-					 nOctaveLayers, hessianThreshold, fovea, margin, foveaLevel ) );
+		 SURFFindInvoker< T, K >(sum, mask_sum, dets, traces, sizes, sampleSteps, middleIndices,
+					 keypoints, nOctaveLayers, hessianThreshold, fovea, margin, foveaLevel ) );
   
   std::sort(keypoints.begin(), keypoints.end(), KeypointGreater());
+  
 }
 
 
@@ -620,7 +637,6 @@ static void foveatedHessianDetector( InputArray _img, InputArray _mask, vector<K
   
   fastFoveatedHessianDetector< T, K >(sum, msum, keypoints, fovea);
 }
-
 
 
 #endif
