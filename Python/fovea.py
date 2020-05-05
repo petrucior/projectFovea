@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/pythonA
 # -*- coding: utf-8 -*-
 
 '''
@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import cv2
 from parameters import Parameters
 from level import Level
+from features import Features
 
 class Fovea :
     '''
@@ -55,7 +56,6 @@ class Fovea :
             level = Level( k, parameters )
             self.levels.append( level )
 
-
     def updateFovea( self, parameters ):
         '''
         \fn updateFovea( parameters )
@@ -68,9 +68,35 @@ class Fovea :
         for k in range( 0, parameters.m + 1 ):
             level = Level( k, parameters )
             self.levels.append( level )
-        
 
-    def foveatedImage( self, img, parameters, color ):
+    def foveatedFeatures( self, img, parameters ):
+        '''
+        \fn foveatedFeatures( parameters )
+
+        \brief Compute keypoints and descriptors of levels
+
+        \param img - Image to be foveated
+        \param parameters - Parameters of fovea structure
+        '''
+        if ( parameters.typeFovea == 0 ): # MRMF
+            self.features = Features( img, self.levels, parameters )
+        else: # MMF
+            print("coming soon . . .")
+
+
+    def foveatedMatching( self, model, parameters ):
+        '''
+        \fn foveatedMatching( model, parameters )
+
+        \brief Maching between multiresolution domain and model 
+
+        \param model - Template that represent the visual stimulli
+        \param parameters - Parameters of fovea structure
+        '''
+        self.features.matchingFeatures( model, parameters )
+    
+    
+    def foveatedImage( self, img, parameters ):
         '''
         \fn foveatedImage( img, parameters )
 
@@ -78,9 +104,9 @@ class Fovea :
 
         \param img - Image to be foveated
         \param parameters - Parameters of fovea structure
-        \param color - Color to paint levels
         '''
         p = parameters
+        color = ( p.colors[0], p.colors[1], p.colors[2] )
         imgFoveated = img.copy()
         for k in range( 0, p.m + 1 ):
             imgLevel = self.levels[k].getLevel( img, p )
@@ -140,13 +166,16 @@ class Fovea :
         
 
 #How to instantiate and use this class
-if __name__ == '__main__':
-    params = Parameters('params.yaml')
-    img = cv2.imread('../../box_in_scene.png')
-    rows,cols = img.shape[:2]
-    u = [ cols, rows ]
-    fovea = Fovea( u, params )
-    color = (255, 255, 255) # B G R
-    output = fovea.foveatedImage( img, params, color )
-    cv2.imshow( "foveated image", output )
-    cv2.waitKey( 0 )
+#if __name__ == '__main__':
+#    params = Parameters('params.yaml')
+#    img = cv2.imread('../../box_in_scene.png')
+#    model = cv2.imread('../../box.png')
+#    rows,cols = img.shape[:2]
+#    u = [ cols, rows ]
+#    fovea = Fovea( u, params )
+#    output = fovea.foveatedImage( img, params )
+#    cv2.imshow( "foveated image", output )
+#    cv2.waitKey( 0 )
+#    fovea.foveatedFeatures( img, params )
+#    fovea.features.matchingFeatures( model, params ) 
+#    cv2.destroyAllWindows()

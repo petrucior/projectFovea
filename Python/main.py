@@ -71,8 +71,7 @@ def main():
     while ( True ):
         # bind the callback function to window
         cv2.setMouseCallback( winname, callback, structure )
-        color = (255, 255, 255) # B G R
-        output = fovea.foveatedImage( img, params, color )
+        output = fovea.foveatedImage( img, params )
         cv2.imshow( winname, output ) 
         key = cv2.waitKey( 2 )
         if ( key == ord('q') ):

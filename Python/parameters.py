@@ -54,6 +54,7 @@ class Parameters:
             self.m = data['numberOfLevels'] # numberOfLevels = m
             self.w = data['smallestLevel'] # smallestLevel = [ wx, wy ]
             self.f = data['foveas'] # foveas = [ fx1, fy1, fx2, fy2, ..., fxk, fyk ]
+            self.colors = data['colors'] # colors = [ B1, G1, R1, B2, G2, R2, ..., Bk, Gk, Rk ] - Blue, Green and Red channels
             self.typeShape = data['typeShape'] # typeShape = Blocks (0) | Polygons (1)
             self.typeFovea = data['typeFovea'] # typeFovea = MRMF (0) | MMF (1)
             self.typeMultifovea = data['typeMultifovea'] # typeMultifovea = REEXECUTION (0) | PIXELBYPIXEL (1) | BITMAP (2) | SENDINGBLOCKS (3)
@@ -65,6 +66,8 @@ class Parameters:
             self.growthfactor = data['growthfactor'] # growthfactor = x
             
             # Features
+            self.features = data['features'] # features = [ ORB, KAZE, SURF, AKAZE, BRISK, SIFT ] ( binary vector )
+            
             # ORB configuration
             self.orb_nfeatures = data['orb_nfeatures']
             self.orb_scaleFactor = data['orb_scaleFactor']
@@ -104,6 +107,13 @@ class Parameters:
             self.brisk_thresh = data['brisk_thresh']
             self.brisk_octaves = data['brisk_octaves']
             self.brisk_patternScale = data['brisk_patternScale']
+
+            # SIFT Configuration
+            self.sift_nfeatures = data['sift_nfeatures']
+            self.sift_nOctaveLayers = data['sift_nOctaveLayers']
+            self.sift_contrastThreshold = data['sift_contrastThreshold']
+            self.sift_edgeThreshold = data['sift_edgeThreshold']
+            self.sift_sigma = data['sift_sigma']
             
             
     def updateParameterSizeImage( self, u ):
@@ -214,3 +224,4 @@ class Parameters:
 #How to instantiate and use this class
 #params = Parameters('params.yaml')
 #print( params.w )
+
