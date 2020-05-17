@@ -129,6 +129,20 @@ class Parameters:
         self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
                               self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
 
+    def updateParameterFoveas( self, f, colors ):
+        '''
+        \fn updateParameterFoveas( f, colors )
+
+        \brief Updating the foveas
+
+        \param f - Image points where we will add foveas
+        '''
+        self.f = f
+        self.colors = colors
+        # checking parameters
+        self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
+                              self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
+
 
     def fixFovea( self ):
         '''
