@@ -231,10 +231,11 @@ class Statistics :
         multifovea = Multifovea( params.u, params )
         multifovea.multifoveatedFeatures( scene, params )
         multifovea.multifoveatedMatching( model, params )
-        output = multifovea.multifoveatedImage( scene, params )
-        cv2.imshow( "multifoveated image", output )
-        cv2.waitKey( 0 )
-        cv2.destroyAllWindows()
+        # Display fovea
+        #output = multifovea.multifoveatedImage( scene, params )
+        #cv2.imshow( "multifoveated image", output )
+        #cv2.waitKey( 0 )
+        #cv2.destroyAllWindows()
 
         # FPDF
         potentialFromMultifovea = self.weightedFunctionMultifovea( multifovea, params )
@@ -270,8 +271,10 @@ class Statistics :
         '''
         # This method will work until iterations to be null
         if ( iterations == 0 ):
-            return regionUnderAnalysis
+            print( regionUnderAnalysis )
+            return regionUnderAnalysis;
         else :
+            print( regionUnderAnalysis )
             # It will work until regionUnderAnalysis is bigger than 5 x 5
             if ( regionUnderAnalysis[1][0] > 5 and regionUnderAnalysis[1][1] > 5 ):
                 deltax = regionUnderAnalysis[0][0]; deltay = regionUnderAnalysis[0][1];
@@ -456,7 +459,7 @@ class Statistics :
                 if ( cA == cB ):
                     print("and coincident lines")
                 # recalculating
-                self.intersectionLocalGradient( referencePoint, model, scene, parameters, jump, config )
+                self.intersectionLocalGradient( model, scene, parameters, jump, config )
             else:
                 if ( mA * mB == -1 ):
                     print("Perpendicular lines")
@@ -469,24 +472,211 @@ class Statistics :
         else:
             print("Horizontal parallel lines")
             # recalculating
-            self.intersectionLocalGradient( referencePoint, model, scene, parameters, jump, config )
+            self.intersectionLocalGradient(  model, scene, parameters, jump, config )
         return x, y
 
 
-    def maximumLikelihoodEstimator( self, model, scene, parameters, method ):
+    def maximumLikelihoodEstimator( self, model, scene, parameters, threshold,  method ):
         '''
-        \fn maximumLikelihoodEstimator( self, model, scene, parameters, method )
+        \fn maximumLikelihoodEstimator( model, scene, parameters, threshold, method )
         
         \brief Calculate the Maximum Likelihood Estimator (MLE)
         
         \param model - Template that represent the visual stimulli
         \param scene - Scene to be foveated
         \param parameters - Parameters of fovea structure
+        \param threshold - Threshold is a potential limiter
         \param method - Arithmetic mean (0) and weighted average (1)
         '''
-        print("Calculating MLE")
+        print("MLE")
+        multifovea = Multifovea( parameters.u, parameters )
+        multifovea.multifoveatedFeatures( scene, params )
+        multifovea.multifoveatedMatching( model, params )
+        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        # Transforming points to cartesian domain
+        pose = []
+        for f in range( 0, len(parameters.f), 2 ):
+            pose.append( [ parameters.f[f] + int( parameters.u[0]/2 ), parameters.f[f+1] + int( parameters.u[1]/2 ) ] )
+        x = 0.0; y = 0.0;
+        if ( method == 0 ): # Arithmetic mean
+            counter = 0
+            for i in range( 0, len( potentials ) ):
+                if ( potentials[i] >= threshold ):
+                    x += pose[i][0]
+                    y += pose[i][1]
+                    counter += 1
+            if ( counter == 0 ):
+                x = 0.0; y = 0.0;
+            else:
+                x /= counter
+                y /= counter
         
+        if ( method == 1 ): # Weighted average
+            for i in range( 0, len( potentials ) ):
+                x += pose[i][0] * potentials[i]
+                y += pose[i][1] * potentials[i]
+            x /= len( potentials )
+            y /= len( potentials )
         
+        return x, y
+    
+    
+    def trilaterationEstimator( self, model, scene, parameters ):
+        '''
+        \fn trilaterationEstimator( model, scene, parameters )
+        
+        \brief Calculate the trilateration Estimator
+        
+        \param model - Template that represent the visual stimulli
+        \param scene - Scene to be foveated
+        \param parameters - Parameters of fovea structure
+        '''
+        print("Trilateration")
+        multifovea = Multifovea( parameters.u, parameters )
+        multifovea.multifoveatedFeatures( scene, params )
+        multifovea.multifoveatedMatching( model, params )
+        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        # Descending ordering of potential
+        potentialsAux = sorted( potentials, reverse=True )
+        potential = potentialsAux[:3]
+        first = 0; second = 0; third = 0;
+        for p in range( 0, len(potentials)):
+            if ( potentials[p] == potential[0] ):
+                first = p * 2
+            if ( potentials[p] == potential[1] ):
+                second = p * 2
+            if ( potentials[p] == potential[2] ):
+                third = p * 2
+        
+        # Points
+        x1 = parameters.f[first]; y1 = parameters.f[first+1];
+        x2 = parameters.f[second]; y2 = parameters.f[second+1];
+        x3 = parameters.f[third]; y3 = parameters.f[third+1];
+
+        # Transforming points to cartesian domain
+        x1 += int( parameters.u[0]/2 ); y1 += int( parameters.u[1]/2 );
+        x2 += int( parameters.u[0]/2 ); y2 += int( parameters.u[1]/2 );
+        x3 += int( parameters.u[0]/2 ); y3 += int( parameters.u[1]/2 );
+        #print( x1, y1, x2, y2, x3, y3 )
+        
+        # Inverse of detection rate
+        r1 = ((1.0 - potential[0]) * 0.001 )/ 0.0001
+        r2 = ((1.0 - potential[1]) * 0.001 )/ 0.0001
+        r3 = ((1.0 - potential[2]) * 0.001 )/ 0.0001
+        
+        a = (-2 * x1) + (2 * x2)
+        b = (-2 * y1) + (2 * y2)
+        c = (r1*r1) - (r2*r2) - (x1*x1) + (x2*x2) - (y1*y1) + (y2*y2)
+        d = (-2 * x2) + (2 * x3)
+        e = (-2 * y2) + (2 * y3)
+        f = (r2*r2) - (r3*r3) - (x2*x2) + (x3*x3) - (y2*y2) + (y3*y3)
+
+        den = (a * e) - (b * d)
+        x = ((c * e) - (b * f)) / den
+        y = ((a * f) - (c * d)) / den
+
+        return x, y
+
+    
+    def multilaterationEstimator( self, model, scene, parameters ):
+        '''
+        \fn multilaterationEstimator( model, scene, parameters )
+        
+        \brief Calculate the multilateration Estimator
+        
+        \param model - Template that represent the visual stimulli
+        \param scene - Scene to be foveated
+        \param parameters - Parameters of fovea structure
+        '''
+        print("Multilateration")
+        multifovea = Multifovea( parameters.u, parameters )
+        multifovea.multifoveatedFeatures( scene, params )
+        multifovea.multifoveatedMatching( model, params )
+        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        # Inverse of detection rate
+        invpotential = []
+        for i in range( 0, len( potentials ) ):
+            invpotential.append( ((1.0 - potentials[i]) * 0.001 )/ 0.0001 )
+        #print( invpotential )
+        x = 0.0; y = 0.0;
+        if ( len(parameters.f) == 0 ): return x, y
+        m = int(len(parameters.f)/2)
+        b = numpy.zeros( (m - 1, 1), dtype=numpy.float64 )
+        A = numpy.zeros( (m - 1, 2), dtype=numpy.float64 )
+        #print( parameters.f )
+        # Transforming points to cartesian domain
+        pose = []
+        for f in range( 0, len(parameters.f), 2 ):
+            pose.append( [ parameters.f[f] + int( parameters.u[0]/2 ), parameters.f[f+1] + int( parameters.u[1]/2 ) ] )
+        #print( pose )
+        for i in range( 0, m - 1 ):
+            A[i][0]  = ( -2 * pose[i][0] ) + ( 2 * pose[i+1][0] )            
+            A[i][1]  = ( -2 * pose[i][1] ) + ( 2 * pose[i+1][1] )
+            b[i][0] = pow( invpotential[i], 2.0 ) - pow( invpotential[i+1], 2.0 ) - pow( pose[i][0], 2.0 ) + pow( pose[i+1][0], 2.0 ) - pow( pose[i][1], 2.0 ) + pow( pose[i+1][1], 2.0 )
+        #print( A, b )
+
+        # Transposed A
+        at = A.transpose()
+        # Multiplication between transposed A and A
+        mult = numpy.dot( at, A )
+        # Inverse of the multiplication
+        inv = numpy.linalg.inv( mult )
+        # Multiplication between inv and transposed A
+        multInv = numpy.dot( inv, at )
+        # Multiplication between multInv and b
+        estimated = numpy.dot( multInv, b )
+
+        # Debug
+        '''
+        print("Matriz b")
+        print( b )
+        print("Matrix A")
+        print( A )
+        print("Transposed A")
+        print( at )
+        print("Multiplication between transposed A and A")
+        print( mult )
+        print("Inverse of the multiplication")
+        print( inv )
+        print("Multiplication between inv and transposed A")
+        print( multInv )
+        print("Multiplication between multInv and b")
+        print( estimated )
+        '''
+        x = (estimated[0])[0]; y = (estimated[1])[0]
+        return x, y
+
+
+    def baricentricCoordinates( self, model, scene, parameters ):
+        '''
+        \fn baricentricCoordinates( model, scene, parameters )
+        
+        \brief Calculate the baricentric coordinates estimator
+        
+        \param model - Template that represent the visual stimulli
+        \param scene - Scene to be foveated
+        \param parameters - Parameters of fovea structure
+        '''
+        print("Weighted Barycentric Coordinates")
+        multifovea = Multifovea( parameters.u, parameters )
+        multifovea.multifoveatedFeatures( scene, params )
+        multifovea.multifoveatedMatching( model, params )
+        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        detectionRateTotal = 0.0
+        for d in range( 0, len(potentials) ):
+            detectionRateTotal += potentials[d]
+        print( detectionRateTotal )
+        # Transforming points to cartesian domain
+        pose = []
+        for f in range( 0, len(parameters.f), 2 ):
+            pose.append( [ parameters.f[f] + int( parameters.u[0]/2 ), parameters.f[f+1] + int( parameters.u[1]/2 ) ] )
+        x = 0.0; y = 0.0;
+        for f in range( 0, len(potentials) ):
+            x += ( potentials[f] * pose[f][0] ) / detectionRateTotal
+            y += ( potentials[f] * pose[f][1] ) / detectionRateTotal
+        print( x, y )
+        return x, y
+
     
         
 #How to instantiate and use this class
@@ -540,11 +730,16 @@ if __name__ == '__main__':
     #multifovea.multifoveatedMatching( model, params )
     statistics = Statistics()
     #print(statistics.weightedFunctionMultifovea( multifovea, params ))
+    iterations = 1
     jump = 5
-    config = 0
-    #region = [ [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ], [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ] ]
+    config = 1
+    delta = [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ]
+    size = [ params.u[0] - int(params.w[0]/2) - jump - delta[0], params.u[1] - int(params.w[1]/2) - jump - delta[1] ]
+    region = [ delta, size ]
     #print(statistics.localGradient( [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ], model, scene, params, jump, config))
-    print(statistics.reduceRegionByLocalGradient( model, scene, params, [ [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ], [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ] ], 1, jump, config))
+    print( statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, config) )
     #print(statistics.intersectionLocalGradient( model, scene, params, jump, config ))
-
-    
+    #print( statistics.maximumLikelihoodEstimator( model, scene, params, 0.3, 0 ) )
+    #print( statistics.trilaterationEstimator( model, scene, params ) )
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
