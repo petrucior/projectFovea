@@ -203,24 +203,55 @@ class Statistics :
         foveas = []
         foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] );
         if ( config == 0 ):
-            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] + jump ); # Top
+            '''
+            # Debug
+            # reference ( red )
+            cv2.circle(scene, (referencePoint[0] + int(parameters.u[0]/2), referencePoint[1] + int(parameters.u[1]/2)), 1, (0, 0, 255), -1)
+            # top ( blue )
+            cv2.circle(scene, (referencePoint[0] + int(parameters.u[0]/2), referencePoint[1] - jump + int(parameters.u[1]/2)), 1, (255, 0, 0), -1)
+            # right ( green )
+            cv2.circle(scene, (referencePoint[0] + jump + int(parameters.u[0]/2), referencePoint[1] + int(parameters.u[1]/2)), 1, (0, 255, 0), -1)
+            # down ( yellow )
+            cv2.circle(scene, (referencePoint[0] + int(parameters.u[0]/2), referencePoint[1] + jump + int(parameters.u[1]/2)), 1, (0, 255, 255), -1)
+            # left ( pink )
+            cv2.circle(scene, (referencePoint[0] - jump + int(parameters.u[0]/2), referencePoint[1] + int(parameters.u[1]/2)), 1, (255, 0, 255), -1)
+            cv2.imshow('posicao', scene)
+            cv2.waitKey( 0 )
+            '''
+            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] - jump ); # Top
             foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] ); # Right
-            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] - jump ); # Down
+            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] + jump ); # Down
             foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] ); # Left
         if ( config == 1 ):
-            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] + jump ); # Northeast
-            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] - jump ); # Southeast
-            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] - jump ); # Southwest
-            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] + jump ); # Northwest
+            '''
+            # Debug
+            # reference ( red )
+            cv2.circle(scene, (referencePoint[0] + int(parameters.u[0]/2), referencePoint[1] + int(parameters.u[1]/2)), 1, (0, 0, 255), -1)
+            # northeast ( blue )
+            cv2.circle(scene, (referencePoint[0] + jump + int(parameters.u[0]/2), referencePoint[1] - jump + int(parameters.u[1]/2)), 1, (255, 0, 0), -1)
+            # southeast ( green )
+            cv2.circle(scene, (referencePoint[0] + jump + int(parameters.u[0]/2), referencePoint[1] + jump + int(parameters.u[1]/2)), 1, (0, 255, 0), -1)
+            # southwest ( yellow )
+            cv2.circle(scene, (referencePoint[0] - jump + int(parameters.u[0]/2), referencePoint[1] + jump + int(parameters.u[1]/2)), 1, (0, 255, 255), -1)
+            # northwest ( pink )
+            cv2.circle(scene, (referencePoint[0] - jump + int(parameters.u[0]/2), referencePoint[1] - jump + int(parameters.u[1]/2)), 1, (255, 0, 255), -1)
+            cv2.imshow('posicao', scene)
+            cv2.waitKey( 0 )
+            '''
+            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] - jump ); # Northeast
+            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] + jump ); # Southeast
+            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] + jump ); # Southwest
+            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] - jump ); # Northwest
         if ( config == 2 ):
-            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] + jump ); # Top
-            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] + jump ); # Northeast
+            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] - jump ); # Top
+            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] - jump ); # Northeast
             foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] ); # Right
-            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] - jump ); # Southeast
-            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] - jump ); # Down
-            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] - jump ); # Southwest
+            foveas.append( referencePoint[0] + jump ); foveas.append( referencePoint[1] + jump ); # Southeast
+            foveas.append( referencePoint[0] ); foveas.append( referencePoint[1] + jump ); # Down
+            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] + jump ); # Southwest
             foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] ); # Left
-            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] + jump ); # Northwest
+            foveas.append( referencePoint[0] - jump ); foveas.append( referencePoint[1] - jump ); # Northwest
+        
         params = copy.copy( parameters )
         colors = []
         for i in range( 0, int(len( foveas )/2) ):
@@ -235,7 +266,7 @@ class Statistics :
         #output = multifovea.multifoveatedImage( scene, params )
         #cv2.imshow( "multifoveated image", output )
         #cv2.waitKey( 0 )
-        #cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()        
 
         # FPDF
         potentialFromMultifovea = self.weightedFunctionMultifovea( multifovea, params )
@@ -275,65 +306,63 @@ class Statistics :
             return regionUnderAnalysis;
         else :
             print( regionUnderAnalysis )
-            # It will work until regionUnderAnalysis is bigger than 5 x 5
-            if ( regionUnderAnalysis[1][0] > 5 and regionUnderAnalysis[1][1] > 5 ):
-                deltax = regionUnderAnalysis[0][0]; deltay = regionUnderAnalysis[0][1];
-                sizex = regionUnderAnalysis[1][0]; sizey = regionUnderAnalysis[1][1];
+            xmin = regionUnderAnalysis[0][0]; ymin = regionUnderAnalysis[0][1];
+            xmax = regionUnderAnalysis[1][0]; ymax = regionUnderAnalysis[1][1];
+            # It will work until regionUnderAnalysis is bigger than 25 x 25
+            if ( xmax - xmin > int(parameters.w[0]/2) and ymax - ymin > int(parameters.w[1]/2) ):
                 # Chosen point
-                x = random.randint(deltax, deltax + sizex)
-                y = random.randint(deltay, deltay + sizey)
-                #x = random.sample(xrange(deltax, deltax + sizex), 1)
-                #y = random.sample(xrange(deltay, deltay + sizey), 1)
+                x = random.randint(xmin, xmax)
+                y = random.randint(ymin, ymax)
+                print( x, y )
+                cv2.rectangle(scene,(xmin, ymin),(xmax, ymax),(0,255,0),3)
+                cv2.rectangle(scene,(0, 30), (20, 60 ), (100, 100, 0), 2 )
+                cv2.circle(scene, (x, y), 3, (0, 0, 255), -1)
+                cv2.imshow('region', scene)
+                cv2.waitKey( 0 )
+                # Detecting bigger potential
                 index = self.localGradient( [x, y], model, scene, parameters, jump, config )
                 if ( config == 0 ): # index related to up (North), right (EAST), down (SOUTH) and left (WEST)
                     if ( index == 0 ): # top
-                        sizex = x
+                        ymax = y
                     if ( index == 1 ): # right
-                        deltay = y
-                        sizey = sizey - y
+                        xmin = x
                     if ( index == 2 ): # down
-                        deltax = x
-                        sizex = sizex - x
+                        ymin = y;
                     if ( index == 3 ): # left
-                        sizey = y
-                
+                        xmax = x
+                        
                 if ( config == 1 ): # index related to northeast, southeast, southwest and northwest
                     if ( index == 0 ): # notheast
-                        deltay = y
-                        sizex = x; sizey = sizey - y;
+                        xmin = x; ymax = y;
                     if ( index == 1 ): # southeast
-                        deltax = x; sizey = y;
-                        sizex = sizex - x; sizey = sizey - y;
+                        xmin = x; ymin = y;
                     if ( index == 2 ): # southwest
-                        deltax = x
-                        sizex = sizex - x; sizey = y;
+                        xmax = x; ymin = y;
                     if ( index == 3 ): # northwest
-                        sizex = x; sizey = y;
-                
+                        xmax = x; ymax = y;
+
                 if ( config == 2 ):
                     if ( index == 0 ): # top
-                        sizex = x
+                        ymax = y
                     if ( index == 1 ): # notheast
-                        deltay = y
-                        sizex = x; sizey = sizey - y;
+                        xmin = x; ymax = y;
                     if ( index == 2 ): # right
-                        deltay = y
-                        sizey = sizey - y
+                        xmin = x
                     if ( index == 3 ): # southeast
-                        deltax = x; sizey = y;
-                        sizex = sizex - x; sizey = sizey - y;
+                        xmin = x; ymin = y;
                     if ( index == 4 ): # down
-                        deltax = x
-                        sizex = sizex - x
+                        ymin = y;
                     if ( index == 5 ): # southwest
-                        deltax = x
-                        sizex = sizex - x; sizey = y;
+                        xmax = x; ymin = y;
                     if ( index == 6 ): # left
-                        sizey = y
+                        xmax = x
                     if ( index == 7 ): # northwest
-                        sizex = x; sizey = y;
+                        xmax = x; ymax = y;
 
-                regionUnderAnalysis = [ [deltax, deltay], [sizex, sizey] ]
+                cv2.rectangle(scene,(xmin, ymin),(xmax, ymax),(244,255,0),3)
+                cv2.imshow('region', scene)
+                cv2.waitKey( 0 )
+                regionUnderAnalysis = [ [xmin, ymin], [xmax, ymax] ]
                 self.reduceRegionByLocalGradient( model, scene, parameters, regionUnderAnalysis, iterations - 1, jump, config )
 
             else :
@@ -356,126 +385,195 @@ class Statistics :
         - if config == 2, then potentials extracted from 8 regions
         '''
         # Chosen points a and c
-        xa = random.randint(0, parameters.u[0])
-        ya = random.randint(0, parameters.u[1])
-        #xa = random.sample(xrange(0, parameters.u[0]), 1)
-        #ya = random.sample(xrange(0, parameters.u[1]), 1)
-        xc = random.randint(0, parameters.u[0])
-        yc = random.randint(0, parameters.u[1])
-        #xc = random.sample(xrange(0, parameters.u[0]), 1)
-        #yc = random.sample(xrange(0, parameters.u[1]), 1)
+        xa = random.randint(0 + parameters.w[0]/2 + jump, parameters.u[0] - parameters.w[0]/2 - jump)
+        ya = random.randint(0 + parameters.w[1]/2 + jump, parameters.u[1]  - parameters.w[1]/2 - jump)
+        xc = random.randint(0 + parameters.w[0]/2 + jump, parameters.u[0]  - parameters.w[0]/2 - jump)
+        yc = random.randint(0 + parameters.w[1]/2 + jump, parameters.u[1]  - parameters.w[1]/2 - jump)
+        # Finding the potential local
         indexA = self.localGradient( [xa, ya], model, scene, parameters, jump, config )
         indexC = self.localGradient( [xc, yc], model, scene, parameters, jump, config )
+        #print( indexA, indexC )
         # Defining points b and d (Neighbors of the chosen points)
         xb = 0; yb = 0;
         xd = 0; yd = 0;
         if ( config == 0 ):
             # Point B
             if ( indexA == 0 ): # Top
-                xb = xa; yb = ya + jump;
+                xb = xa; yb = ya - jump;
             if ( indexA == 1 ): # Right
                 xb = xa + jump; yb = ya;
             if ( indexA == 2 ): # Down
-                xb = xa; yb = ya - jump;
+                xb = xa; yb = ya + jump;
             if ( indexA == 3 ): # Left
                 xb = xa - jump; yb = ya;
             # Point D
             if ( indexC == 0 ): # Top
-                xd = xc; yd = yc + jump;
+                xd = xc; yd = yc - jump;
             if ( indexC == 1 ): # Right
                 xd = xc + jump; yd = yc;
             if ( indexC == 2 ): # Down
-                xd = xc; yd = yc - jump;
+                xd = xc; yd = yc + jump;
             if ( indexC == 3 ): # Left
                 xd = xc - jump; yd = yc;
         if ( config == 1 ):
             # Point B
             if ( indexA == 0 ): # Northeast
-                xb = xa + jump; yb = ya + jump;
-            if ( indexA == 1 ): # Southeast
                 xb = xa + jump; yb = ya - jump;
+            if ( indexA == 1 ): # Southeast
+                xb = xa + jump; yb = ya + jump;
             if ( indexA == 2 ): # Southwest 
-                xb = xa - jump; yb = ya - jump;
-            if ( indexA == 3 ): # Northwest
                 xb = xa - jump; yb = ya + jump;
+            if ( indexA == 3 ): # Northwest
+                xb = xa - jump; yb = ya - jump;
             # Point D
             if ( indexC == 0 ): # Northeast
-                xd = xc + jump; yd = yc + jump;
-            if ( indexC == 1 ): # Southeast
                 xd = xc + jump; yd = yc - jump;
+            if ( indexC == 1 ): # Southeast
+                xd = xc + jump; yd = yc + jump;
             if ( indexC == 2 ): # Southwest
-                xd = xc - jump; yd = yc - jump;
-            if ( indexC == 3 ): # Northwest
                 xd = xc - jump; yd = yc + jump;
+            if ( indexC == 3 ): # Northwest
+                xd = xc - jump; yd = yc - jump;
         if ( config == 2 ):
             # Point B
             if ( indexA == 0 ): # Top
-                xb = xa; yb = ya + jump;
-            if ( indexA == 0 ): # Northeast
-                xb = xa + jump; yb = ya + jump;
-            if ( indexA == 1 ): # Right
-                xb = xa + jump; yb = ya;
-            if ( indexA == 1 ): # Southeast
-                xb = xa + jump; yb = ya - jump;
-            if ( indexA == 2 ): # Down
                 xb = xa; yb = ya - jump;
-            if ( indexA == 2 ): # Southwest 
-                xb = xa - jump; yb = ya - jump;
-            if ( indexA == 3 ): # Left
-                xb = xa - jump; yb = ya;
-            if ( indexA == 3 ): # Northwest
+            if ( indexA == 1 ): # Northeast
+                xb = xa + jump; yb = ya - jump;
+            if ( indexA == 2 ): # Right
+                xb = xa + jump; yb = ya;
+            if ( indexA == 3 ): # Southeast
+                xb = xa + jump; yb = ya + jump;
+            if ( indexA == 4 ): # Down
+                xb = xa; yb = ya + jump;
+            if ( indexA == 5 ): # Southwest 
                 xb = xa - jump; yb = ya + jump;
+            if ( indexA == 6 ): # Left
+                xb = xa - jump; yb = ya;
+            if ( indexA == 7 ): # Northwest
+                xb = xa - jump; yb = ya - jump;
             # Point D
             if ( indexC == 0 ): # Top
-                xd = xc; yd = yc + jump;
-            if ( indexC == 0 ): # Northeast
-                xd = xc + jump; yd = yc + jump;
-            if ( indexC == 1 ): # Right
-                xd = xc + jump; yd = yc;
-            if ( indexC == 1 ): # Southeast
-                xd = xc + jump; yd = yc - jump;
-            if ( indexC == 2 ): # Down
                 xd = xc; yd = yc - jump;
-            if ( indexC == 2 ): # Southwest
-                xd = xc - jump; yd = yc - jump;
-            if ( indexC == 3 ): # Left
-                xd = xc - jump; yd = yc;
-            if ( indexC == 3 ): # Northwest
+            if ( indexC == 1 ): # Northeast
+                xd = xc + jump; yd = yc - jump;
+            if ( indexC == 2 ): # Right
+                xd = xc + jump; yd = yc;
+            if ( indexC == 3 ): # Southeast
+                xd = xc + jump; yd = yc + jump;
+            if ( indexC == 4 ): # Down
+                xd = xc; yd = yc + jump;
+            if ( indexC == 5 ): # Southwest
                 xd = xc - jump; yd = yc + jump;
-        x = 0.0; y = 0.0;
-        # angular coefficient
-        if ( ( xb - xa != 0 ) or ( xd - xc != 0 ) ):
+            if ( indexC == 6 ): # Left
+                xd = xc - jump; yd = yc;
+            if ( indexC == 7 ): # Northwest
+                xd = xc - jump; yd = yc - jump;
+
+        '''
+        # Display in the image the intersection between lines
+        #xa = 333; ya = 303; xb = 338; yb = 298;
+        #xc = 219; yc = 283; xd = 214; yd = 278;
+        print( xa, ya ); print( xb, yb );
+        print( xc, yc ); print( xd, yd );
+        b = random.randint(0, 255); g = random.randint(0, 255); r = random.randint(0, 255);
+        cv2.line(scene,(xa, ya),(xb, yb),(b,g,r),2)
+        cv2.line(scene,(xc, yc),(xd, yd),(b,g,r),2)
+        cv2.imshow('intersection', scene)
+        cv2.waitKey( 0 )
+        '''
+        
+        '''
+              x    y    1
+        A =   xa   ya   1
+              xb   yb   1
+        det( A ) = 0
+        ( x * ya * 1 ) + ( y * 1 * xb ) + ( xa * yb * 1 ) - ( xb * ya * 1 ) - ( x * yb * 1 ) - ( y * xa * 1 ) = 0
+        xya + yxb + xayb - xbya - xyb - yxa = 0
+        eq1:    x ( ya - yb ) + y ( xb - xa ) = xbya - xayb
+
+              x    y   1
+        C =   xc   yc  1
+              xd   yd  1
+        det( C ) = 0
+        ( x * yc * 1 ) + ( y * 1 * xd ) + ( xc * yd * 1 ) - ( xd * yc * 1 ) - ( x * yd * 1 ) - ( y * xc * 1 ) = 0
+        xyc + yxd + xcyd - xdyc - xyd - yxc = 0
+        eq2:    x ( yc - yd ) + y ( xd - xc ) = xdyc - xcyd
+
+        if ( ya == yb )
+           y = ( xbya - xayb ) / ( xb - xa )
+           x = ( ( xdyc - xcyd ) - y ( xd - xc ) ) / ( yc - yd )
+
+        if ( xb == xa )
+           x = ( xbya - xayb ) / ( ya - yb )
+           y = ( xdyc - xcyd ) - x ( yc - yd ) / ( xd - xc )
+
+        if ( yc == yd )
+           y = ( xdyc - xcyd ) / ( xd - xc )
+           x = ( xbya - xayb ) - y ( xb - xa ) / ( ya - yb )
+
+        if ( xd == xc )
+           x = ( xdyc - xcyd ) / ( yc - yd )
+           y = ( xbya - xayb ) - x ( ya - yb ) / ( xb - xa )
+        
+        '''
+        
+        x = int(parameters.u[0]/2); y = int(parameters.u[1]/2);
+        if ( ( xb - xa != 0.0 ) and ( xd - xc != 0.0 ) ):
+            # angular coefficient
             mA = (yb - ya)/(xb - xa)
             mB = (yd - yc)/(xd - xc)
-            print( mA, mB )
+            #print( mA, mB )
             # linear coefficient
             # y = mx - mx_{1} + y_{1} => y = mx + c
             cA = mA * xa + ya
             cB = mB * xc + yc
             if ( mA == mB ):
+                '''
                 print("Angular coefficients are equals, then parallel ")
                 if ( cA != cB ):
                     print("and distintes lines")
                 if ( cA == cB ):
                     print("and coincident lines")
+                '''
                 # recalculating
-                self.intersectionLocalGradient( model, scene, parameters, jump, config )
+                return self.intersectionLocalGradient( model, scene, parameters, jump, config );
             else:
                 if ( mA * mB == -1 ):
-                    print("Perpendicular lines")
+                    #print("Perpendicular lines")
                     x = ( yc - ya + (mA * xa) - (mB * xc) ) / (mA - mB)
                     y = mA * ( x - xa ) + ya
+                    return x, y
+                
                 if ( ( mA == 0 ) or ( mB == 0 ) ):
-                    print("Vertical parallel line")
+                    #print("Vertical parallel line")
                     x = ( yc - ya + (mA * xa) - (mB * xc) ) / (mA - mB)
                     y = mA * ( x - xa ) + ya
+                    return x, y
+                    # recalculating
+                    #self.intersectionLocalGradient(  model, scene, parameters, jump, config )
+                    
         else:
-            print("Horizontal parallel lines")
-            # recalculating
-            self.intersectionLocalGradient(  model, scene, parameters, jump, config )
+            #print("Horizontal parallel lines")
+            if ( ya == yb ):
+                y = ( xb * ya - xa * yb ) / ( xb - xa )
+                x = ( ( xd * yc - xc * yd ) - y * ( xd - xc ) ) / ( yc - yd )
+                
+            if ( xb == xa ):
+                x = ( xb * ya - xa * yb ) / ( ya - yb )
+                y = ( ( xd * yc - xc * yd ) - x * ( yc - yd ) ) / ( xd - xc )
+            
+            if ( yc == yd ):
+                y = ( xd * yc - xc * yd ) / ( xd - xc )
+                x = ( ( xb * ya - xa * yb ) - y * ( xb - xa ) ) / ( ya - yb )
+                
+            if ( xd == xc ):
+                x = ( xd * yc - xc * yd ) / ( yc - yd )
+                y = ( ( xb * ya - xa * yb ) - x * ( ya - yb ) ) / ( xb - xa )
+        
         return x, y
-
-
+        
+    
     def maximumLikelihoodEstimator( self, model, scene, parameters, threshold,  method ):
         '''
         \fn maximumLikelihoodEstimator( model, scene, parameters, threshold, method )
@@ -665,7 +763,7 @@ class Statistics :
         detectionRateTotal = 0.0
         for d in range( 0, len(potentials) ):
             detectionRateTotal += potentials[d]
-        print( detectionRateTotal )
+        #print( detectionRateTotal )
         # Transforming points to cartesian domain
         pose = []
         for f in range( 0, len(parameters.f), 2 ):
@@ -674,7 +772,7 @@ class Statistics :
         for f in range( 0, len(potentials) ):
             x += ( potentials[f] * pose[f][0] ) / detectionRateTotal
             y += ( potentials[f] * pose[f][1] ) / detectionRateTotal
-        print( x, y )
+        #print( x, y )
         return x, y
 
     
@@ -730,16 +828,17 @@ if __name__ == '__main__':
     #multifovea.multifoveatedMatching( model, params )
     statistics = Statistics()
     #print(statistics.weightedFunctionMultifovea( multifovea, params ))
-    iterations = 1
-    jump = 5
-    config = 1
+    iterations = 10
+    jump = 10
+    config = 2
     delta = [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ]
-    size = [ params.u[0] - int(params.w[0]/2) - jump - delta[0], params.u[1] - int(params.w[1]/2) - jump - delta[1] ]
+    size = [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ]
     region = [ delta, size ]
     #print(statistics.localGradient( [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ], model, scene, params, jump, config))
-    print( statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, config) )
-    #print(statistics.intersectionLocalGradient( model, scene, params, jump, config ))
+    #print(statistics.localGradient( [ 256, 192 ], model, scene, params, jump, config))
+    #print( statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, config ) )
+    #print( statistics.intersectionLocalGradient( model, scene, params, jump, config ) )
     #print( statistics.maximumLikelihoodEstimator( model, scene, params, 0.3, 0 ) )
     #print( statistics.trilaterationEstimator( model, scene, params ) )
     #print( statistics.multilaterationEstimator( model, scene, params ) )
-    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    print( statistics.baricentricCoordinates( model, scene, params ) )
