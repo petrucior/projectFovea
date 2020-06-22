@@ -138,7 +138,7 @@ class Fovea :
     
     def saveFoveatedImage( self, name, img, parameters ):
         '''
-        \fn saveLevels()
+        \fn saveFoveatedImage()
 
         \brief Saves all levels to a PNG file
 
@@ -161,7 +161,7 @@ class Fovea :
         \param parameters - Parameters of fovea structure
         '''
         print('saving images')
-        for k in range(0, len(self.levels)):
+        for k in range(0, len(self.levels) - 1):
             cv2.imwrite( "midia/" + name + str( k ) + ".png", self.levels[k].getLevel( img, parameters ) )
         
 

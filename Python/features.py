@@ -123,7 +123,7 @@ class Features :
                 kpAux, desAux = self.sift.detectAndCompute( imgLevel, None )
                 self.kpSIFT.append( kpAux )
                 self.desSIFT.append( desAux )
-                imgLevelSIFT = cv2.drawKeypoints( imgLevel, self.kpSIFT[k], None, (255,255,255), 4 )
+                imgLevelSIFT = cv2.drawKeypoints( imgLevel, self.kpSIFT[k], None, (0,255,255), 4 )
                 levelsKp.append( imgLevelSIFT )
 
         # Figure shows distribution of the features ORB, KAZE, SURF, AKAZE, BRISK and SIFT by levels
@@ -207,7 +207,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateORB.append( float(inliers/len(mask)) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateORB.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateORB.append( 0.0 )
                 else:
                     self.matchORB.append( 0 )
                     self.inlierRateORB.append( 0 )
@@ -233,7 +237,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateKAZE.append( float(inliers/len(mask)) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateKAZE.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateKAZE.append( 0.0 )
                 else:
                     self.matchKAZE.append( 0 )
                     self.inlierRateKAZE.append( 0 )
@@ -246,7 +254,7 @@ class Features :
                     matches = bf.match(self.desModelSURF, self.desSURF[k])
                     # Sort them in the order of their distance
                     matches = sorted(matches, key = lambda x:x.distance)
-                    matches = matches[:50]
+                    #matches = matches[:50]
                     # Saving matches
                     self.matchSURF.append( matches )
                 
@@ -259,7 +267,12 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateSURF.append( float(inliers/len(mask)) )
+                    #print( "matches: "+ str(len(matches))+", inliers: "+ str(inliers)+", ratio: "+str(float(inliers/len(mask))) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateSURF.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateSURF.append( 0.0 )
                 else:
                     self.matchSURF.append( 0 )
                     self.inlierRateSURF.append( 0 )                    
@@ -285,7 +298,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateAKAZE.append( float(inliers/len(mask)) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateAKAZE.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateAKAZE.append( 0.0 )
                 else:
                     self.matchAKAZE.append( 0 )
                     self.inlierRateAKAZE.append( 0 )
@@ -312,7 +329,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateBRISK.append( float(inliers/len(mask)) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateBRISK.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateBRISK.append( 0.0 )
                 else:
                     self.matchBRISK.append( 0 )
                     self.inlierRateBRISK.append( 0 )
@@ -338,7 +359,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    self.inlierRateSIFT.append( float(inliers/len(mask)) )
+                    #if ( inliers > parameters.thresholdFeatures ):
+                    if ( len(mask) > parameters.thresholdFeatures ):
+                        self.inlierRateSIFT.append( float(inliers/len(mask)) )
+                    else:
+                        self.inlierRateSIFT.append( 0.0 )
                 else:
                     self.matchSIFT.append( 0 )
                     self.inlierRateSIFT.append( 0 )

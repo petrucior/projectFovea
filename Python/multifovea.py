@@ -188,6 +188,7 @@ class Multifovea :
         
     
 #How to instantiate and use this class
+'''
 if __name__ == '__main__':
     params = Parameters('params.yaml')
     model = cv2.imread('../../box.png')
@@ -201,5 +202,5 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
     multifovea.multifoveatedFeatures( scene, params )
     multifovea.multifoveatedMatching( model, params )
-
+'''
 

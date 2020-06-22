@@ -1,4 +1,4 @@
-#!/usr/bin/pythoAn
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 '''
@@ -70,8 +70,6 @@ class Statistics :
         '''
         file = open("data/graph3d.dat", "w")
         stepx = 60; stepy = 60;
-        complete = False
-        savedValue = 0.0
         # loop image
         for i in range( 0, parameters.u[1], stepx ): # rows
             for j in range( 0, parameters.u[0], stepy ): # cols
@@ -84,8 +82,8 @@ class Statistics :
                     #output = fovea.foveatedImage( scene, params )
                     #cv2.imshow( "foveated image", output )
                     #cv2.waitKey( 0 )
-                    fovea.foveatedFeatures( scene, params )
-                    fovea.foveatedMatching( model, params )
+                    fovea.foveatedFeatures( scene, parameters )
+                    fovea.foveatedMatching( model, parameters )
                     file.write(str(fovea.features.inlierRateSURF[k]) + '\t')
                 file.write('\n')
 
@@ -103,8 +101,6 @@ class Statistics :
         '''
         file = open("data/function.dat", "w")
         stepx = 20; stepy = 20;
-        complete = False
-        savedValue = 0.0
         # loop image
         for i in range( 0, parameters.u[1], stepx ): # rows
             for j in range( 0, parameters.u[0], stepy ): # cols
@@ -115,8 +111,8 @@ class Statistics :
                 #output = fovea.foveatedImage( scene, params )
                 #cv2.imshow( "foveated image", output )
                 #cv2.waitKey( 0 )
-                fovea.foveatedFeatures( scene, params )
-                fovea.foveatedMatching( model, params )
+                fovea.foveatedFeatures( scene, parameters )
+                fovea.foveatedMatching( model, parameters )
                 #file.write(str(fovea.features.inlierRateSURF[k]) + '\t')
                 file.write( str(self.weightedFunctionFovea( fovea, parameters )) + '\t' )
                 file.write('\n')
@@ -310,6 +306,9 @@ class Statistics :
             xmax = regionUnderAnalysis[1][0]; ymax = regionUnderAnalysis[1][1];
             # It will work until regionUnderAnalysis is bigger than 25 x 25
             if ( xmax - xmin > int(parameters.w[0]/2) and ymax - ymin > int(parameters.w[1]/2) ):
+                # Debug
+                #x = int(input("posicao x: "))
+                #y = int(input("posicao y: "))
                 # Chosen point
                 x = random.randint(xmin, xmax)
                 y = random.randint(ymin, ymax)
@@ -470,7 +469,7 @@ class Statistics :
             if ( indexC == 7 ): # Northwest
                 xd = xc - jump; yd = yc - jump;
 
-        '''
+        #'''
         # Display in the image the intersection between lines
         #xa = 333; ya = 303; xb = 338; yb = 298;
         #xc = 219; yc = 283; xd = 214; yd = 278;
@@ -481,7 +480,7 @@ class Statistics :
         cv2.line(scene,(xc, yc),(xd, yd),(b,g,r),2)
         cv2.imshow('intersection', scene)
         cv2.waitKey( 0 )
-        '''
+        #'''
         
         '''
               x    y    1
@@ -588,9 +587,9 @@ class Statistics :
         '''
         print("MLE")
         multifovea = Multifovea( parameters.u, parameters )
-        multifovea.multifoveatedFeatures( scene, params )
-        multifovea.multifoveatedMatching( model, params )
-        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        multifovea.multifoveatedFeatures( scene, parameters )
+        multifovea.multifoveatedMatching( model, parameters )
+        potentials = self.weightedFunctionMultifovea( multifovea, parameters )
         # Transforming points to cartesian domain
         pose = []
         for f in range( 0, len(parameters.f), 2 ):
@@ -599,7 +598,7 @@ class Statistics :
         if ( method == 0 ): # Arithmetic mean
             counter = 0
             for i in range( 0, len( potentials ) ):
-                if ( potentials[i] >= threshold ):
+                if ( potentials[i] > threshold ):
                     x += pose[i][0]
                     y += pose[i][1]
                     counter += 1
@@ -610,11 +609,13 @@ class Statistics :
                 y /= counter
         
         if ( method == 1 ): # Weighted average
+            sumPotentials = 0.0
             for i in range( 0, len( potentials ) ):
                 x += pose[i][0] * potentials[i]
                 y += pose[i][1] * potentials[i]
-            x /= len( potentials )
-            y /= len( potentials )
+                sumPotentials += potentials[i]
+            x /= sumPotentials
+            y /= sumPotentials
         
         return x, y
     
@@ -631,9 +632,9 @@ class Statistics :
         '''
         print("Trilateration")
         multifovea = Multifovea( parameters.u, parameters )
-        multifovea.multifoveatedFeatures( scene, params )
-        multifovea.multifoveatedMatching( model, params )
-        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        multifovea.multifoveatedFeatures( scene, parameters )
+        multifovea.multifoveatedMatching( model, parameters )
+        potentials = self.weightedFunctionMultifovea( multifovea, parameters )
         # Descending ordering of potential
         potentialsAux = sorted( potentials, reverse=True )
         potential = potentialsAux[:3]
@@ -688,9 +689,9 @@ class Statistics :
         '''
         print("Multilateration")
         multifovea = Multifovea( parameters.u, parameters )
-        multifovea.multifoveatedFeatures( scene, params )
-        multifovea.multifoveatedMatching( model, params )
-        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        multifovea.multifoveatedFeatures( scene, parameters )
+        multifovea.multifoveatedMatching( model, parameters )
+        potentials = self.weightedFunctionMultifovea( multifovea, parameters )
         # Inverse of detection rate
         invpotential = []
         for i in range( 0, len( potentials ) ):
@@ -757,9 +758,9 @@ class Statistics :
         '''
         print("Weighted Barycentric Coordinates")
         multifovea = Multifovea( parameters.u, parameters )
-        multifovea.multifoveatedFeatures( scene, params )
-        multifovea.multifoveatedMatching( model, params )
-        potentials = self.weightedFunctionMultifovea( multifovea, params )
+        multifovea.multifoveatedFeatures( scene, parameters )
+        multifovea.multifoveatedMatching( model, parameters )
+        potentials = self.weightedFunctionMultifovea( multifovea, parameters )
         detectionRateTotal = 0.0
         for d in range( 0, len(potentials) ):
             detectionRateTotal += potentials[d]
@@ -774,8 +775,80 @@ class Statistics :
             y += ( potentials[f] * pose[f][1] ) / detectionRateTotal
         #print( x, y )
         return x, y
+    
+
+    def displayConfigurations( self, model, scene, parameters, poseEstimated ):
+        '''
+        \fn displayConfigurations( model, scene, parameters, poseEstimated )
+        
+        \brief Displaying the configurations
+        
+        \param model - Template that represent the visual stimulli
+        \param scene - Scene to be foveated
+        \param parameters - Parameters of fovea structure
+        \param poseEstimated - Pose of localization estimated
+        '''
+        multifovea = Multifovea( parameters.u, parameters )
+        multifovea.multifoveatedFeatures( scene, parameters )
+        multifovea.multifoveatedMatching( model, parameters )
+        fpdf = statistics.weightedFunctionMultifovea( multifovea, parameters )
+        #print( fpdf )
+        output = multifovea.multifoveatedImage( scene, parameters )
+        for i in range( 0, int(len( parameters.f )/2) ):
+            cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(parameters.f[i*2] + u[0]/2 - 30), int(parameters.f[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [parameters.colors[i*3], parameters.colors[i*3+1], parameters.colors[i*3 + 2]], 2 )
+        if (( poseEstimated[0] != -1 ) and ( poseEstimated[1] != -1 ) ):
+            # Radius of circle 
+            radius = 5
+            # Blue color in BGR 
+            color = (0, 0, 255)
+            # Line thickness of 1 px 
+            thickness = 2
+            # put the point estimated
+            cv2.circle( output, (int(poseEstimated[0]), int(poseEstimated[1])), radius, color, thickness )
+        cv2.imshow( "multifoveated image with 4 foveas", output )
+        cv2.waitKey( 0 )
+        #cv2.destroyAllWindows()
 
     
+    def findMaximum(  self, model, scene, parameters, array ):
+        '''
+        \fn findMaximum( array )
+        
+        \brief Finding the higher fpdf value of foveas
+        
+        \param model - Template that represent the visual stimulli
+        \param scene - Scene to be foveated
+        \param parameters - Parameters of fovea structure
+        \param array - Contains in each position 3 foveas that are distributed in a triangle
+        
+        \return Position of maximum configuration
+        '''
+        params = copy.copy(parameters)
+        multifovea = Multifovea( parameters.u, params )
+        multifovea.multifoveatedFeatures( scene, params )
+        multifovea.multifoveatedMatching( model, params )
+        fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+        #print( fpdf )
+        indexSave = 0; biggerSum = 0.0;
+        for index in range( 0, len( array ) ):
+            sumAux = 0.0;
+            for indexAux in range( 0, len( array[index] ) ):
+                sumAux += fpdf[ array[index][indexAux] ]
+            if ( biggerSum < sumAux ):
+                biggerSum = sumAux
+                indexSave = index
+        # Using only 3 foveas
+        foveas = []; colors = [];
+        for i in range( 0, len( array[indexSave] ) ):
+            foveas.append( params.f[ 2 * array[indexSave][i] ] )
+            foveas.append( params.f[ 2 * array[indexSave][i] + 1 ] )
+            colors.append( params.colors[ 3 * array[indexSave][i] ] )
+            colors.append( params.colors[ 3 * array[indexSave][i] + 1 ] )
+            colors.append( params.colors[ 3 * array[indexSave][i] + 2 ] )
+        #print( foveas )
+        params.updateParameterFoveas( foveas, colors )
+        return params
+                
         
 #How to instantiate and use this class
 if __name__ == '__main__':
@@ -816,7 +889,8 @@ if __name__ == '__main__':
     statistics.weightedFunctionFovea( fovea, params )
     cv2.destroyAllWindows()
     '''
-    
+
+    '''
     params = Parameters('params.yaml')
     model = cv2.imread('../../box.png')
     scene = cv2.imread('../../box_in_scene.png')
@@ -842,3 +916,295 @@ if __name__ == '__main__':
     #print( statistics.trilaterationEstimator( model, scene, params ) )
     #print( statistics.multilaterationEstimator( model, scene, params ) )
     print( statistics.baricentricCoordinates( model, scene, params ) )
+    '''
+
+    '''
+    # First code
+    # 0. Display Model and Scene
+    # 1. Display Multirresolution Domain
+    # 2. Features Detection
+    # 3. Detecting Problems In Step 2
+    # 4. Minimum Fovea Size To Solve Step 2
+    
+    # Getting parameters, model and scene
+    params = Parameters('params.yaml')
+    model = cv2.imread('../../box.png')
+    scene = cv2.imread('../../box_in_scene.png')
+    # Updateing size of scene
+    rows,cols = scene.shape[:2]
+    u = [ cols, rows ]
+    params.updateParameterSizeImage( u )
+    # Creating fovea
+    fovea = Fovea( u, params )
+    
+    # Display Model and Scene
+    cv2.imshow( "Model", model )
+    cv2.imshow( "Scene", scene )
+    cv2.waitKey( 0 )
+
+    # Display Multirresolution Domain
+    output = fovea.foveatedImage( scene, params )
+    cv2.imshow( "fovea", output ) 
+    cv2.waitKey( 0 )
+    fovea.saveLevels( "nivel", scene, params )
+    cv2.waitKey( 0 )
+
+    # Features Detection
+    fovea.foveatedFeatures( scene, params )
+    
+    
+    # Second Code
+    # 1. Proportion of Inliers by Level
+    # 2. Detection Probability Density Function
+    
+    # Features Matches
+    fovea.features.matchingFeatures( model, params )
+
+    # Starting Statistics
+    statistics = Statistics()
+
+    # Proportion of Inliers by Level
+    print("Ploting proportion")
+    statistics.plotProportion( model, scene, fovea, params )
+
+    # Detection Probability Density Function
+    print("Building FPDF")
+    statistics.plotFunction( model, scene, fovea, params )
+
+    
+    # Destroy all windows
+    cv2.destroyAllWindows()
+    '''
+    
+    '''
+    # Third Code
+    # 1. Calculating and Displaying the Results of reduceRegion and intersectionPotential
+    
+    # Getting parameters, model and scene
+    params = Parameters('params.yaml')
+    model = cv2.imread('../../box.png')
+    scene = cv2.imread('../../box_in_scene.png')
+    # Updateing size of scene
+    rows,cols = scene.shape[:2]
+    u = [ cols, rows ]
+    params.updateParameterSizeImage( u )
+
+    # Starting Statistics
+    statistics = Statistics()
+    
+    # Configurations
+    iterations = 10
+    jump = 15
+    config = 2
+    delta = [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ]
+    size = [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ]
+    region = [ delta, size ]
+
+    #print( statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, config ) )
+    #print( statistics.intersectionLocalGradient( model, scene, params, jump, config ) )
+    '''
+
+    #'''
+    # Fourth Code
+    # 1. Displaying the 4 configurations
+    # 2. Calculating and Displaying the MLE
+    # 3. Calculating and Displaying the trilateration and multilateration
+    # 4. Calculating and Displaying the Barycentric coordinates
+
+    # Getting parameters, model and scene
+    params = Parameters('params.yaml')
+    model = cv2.imread('../../box.png')
+    scene = cv2.imread('../../box_in_scene.png')
+    # Updateing size of scene
+    rows,cols = scene.shape[:2]
+    u = [ cols, rows ]
+    params.updateParameterSizeImage( u )
+
+    # Starting Statistics
+    statistics = Statistics()
+
+    # ---------------------------
+    # Configuracao com 4 foveas
+    # ---------------------------
+    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+
+    #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.15, 0 )
+    #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.0, 1 )
+    parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 3], [1, 2, 3], [0, 2, 3], [0, 1, 2] ] )
+    pose = statistics.trilaterationEstimator( model, scene, parameters )
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    statistics.displayConfigurations( model, scene, params, pose )
+    #print( statistics.findMaximum( model, scene, params, [[0]] ) )
+
+    # ---------------------------
+    # Configuracao com 5 foveas
+    # ---------------------------
+    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0, 0.0, 0.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+
+    #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.0, 1 )
+    pose = statistics.trilaterationEstimator( model, scene, params )
+    pose = [-1, -1]
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    statistics.displayConfigurations( model, scene, params, pose )
+
+    # ---------------------------
+    # Configuracao com 6 foveas
+    # ---------------------------
+    foveas = [ -170.0, -96.0, 0.0, -96.0, 170.0, -96.0, 170.0, 96.0, 0.0, 96.0, -170.0, 96.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+
+    #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.0, 1 )
+    pose = statistics.trilaterationEstimator( model, scene, params )
+    pose = [-1, -1]
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    statistics.displayConfigurations( model, scene, params, pose )
+
+    # ---------------------------
+    # Configuracao com 9 foveas
+    # ---------------------------
+    foveas = [ -170.0, -128.0, 0.0, -128.0, 170.0, -128.0, 170.0, 0.0, 0.0, 0.0, -170.0, 0.0, -170.0, 128.0, 0.0, 128.0, 170.0, 128.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+    
+    #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.0, 1 )
+    pose = statistics.trilaterationEstimator( model, scene, params )
+    pose = [-1, -1]
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    statistics.displayConfigurations( model, scene, params, pose )
+    
+    cv2.destroyAllWindows()
+    #'''
+    
+    '''
+    # Configuracao com 4 Foveas
+    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+    
+    print( statistics.maximumLikelihoodEstimator( model, scene, params, 0, 1 ) )
+    #print( statistics.trilaterationEstimator( model, scene, params ) )
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    
+    multifovea = Multifovea( u, params )
+    multifovea.multifoveatedFeatures( scene, params )
+    multifovea.multifoveatedMatching( model, params )
+    fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+    output = multifovea.multifoveatedImage( scene, params )
+    for i in range( 0, int(len( foveas )/2) ):
+        cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(foveas[i*2] + u[0]/2 - 30), int(foveas[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [colors[i*3], colors[i*3+1], colors[i*3 + 2]], 1 )
+    cv2.imshow( "multifoveated image", output )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()
+    '''
+    
+    '''
+    # Configuracao com 5 Foveas
+    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0, 0.0, 0.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+    
+    print( statistics.maximumLikelihoodEstimator( model, scene, params, 0.5, 1 ) )
+    #print( statistics.trilaterationEstimator( model, scene, params ) )
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    
+    multifovea = Multifovea( u, params )
+    multifovea.multifoveatedFeatures( scene, params )
+    multifovea.multifoveatedMatching( model, params )
+    fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+    output = multifovea.multifoveatedImage( scene, params )
+    for i in range( 0, int(len( foveas )/2) ):
+        cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(foveas[i*2] + u[0]/2 - 30), int(foveas[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [colors[i*3], colors[i*3+1], colors[i*3 + 2]], 1 )
+    cv2.imshow( "multifoveated image", output )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()
+    '''
+
+    '''
+    # Configuracao com 6 Foveas
+    foveas = [ -170.0, -96.0, 0.0, -96.0, 170.0, -96.0, 170.0, 96.0, 0.0, 96.0, -170.0, 96.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+    
+    print( statistics.maximumLikelihoodEstimator( model, scene, params, 0.5, 1 ) )
+    #print( statistics.trilaterationEstimator( model, scene, params ) )
+    #print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    
+    multifovea = Multifovea( u, params )
+    multifovea.multifoveatedFeatures( scene, params )
+    multifovea.multifoveatedMatching( model, params )
+    fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+    output = multifovea.multifoveatedImage( scene, params )
+    for i in range( 0, int(len( foveas )/2) ):
+        cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(foveas[i*2] + u[0]/2 - 30), int(foveas[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [colors[i*3], colors[i*3+1], colors[i*3 + 2]], 1 )
+    cv2.imshow( "multifoveated image", output )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()
+    '''
+
+    '''
+    # Configuracao com 9 Foveas
+    foveas = [ -170.0, -128.0, 0.0, -128.0, 170.0, -128.0, 170.0, 0.0, 0.0, 0.0, -170.0, 0.0, -170.0, 128.0, 0.0, 128.0, 170.0, 128.0 ]
+    colors = []
+    for i in range( 0, int(len( foveas )/2) ):
+        colors.append( random.randint(0, 255) ) # blue
+        colors.append( random.randint(0, 255) ) # green
+        colors.append( random.randint(0, 255) ) # red
+    params.updateParameterFoveas( foveas, colors )
+    
+    print( statistics.maximumLikelihoodEstimator( model, scene, params, 0.0, 0 ) )
+    #print( statistics.trilaterationEstimator( model, scene, params ) )
+    print( statistics.multilaterationEstimator( model, scene, params ) )
+    #print( statistics.baricentricCoordinates( model, scene, params ) )
+    
+    multifovea = Multifovea( u, params )
+    multifovea.multifoveatedFeatures( scene, params )
+    multifovea.multifoveatedMatching( model, params )
+    fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+    print( fpdf )
+    output = multifovea.multifoveatedImage( scene, params )
+    for i in range( 0, int(len( foveas )/2) ):
+        cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(foveas[i*2] + u[0]/2 - 30), int(foveas[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [colors[i*3], colors[i*3+1], colors[i*3 + 2]], 1 )
+    cv2.imshow( "multifoveated image", output )
+    cv2.waitKey( 0 )
+    cv2.destroyAllWindows()
+    '''

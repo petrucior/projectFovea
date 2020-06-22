@@ -67,6 +67,7 @@ class Parameters:
             
             # Features
             self.features = data['features'] # features = [ ORB, KAZE, SURF, AKAZE, BRISK, SIFT ] ( binary vector )
+            self.thresholdFeatures = data['thresholdFeatures']
             
             # ORB configuration
             self.orb_nfeatures = data['orb_nfeatures']
