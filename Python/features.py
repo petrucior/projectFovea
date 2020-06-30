@@ -267,10 +267,11 @@ class Features :
                     for i in range(0, len(mask)):
                         if ( mask[i] == 1 ):
                             inliers += 1
-                    #print( "matches: "+ str(len(matches))+", inliers: "+ str(inliers)+", ratio: "+str(float(inliers/len(mask))) )
                     #if ( inliers > parameters.thresholdFeatures ):
                     if ( len(mask) > parameters.thresholdFeatures ):
                         self.inlierRateSURF.append( float(inliers/len(mask)) )
+#                        print( "matches: "+ str(len(matches))+", inliers: "+ str(inliers)+", ratio: "+str(float(inliers/len(mask))) )
+
                     else:
                         self.inlierRateSURF.append( 0.0 )
                 else:

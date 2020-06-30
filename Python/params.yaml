@@ -19,7 +19,7 @@ smallestLevel: [ 120, 120 ]
 #colors: [ 0, 0, 255,     255, 0, 0,     0, 255, 0,     0, 255, 255,        255, 0, 255 ] # B G R
 foveas: [0, 0]
 colors: [255, 255, 255]
-bvector: [ 1, 1, 1, 1 ]
+bvector: [ 1, 1, 1, 1]
 etavector: [ 4, 3, 2, 1 ]
 levelvector: [ 0, 1, 2, 3 ]
 #nOctaveLayers: 3
@@ -30,7 +30,9 @@ typeFovea: 0
 typeMultifovea: 0
 
 features: [0, 0, 1, 0, 0, 0] # [ORB, KAZE, SURF, AKAZE, BRISK, SIFT]
-thresholdFeatures: 50
+#thresholdFeatures: 50
+#thresholdFeatures: 78
+thresholdFeatures: 62
 
 # Features Configuration
 # ORB configuration
