@@ -93,7 +93,7 @@ class Multifovea :
             colors.append( color )
         p.f = px[index]
         p.colors = colors[index]
-        self.fovea[index].updateFovea( p )
+        self.foveas[index].updateFovea( p )
         
         
     def multifoveatedFeatures( self, img, parameters ):

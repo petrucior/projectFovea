@@ -1085,7 +1085,11 @@ if __name__ == '__main__':
     params = Parameters('params.yaml')
     model = cv2.imread('../../box.png')
     scene = cv2.imread('../../box_in_scene.png')
-    # Updateing size of scene
+    cv2.imshow( "Model", model )
+    cv2.imshow( "Scene", scene )
+    cv2.waitKey( 0 )
+
+    # Updating size of scene
     rows,cols = scene.shape[:2]
     u = [ cols, rows ]
     params.updateParameterSizeImage( u )

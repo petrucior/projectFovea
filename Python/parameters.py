@@ -151,11 +151,11 @@ class Parameters:
 
         \brief Fix the fovea position: if fovea is outsite image domain, snap it to the closest valid position independently for each coordinate
         '''
-        self.f[0] = min((self.u[0] - self.w[0])/2, self.f[0])
-        self.f[0] = max((self.w[0] - self.u[0])/2, self.f[0])
-        self.f[1] = min((self.u[1] - self.w[1])/2, self.f[1])
-        self.f[1] = max((self.w[1] - self.u[1])/2, self.f[1])
-        
+        for i in range( 0, int(len(self.f)/2) ):
+            self.f[2*i] = min((self.u[0] - self.w[0])/2, self.f[2*i])
+            self.f[2*i] = max((self.w[0] - self.u[0])/2, self.f[2*i])
+            self.f[(2*i)+1] = min((self.u[1] - self.w[1])/2, self.f[(2*i)+1])
+            self.f[(2*i)+1] = max((self.w[1] - self.u[1])/2, self.f[(2*i)+1])        
     
     def setFovea( self, px ):
         '''
