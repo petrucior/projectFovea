@@ -55,7 +55,6 @@ class Statistics :
         \brief Constructor default
         '''
         print("Welcome to class of data manipulation")
-        
 
     def plotProportion( self, model, scene, fovea, parameters ):
         '''
@@ -586,7 +585,7 @@ class Statistics :
         \param threshold - Threshold is a potential limiter
         \param method - Arithmetic mean (0) and weighted average (1)
         '''
-        print("MLE")
+        #print("MLE")
         multifovea = Multifovea( parameters.u, parameters )
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
@@ -631,7 +630,7 @@ class Statistics :
         \param scene - Scene to be foveated
         \param parameters - Parameters of fovea structure
         '''
-        print("Trilateration")
+        #print("Trilateration")
         multifovea = Multifovea( parameters.u, parameters )
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
@@ -664,11 +663,12 @@ class Statistics :
         
         # Circumference radius
         r = []
-        for i in range( 0, len(potential) ):
+        r = [0, 80, 80]
+        #for i in range( 0, len(potential) ):
             # first way
             #r.append( (self.euclideanDistance * self.potentialDifference) / potential[i] )
             # second way
-            r.append( (1.0 - potential[i]) * self.euclideanDistance )
+            #r.append( (1.0 - potential[i]) * self.euclideanDistance )
         #print( r )
 
         #'''
@@ -696,9 +696,7 @@ class Statistics :
         x = ((c * e) - (b * f)) / den
         y = ((a * f) - (c * d)) / den
         
-        return x, y
-
-    
+        return x, y    
     
     def calcArea( self, points ):
         '''
@@ -722,7 +720,7 @@ class Statistics :
         \param scene - Scene to be foveated
         \param parameters - Parameters of fovea structure
         '''
-        print("Multilateration")
+        #print("Multilateration")
         multifovea = Multifovea( parameters.u, parameters )
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
@@ -821,7 +819,7 @@ class Statistics :
         \param scene - Scene to be foveated
         \param parameters - Parameters of fovea structure
         '''
-        print("Weighted Barycentric Coordinates")
+        #print("Weighted Barycentric Coordinates")
         multifovea = Multifovea( parameters.u, parameters )
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
@@ -860,11 +858,11 @@ class Statistics :
         multifovea = Multifovea( parameters.u, parameters )
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
-        fpdf = statistics.weightedFunctionMultifovea( multifovea, parameters )
+        fpdf = self.weightedFunctionMultifovea( multifovea, parameters )
         #print( fpdf )
         output = multifovea.multifoveatedImage( scene, parameters )
         for i in range( 0, int(len( parameters.f )/2) ):
-            cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(parameters.f[i*2] + u[0]/2 - 30), int(parameters.f[i*2 + 1] + u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [parameters.colors[i*3], parameters.colors[i*3+1], parameters.colors[i*3 + 2]], 2 )
+            cv2.putText( output, "f"+str(i)+": "+str(round(fpdf[i], 2)), ( int(parameters.f[i*2] + parameters.u[0]/2 - 30), int(parameters.f[i*2 + 1] + parameters.u[1]/2) ), cv2.FONT_HERSHEY_PLAIN, 1.0, [parameters.colors[i*3], parameters.colors[i*3+1], parameters.colors[i*3 + 2]], 2 )
         if (( poseEstimated[0] != -1 ) and ( poseEstimated[1] != -1 ) ):
             # Radius of circle 
             radius = 5
@@ -919,9 +917,49 @@ class Statistics :
         params.updateParameterFoveas( foveas, colors )
         return params
                 
+    def poseFoveas(  self, parameters, config ):
+        '''
+        \fn poseFoveas( parameters, config )
         
+        \brief Defining the position of foveas based on defined configuration
+        
+        \param parameters - Parameters of fovea structure
+        \param config - Configuration (0) with 4 foveas, (1) 5 foveas, (2) 6 foveas and (3) 9 foveas
+        '''
+        scale = [ [4, 4],
+                  [4, 4],
+                  [6, 4],
+                  [6, 6] ]
+        jump = [ [2, 2],
+                 [2, 1],
+                 [2, 2],
+                 [2, 2] ]
+        distpointsx = int(parameters.u[0]/scale[config][0]); distpointsy = int(parameters.u[1]/scale[config][1]);
+        foveas = []
+        for j in range( distpointsy, parameters.u[1], jump[config][1] * distpointsy ):
+            for i in range( distpointsx, parameters.u[0], jump[config][0] * distpointsx ):
+                if ( ( config == 1 ) and ( j == parameters.u[1]/2 ) ):
+                    i = int(parameters.u[0]/2)
+                foveas.append( (i - math.floor( parameters.u[0]/2 )) )
+                foveas.append( (j - math.floor( parameters.u[1]/2 )) )
+            if ( ( config == 1 ) and ( j == parameters.u[1]/2 ) ):
+                foveas.pop(); foveas.pop(); # removing x and y
+                
+        #print( foveas )
+        colors = []
+        for i in range( 0, int(len( foveas )/2) ):
+            colors.append( random.randint(0, 255) ) # blue
+            colors.append( random.randint(0, 255) ) # green
+            colors.append( random.randint(0, 255) ) # red
+        parameters.updateParameterFoveas( foveas, colors )
+        
+        return parameters
+        
+        
+    
+    
 #How to instantiate and use this class
-if __name__ == '__main__':
+#if __name__ == '__main__':
     '''
     params = Parameters('params.yaml')
     model = cv2.imread('../../box.png')
@@ -1074,7 +1112,7 @@ if __name__ == '__main__':
     #print( statistics.intersectionLocalGradient( model, scene, params, jump, config ) )
     '''
 
-    #'''
+    '''
     # Fourth Code
     # 1. Displaying the 4 configurations
     # 2. Calculating and Displaying the MLE
@@ -1085,9 +1123,9 @@ if __name__ == '__main__':
     params = Parameters('params.yaml')
     model = cv2.imread('../../box.png')
     scene = cv2.imread('../../box_in_scene.png')
-    cv2.imshow( "Model", model )
-    cv2.imshow( "Scene", scene )
-    cv2.waitKey( 0 )
+    #cv2.imshow( "Model", model )
+    #cv2.imshow( "Scene", scene )
+    #cv2.waitKey( 0 )
 
     # Updating size of scene
     rows,cols = scene.shape[:2]
@@ -1096,18 +1134,19 @@ if __name__ == '__main__':
 
     # Starting Statistics
     statistics = Statistics()
-    #'''
+    
     # ---------------------------
     # Configuracao com 4 foveas
     # ---------------------------
-    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0 ]
-    colors = []
-    for i in range( 0, int(len( foveas )/2) ):
-        colors.append( random.randint(0, 255) ) # blue
-        colors.append( random.randint(0, 255) ) # green
-        colors.append( random.randint(0, 255) ) # red
-    params.updateParameterFoveas( foveas, colors )
-
+    params = statistics.poseFoveas( params, 0 )
+    #foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0 ]
+    #colors = []
+    #for i in range( 0, int(len( foveas )/2) ):
+    #    colors.append( random.randint(0, 255) ) # blue
+    #    colors.append( random.randint(0, 255) ) # green
+    #    colors.append( random.randint(0, 255) ) # red
+    #params.updateParameterFoveas( foveas, colors )
+    
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.12, 1 )
     parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 3], [1, 2, 3], [0, 2, 3], [0, 1, 2] ] )
@@ -1120,14 +1159,15 @@ if __name__ == '__main__':
     # ---------------------------
     # Configuracao com 5 foveas
     # ---------------------------
-    foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0, 0.0, 0.0 ]
-    colors = []
-    for i in range( 0, int(len( foveas )/2) ):
-        colors.append( random.randint(0, 255) ) # blue
-        colors.append( random.randint(0, 255) ) # green
-        colors.append( random.randint(0, 255) ) # red
-    params.updateParameterFoveas( foveas, colors )
-
+    params = statistics.poseFoveas( params, 1 )
+    #foveas = [  -128.0, -96.0, 128.0, -96.0, 128.0, 96.0, -128.0, 96.0, 0.0, 0.0 ]
+    #colors = []
+    #for i in range( 0, int(len( foveas )/2) ):
+    #    colors.append( random.randint(0, 255) ) # blue
+    #    colors.append( random.randint(0, 255) ) # green
+    #    colors.append( random.randint(0, 255) ) # red
+    #params.updateParameterFoveas( foveas, colors )
+    
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.12, 1 )
     parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 4], [1, 2, 4], [2, 3, 4], [0, 3, 4] ] )
@@ -1136,18 +1176,19 @@ if __name__ == '__main__':
     #parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 4], [1, 2, 4], [2, 3, 4], [0, 3, 4] ] )
     #pose = statistics.barycentricCoordinates( model, scene, parameters )
     statistics.displayConfigurations( model, scene, params, pose )
-
+    
     # ---------------------------
     # Configuracao com 6 foveas
     # ---------------------------
-    foveas = [ -170.0, -96.0, 0.0, -96.0, 170.0, -96.0, 170.0, 96.0, 0.0, 96.0, -170.0, 96.0 ]
-    colors = []
-    for i in range( 0, int(len( foveas )/2) ):
-        colors.append( random.randint(0, 255) ) # blue
-        colors.append( random.randint(0, 255) ) # green
-        colors.append( random.randint(0, 255) ) # red
-    params.updateParameterFoveas( foveas, colors )
-
+    params = statistics.poseFoveas( params, 2 )
+    #foveas = [ -170.0, -96.0, 0.0, -96.0, 170.0, -96.0, 170.0, 96.0, 0.0, 96.0, -170.0, 96.0 ]
+    #colors = []
+    #for i in range( 0, int(len( foveas )/2) ):
+    #    colors.append( random.randint(0, 255) ) # blue
+    #    colors.append( random.randint(0, 255) ) # green
+    #    colors.append( random.randint(0, 255) ) # red
+    #params.updateParameterFoveas( foveas, colors )
+    
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.12, 1 )
     parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 4], [0, 4, 5], [1, 4, 5], [0, 1, 5], [1, 2, 3], [1, 3, 4], [1, 2, 4], [2, 3, 4] ] )
@@ -1156,18 +1197,19 @@ if __name__ == '__main__':
     #parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 4], [0, 4, 5], [1, 4, 5], [0, 1, 5], [1, 2, 3], [1, 3, 4], [1, 2, 4], [2, 3, 4] ] )
     #pose = statistics.barycentricCoordinates( model, scene, parameters )
     statistics.displayConfigurations( model, scene, params, pose )
-
+    
     # ---------------------------
     # Configuracao com 9 foveas
     # ---------------------------
-    foveas = [ -170.0, -128.0, 0.0, -128.0, 170.0, -128.0, 170.0, 0.0, 0.0, 0.0, -170.0, 0.0, -170.0, 128.0, 0.0, 128.0, 170.0, 128.0 ]
-    colors = []
-    for i in range( 0, int(len( foveas )/2) ):
-        colors.append( random.randint(0, 255) ) # blue
-        colors.append( random.randint(0, 255) ) # green
-        colors.append( random.randint(0, 255) ) # red
-    params.updateParameterFoveas( foveas, colors )
-
+    params = statistics.poseFoveas( params, 3 )
+    #foveas = [ -170.0, -128.0, 0.0, -128.0, 170.0, -128.0, 170.0, 0.0, 0.0, 0.0, -170.0, 0.0, -170.0, 128.0, 0.0, 128.0, 170.0, 128.0 ]
+    #colors = []
+    #for i in range( 0, int(len( foveas )/2) ):
+    #    colors.append( random.randint(0, 255) ) # blue
+    #    colors.append( random.randint(0, 255) ) # green
+    #    colors.append( random.randint(0, 255) ) # red
+    #params.updateParameterFoveas( foveas, colors )
+    
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
     #pose = statistics.maximumLikelihoodEstimator( model, scene, params, 0.12, 1 )
     parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 4], [0, 4, 5], [1, 4, 5], [0, 1, 5], [1, 2, 3], [1, 3, 4], [1, 2, 4], [2, 3, 4], [5, 4, 7], [5, 6, 7], [4, 6, 7], [4, 5, 6], [3, 4, 8], [4, 7, 8], [3, 4, 7], [3, 7, 8] ] )
@@ -1186,5 +1228,5 @@ if __name__ == '__main__':
 #    statistics.displayConfigurations( model, scene, params, pose )
 
     cv2.destroyAllWindows()
-    #'''
+    '''
     
