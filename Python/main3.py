@@ -4,7 +4,8 @@
 '''
 \file main2.py
 
-\brief This file executable to multifovea structure
+\brief This file executable to multifovea structure and contains the proposed 
+approaches.
 
 \author
 Petrucio Ricardo Tavares de Medeiros \n
@@ -27,11 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import cv2
-import sys, os
+import sys
 import numpy as np
+import os
 from parameters import Parameters
 from fovea import Fovea
 from multifovea import Multifovea
+from statistics import Statistics
 
 class Structure:
     def __init__( self, parameters, multifovea ):
@@ -40,7 +43,7 @@ class Structure:
         self.indexFovea = 0
 
     def updateFovea( self ):
-        if ( self.indexFovea + 1 < int( len(self.parameters.f)/2) ):
+        if ( self.indexFovea + 1 <= int( len(self.parameters.f)/2) ):
             self.indexFovea += 1
         else:
             self.indexFovea = 0
@@ -63,48 +66,59 @@ def callback( event, x, y, flags, structure ):
     position = [ x - (structure.parameters.u[0]/2), y - (structure.parameters.u[1]/2) ]
     structure.update( position )
 
-
+    
 def main():
     arguments = sys.argv[1:]
     if ( len( arguments ) != 3 ):
-        print ('python main.py ''< model >'' ''< scene >'' ''<yaml>'' ')
-        print ('Example: python main.py ~/box.png ~/box_in_scene.png fovea.yaml')
+        print ('python main.py ''< model >'' ''< dataset >'' ''<yaml>'' ')
+        print ('Example: python main.py ~/<model> ~/<scene> params.yaml')
     else:
         model = cv2.imread( arguments[0] )
         scene = cv2.imread( arguments[1] )
-        params = Parameters( arguments[2] )        
-        rows, cols = scene.shape[:2]
-        u = [ cols, rows ]
-        multifovea = Multifovea( u, params )
+        params = Parameters( arguments[2] )
         
-        structure = Structure( params, multifovea )
+        # Starting Statistics
+        statistics = Statistics()
         
         winname = 'image foveated'
         cv2.namedWindow( winname )
-        while ( True ):
-            # bind the callback function to window
-            cv2.setMouseCallback( winname, callback, structure )
-            output = multifovea.multifoveatedImage( scene, params )
-            cv2.imshow( winname, output ) 
-            key = cv2.waitKey( 2 )
-            if ( key == ord('q') ):
-                break
-            
-            #'''
-            # Controls from fovea
-            if ( key == ord('d') ):
-                params.w[0] = min( params.u[0], params.w[0] + 10 )
-            if ( key == ord('a') ):
-                params.w[0] = max( 1, params.w[0] - 10 )
-            if ( key == ord('c') ):
-                params.w[1] = min( params.u[1] - 1, params.w[1] + 10 )
-            if ( key == ord('z') ):
-                params.w[1] = max( 1, params.w[1] - 10 )
-            if ( key == ord('m') ):
-                structure.updateFovea()                
-            #'''
-                
-            
+        
+        # Updating size of scene
+        rows, cols = scene.shape[:2]
+        u = [ cols, rows ]
+        params.updateParameterSizeImage( u )
+        
+        # Configuration with 4 foveas ( config 0 )
+        params = statistics.poseFoveas( params, 0 )
+        parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 2], [1, 2, 3], [0, 2, 3], [0, 1, 3] ] )
+        pose = statistics.trilaterationEstimator( model, scene, parameters ) 
+        #poseMLE0 = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
+        #statistics.displayConfigurations( model, scene, params, pose )
+        
+        # Configuration with 5 foveas ( config 1 )
+        #params = statistics.poseFoveas( params, 1 )
+        #parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 2], [0, 2, 3], [1, 2, 4], [2, 3, 4] ] )
+        #pose = statistics.trilaterationEstimator( model, scene, parameters ) 
+        #poseMLE1 = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
+        #statistics.displayConfigurations( model, scene, params, pose )   
+        
+        # Configuration with 6 foveas ( config 2 )
+        #params = statistics.poseFoveas( params, 2 )
+        #parameters = statistics.findMaximum( model, scene, params, [ [0, 1, 2], [0, 2, 3], [1, 2, 4], [2, 3, 4] ] )
+        #pose = statistics.trilaterationEstimator( model, scene, parameters ) 
+        #poseMLE2 = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
+        #statistics.displayConfigurations( model, scene, params, [-1, -1] )   
+        
+        # Configuration with 9 foveas ( config 3 )
+        #params = statistics.poseFoveas( params, 3 )
+        #poseMLE3 = statistics.maximumLikelihoodEstimator( model, scene, params, 0.1, 0 )
+        
+        #print("MLE: "+str(poseMLE0)+" "+str(poseMLE1)+" "+str(poseMLE2)+" "+str(poseMLE3))
+        
+        #multifovea = Multifovea( u, params )
+        #output = multifovea.multifoveatedImage( scene, params )
+        #cv2.imshow( winname, output )
+          
     cv2.destroyAllWindows()
 
 
