@@ -14,11 +14,11 @@
 
 numberOfLevels: 4
 smallestLevel: [ 120, 120 ]
-foveas: [ 0, 10,           20, 30,        0, 0,          10, 10,            -20, 10]
+#foveas: [ 0, 10,           20, 30,        0, 0,          10, 10,            -20, 10]
 #           red              blue         green          yellow             pink
-colors: [ 0, 0, 255,     255, 0, 0,     0, 255, 0,     0, 255, 255,        255, 0, 255 ] # B G R
-#foveas: [0, 0]
-#colors: [255, 255, 255]
+#colors: [ 0, 0, 255,     255, 0, 0,     0, 255, 0,     0, 255, 255,        255, 0, 255 ] # B G R
+foveas: [0, 0]
+colors: [255, 255, 255]
 bvector: [ 1, 1, 1, 1]
 etavector: [ 4, 3, 2, 1 ]
 levelvector: [ 0, 1, 2, 3 ]

@@ -205,10 +205,29 @@ def main():
                     delta = [ int(params.w[0]/2) + jump, int(params.w[1]/2) + jump ]
                     size = [ params.u[0] - int(params.w[0]/2) - jump, params.u[1] - int(params.w[1]/2) - jump ]
                     region = [ delta, size ]
+
+                    # Reduce Region by Local Gradient
+                    poseRRLG = statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, c )
+                    #statistics.displayConfigurations( model, scene, params, poseRRLG )
+                    pose, errorRRLG = calcError( poseRRLG, lines, i )
+
+                    # Intersection Local Gradient
+                    poseILG = ( 0.0, 0.0 )
+                    if ( c != 0 ):
+                        poseILG = statistics.intersectionLocalGradient( model, scene, params, jump, c )
+                    #statistics.displayConfigurations( model, scene, params, poseILG )
+                    pose, errorILG = calcError( poseILG, lines, i )
                     
-                    print( statistics.reduceRegionByLocalGradient( model, scene, params, region, iterations, jump, 1 ) )
-                    #pose = statistics.intersectionLocalGradient( model, scene, params, jump, 1 )
-                    #statistics.displayConfigurations( model, scene, params, pose )
+
+                    # Writing on the file
+                    if ( c == 0 ):
+                        file.write( str( count ) + '\t' +
+                                    str( "{0:.2f}".format(round(errorRRLG,2)) ) + '\t' + \
+                                    str( "{0:.2f}".format(round(errorILG,2)) ) + '\t' )
+                    else:
+                        file.write( str( "{0:.2f}".format(round(errorRRLG,2)) ) + '\t' + \
+                                    str( "{0:.2f}".format(round(errorILG,2)) ) + '\t' )
+
                     
                     key = cv2.waitKey( 1 )
                     if ( key == ord('q') ):

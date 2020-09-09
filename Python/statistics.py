@@ -85,7 +85,7 @@ class Statistics :
                     fovea.foveatedMatching( model, parameters )
                     file.write(str(fovea.features.inlierRateSURF[k]) + '\t')
                 file.write('\n')
-
+    
 
     def plotFunction( self, model, scene, fovea, parameters ):
         '''
@@ -125,7 +125,7 @@ class Statistics :
         
         \param fovea - Structure that contain the features ( keypoints, descriptors and matches )
         \param parameters - Parameters of fovea structure
-        '''
+        '''        
         p = parameters
         self.weightedFunction = []
         # Adding all regions
@@ -136,13 +136,17 @@ class Statistics :
         for i in range( 0, p.m + 1 ):
             den = fovea.levels[p.m - i].getSize( parameters )
             self.weightedFunction.append( numpy.divide( den , self.regionSum ) )
+        # Adding all weight
+        sumWeight = 0.0
+        for k in range( 0, p.m + 1 ):
+            sumWeight += self.weightedFunction[k][0] + self.weightedFunction[k][1]
         # Weighting fovea
         self.fpdf = 0.0
         for k in range( 0, p.m + 1 ):
-            inlierRate = fovea.features.inlierRateSURF[k]
+            inlierRate = ( fovea.features.inlierRateSURF[k] )
 #            print("taxa de inlier: " +str(inlierRate)+", pesox: "+str(self.weightedFunction[k][0])+", pesoy: "+str(self.weightedFunction[k][1]))
             #self.fpdf += 1.0 * inlierRate
-            self.fpdf += self.weightedFunction[k][0] * inlierRate + self.weightedFunction[k][1] * inlierRate
+            self.fpdf += (self.weightedFunction[k][0]/sumWeight) * inlierRate + (self.weightedFunction[k][1]/sumWeight) * inlierRate
 #        print("fpdf"+str(self.fpdf))
         return self.fpdf
         
@@ -277,8 +281,8 @@ class Statistics :
                 maxPotential = ( potentials[p] - referencePotential )
                 index = p
         return index
-        
-
+    
+    
     def reduceRegionByLocalGradient( self, model, scene, parameters, regionUnderAnalysis, iterations, jump, config ):
         '''
         \fn reduceRegionByLocalGradient( model, scene, parameters, regionUnderAnalysis, iterations, jump, config )
@@ -298,26 +302,27 @@ class Statistics :
         '''
         # This method will work until iterations to be null
         if ( iterations == 0 ):
-            print( regionUnderAnalysis )
-            return regionUnderAnalysis;
-        else :
-            print( regionUnderAnalysis )
+            x = regionUnderAnalysis[0][0]; y = regionUnderAnalysis[0][1];
+            sx = regionUnderAnalysis[1][0]; sy = regionUnderAnalysis[1][1];
+            center = ( (x + sx)/2, (y + sy)/2 )
+            return center
+        else:
             xmin = regionUnderAnalysis[0][0]; ymin = regionUnderAnalysis[0][1];
             xmax = regionUnderAnalysis[1][0]; ymax = regionUnderAnalysis[1][1];
             # It will work until regionUnderAnalysis is bigger than 25 x 25
-            if ( xmax - xmin > int(parameters.w[0]/2) and ymax - ymin > int(parameters.w[1]/2) ):
-                # Debug
-                #x = int(input("posicao x: "))
-                #y = int(input("posicao y: "))
+            if ( (xmax - xmin) > int(parameters.w[0]/2) and (ymax - ymin) > int(parameters.w[1]/2) ):
                 # Chosen point
                 x = random.randint(xmin, xmax)
                 y = random.randint(ymin, ymax)
-                print( x, y )
+                
+                '''
                 cv2.rectangle(scene,(xmin, ymin),(xmax, ymax),(0,255,0),3)
                 cv2.rectangle(scene,(0, 30), (20, 60 ), (100, 100, 0), 2 )
                 cv2.circle(scene, (x, y), 3, (0, 0, 255), -1)
                 cv2.imshow('region', scene)
                 cv2.waitKey( 0 )
+                '''
+                
                 # Detecting bigger potential
                 index = self.localGradient( [x, y], model, scene, parameters, jump, config )
                 if ( config == 0 ): # index related to up (North), right (EAST), down (SOUTH) and left (WEST)
@@ -358,16 +363,15 @@ class Statistics :
                     if ( index == 7 ): # northwest
                         xmax = x; ymax = y;
 
-                cv2.rectangle(scene,(xmin, ymin),(xmax, ymax),(244,255,0),3)
-                cv2.imshow('region', scene)
-                cv2.waitKey( 0 )
-                regionUnderAnalysis = [ [xmin, ymin], [xmax, ymax] ]
-                self.reduceRegionByLocalGradient( model, scene, parameters, regionUnderAnalysis, iterations - 1, jump, config )
+                    '''
+                    cv2.rectangle(scene,(xmin, ymin),(xmax, ymax),(244,255,0),3)
+                    cv2.imshow('region', scene)
+                    cv2.waitKey( 0 )
+                    '''
+            regionUnderAnalysis = [ [xmin, ymin], [xmax, ymax] ]
+            return self.reduceRegionByLocalGradient( model, scene, parameters, regionUnderAnalysis, iterations - 1, jump, config )
 
-            else :
-                return regionUnderAnalysis
-            
-    
+
     def intersectionLocalGradient( self, model, scene, parameters, jump, config):
         '''
         \fn intersectionLocalGradient( model, scene, parameters, jump, config )
@@ -469,7 +473,7 @@ class Statistics :
             if ( indexC == 7 ): # Northwest
                 xd = xc - jump; yd = yc - jump;
 
-        #'''
+        '''
         # Display in the image the intersection between lines
         #xa = 333; ya = 303; xb = 338; yb = 298;
         #xc = 219; yc = 283; xd = 214; yd = 278;
@@ -480,7 +484,7 @@ class Statistics :
         cv2.line(scene,(xc, yc),(xd, yd),(b,g,r),2)
         cv2.imshow('intersection', scene)
         cv2.waitKey( 0 )
-        #'''
+        '''
         
         '''
               x    y    1
@@ -554,6 +558,8 @@ class Statistics :
                     
         else:
             #print("Horizontal parallel lines")
+            return self.intersectionLocalGradient( model, scene, parameters, jump, config )
+        '''
             if ( ya == yb ):
                 y = ( xb * ya - xa * yb ) / ( xb - xa )
                 x = ( ( xd * yc - xc * yd ) - y * ( xd - xc ) ) / ( yc - yd )
@@ -571,6 +577,7 @@ class Statistics :
                 y = ( ( xb * ya - xa * yb ) - x * ( ya - yb ) ) / ( xb - xa )
         
         return x, y
+        '''
         
     
     def maximumLikelihoodEstimator( self, model, scene, parameters, threshold,  method ):
@@ -618,6 +625,39 @@ class Statistics :
             y /= sumPotentials
         
         return x, y
+
+
+    def distanceEstimator( self, points, potential, parameters ):
+        '''
+        \fn distanceEstimator( points, potential )
+
+        \param points - Foveas position
+        \param potential - Detection rate
+
+        \return A vector of estimated distances
+        '''
+        # Intersection between secant circumferences
+        components = numpy.zeros(int(len(points)/2))
+        radius = [];
+        for i in range( len(potential) ):
+            radius.append(1 - potential[i])
+        found = False
+        while ( found == False ):
+            found = True
+            for i in range( len(potential) ):
+                for j in range( i, len(potential) ):
+                    if ( i != j ):
+
+                        d = math.sqrt( pow(points[2*i] - points[2*j], 2.0) + pow(points[2*i+1] - points[2*j+1], 2.0) )
+                        if ( ( d > radius[i] - radius[j] ) and ( d < radius[i] + radius[j] ) ):
+                            found = found and True
+                        else:
+                            found = False
+                            radius[i] += ( 1 - potential[i] )
+                            radius[j] += ( 1 - potential[j] )
+        #print( radius )
+        components = radius
+        return components
     
     
     def trilaterationEstimator( self, model, scene, parameters ):
@@ -648,36 +688,17 @@ class Statistics :
             else:
                 points[p] += int( parameters.u[1]/2 )        
         #print( points )
-        
-        # Finding the shortest euclidean distance
-        for i in range( 0, int(len(points)/2) ):
-            for j in range( i+1, int(len(points)/2) ):
-                distance = math.sqrt( pow( points[2*i] - points[2*j], 2.0 ) + pow( points[2*i+1] - points[2*j+1], 2.0 ) )
-                if ( ( j == 1 ) and ( potential[i] != potential[j] ) ):
-                    self.euclideanDistance = distance
-                    self.potentialDifference = abs( potential[i] - potential[j] )
-                if ( ( j != 1 ) and ( self.euclideanDistance > distance ) ):
-                    self.euclideanDistance = distance
-                    self.potentialDifference = abs( potential[i] - potential[j] )
-        #print( self.euclideanDistance, self.potentialDifference )
-        
-        # Circumference radius
-        r = []
-        r = [0, 80, 80]
-        #for i in range( 0, len(potential) ):
-            # first way
-            #r.append( (self.euclideanDistance * self.potentialDifference) / potential[i] )
-            # second way
-            #r.append( (1.0 - potential[i]) * self.euclideanDistance )
-        #print( r )
 
-        #'''
+        # Distance Estimator
+        r = self.distanceEstimator( points, potential, parameters )
+        
+        '''
         output = multifovea.multifoveatedImage( scene, parameters )
         for i in range( 0, len(potential) ):
             cv2.circle( output, (int(points[2*i]), int(points[2*i+1])), int(r[i]), (parameters.colors[3*i], parameters.colors[3*i+1], parameters.colors[3*i+2]), 1 )
-        cv2.imshow( "testando", output )
+        cv2.imshow( "trilateration", output )
         cv2.waitKey( 0 )
-        #'''
+        '''
 
         x1 = points[0]; y1 = points[1];
         x2 = points[2]; y2 = points[3];
@@ -693,8 +714,12 @@ class Statistics :
         f = (r2*r2) - (r3*r3) - (x2*x2) + (x3*x3) - (y2*y2) + (y3*y3)
 
         den = (a * e) - (b * d)
-        x = ((c * e) - (b * f)) / den
-        y = ((a * f) - (c * d)) / den
+        if ( den != 0 ):
+            x = ((c * e) - (b * f)) / den
+            y = ((a * f) - (c * d)) / den
+        else:
+            x = 0
+            y = 0
         
         return x, y    
     
@@ -725,45 +750,35 @@ class Statistics :
         multifovea.multifoveatedFeatures( scene, parameters )
         multifovea.multifoveatedMatching( model, parameters )
         potentials = self.weightedFunctionMultifovea( multifovea, parameters )
+        
         # Transforming points to cartesian domain
         pose = []
         for f in range( 0, len(parameters.f), 2 ):
             pose.append( [ parameters.f[f] + int( parameters.u[0]/2 ), parameters.f[f+1] + int( parameters.u[1]/2 ) ] )
-        print( pose )
+        #print( pose )
 
-        # Finding the shortest euclidean distance
-        for i in range( 0, len(potentials) ):
-            for j in range( i+1, len(potentials) ):
-                distance = math.sqrt( pow( pose[i][0] - pose[j][0], 2.0 ) + pow( pose[i][1] - pose[j][1], 2.0 ) )
-                if ( ( j == 1 ) and ( potentials[i] != potentials[j] ) ):
-                    self.euclideanDistance = distance
-                    self.potentialDifference = abs( potentials[i] - potentials[j] )
-                if ( ( j != 1 ) and ( self.euclideanDistance > distance ) ):
-                    self.euclideanDistance = distance
-                    self.potentialDifference = abs( potentials[i] - potentials[j] )
-        print( self.euclideanDistance, self.potentialDifference )
-
-        print( potentials )
+        # Points
+        points = []
+        for p in range( 0, len(parameters.f) ):
+            points.append( parameters.f[p] )
         
-        # Inverse of detection rate
-        invpotential = []
-        for i in range( 0, len( potentials ) ):
-            # first way
-            #invpotential.append( (self.euclideanDistance * self.potentialDifference) / potentials[i] )
-            # second way
-            invpotential.append( (1.0 - potentials[i]) * self.euclideanDistance )
-            
-            #invpotential.append( ((1.0 - potentials[i]) * 0.001 )/ 0.0001 )
-            #invpotential.append( math.sqrt( pow(pose[i][0] * (0.57 - potentials[i]), 2.0) + pow(pose[i][1] * (0.57 - potentials[i]), 2.0) ) )
-        #invpotential = [ 140, 235, 224, 88, 88]
-        print( invpotential )
+        # Transforming points to cartesian domain
+        for p in range( 0, len(points) ):
+            if ( p % 2 == 0 ):
+                points[p] += int( parameters.u[0]/2 )
+            else:
+                points[p] += int( parameters.u[1]/2 )
+        
+        # Distance Estimator
+        r = self.distanceEstimator( points, potentials, parameters )
 
+        '''
         output = multifovea.multifoveatedImage( scene, parameters )
-        # put the point estimated
-        for p in range( 0, len( potentials ) ):
-            cv2.circle( output, (int(pose[p][0]), int(pose[p][1])), int(invpotential[p]), (parameters.colors[3*p], parameters.colors[3*p+1], parameters.colors[3*p+2]), 1 )
+        for p in range( 0, len(potentials) ):
+            cv2.circle( output, (int(pose[p][0]), int(pose[p][1])), int(r[p]), (parameters.colors[3*p], parameters.colors[3*p+1], parameters.colors[3*p+2]), 1 )
         cv2.imshow( "testando", output )
         cv2.waitKey( 0 )
+        '''
         
         x = 0.0; y = 0.0;
         if ( len(parameters.f) == 0 ): return x, y
@@ -774,9 +789,9 @@ class Statistics :
         for i in range( 0, m - 1 ):
             A[i][0]  = ( -2 * pose[i][0] ) + ( 2 * pose[i+1][0] )            
             A[i][1]  = ( -2 * pose[i][1] ) + ( 2 * pose[i+1][1] )
-            b[i][0] = pow( invpotential[i], 2.0 ) - pow( invpotential[i+1], 2.0 ) - pow( pose[i][0], 2.0 ) + pow( pose[i+1][0], 2.0 ) - pow( pose[i][1], 2.0 ) + pow( pose[i+1][1], 2.0 )
+            b[i][0] = pow( r[i], 2.0 ) - pow( r[i+1], 2.0 ) - pow( pose[i][0], 2.0 ) + pow( pose[i+1][0], 2.0 ) - pow( pose[i][1], 2.0 ) + pow( pose[i+1][1], 2.0 )
         #print( A, b )
-
+        
         # Transposed A
         at = A.transpose()
         # Multiplication between transposed A and A
@@ -787,7 +802,7 @@ class Statistics :
         multInv = numpy.dot( inv, at )
         # Multiplication between multInv and b
         estimated = numpy.dot( multInv, b )
-
+        
         # Debug
         '''
         print("Matriz b")
@@ -808,7 +823,7 @@ class Statistics :
         x = (estimated[0])[0]; y = (estimated[1])[0]
         return x, y
 
-
+    
     def barycentricCoordinates( self, model, scene, parameters ):
         '''
         \fn barycentricCoordinates( model, scene, parameters )
@@ -872,8 +887,10 @@ class Statistics :
             thickness = 2
             # put the point estimated
             cv2.circle( output, (int(poseEstimated[0]), int(poseEstimated[1])), radius, color, thickness )
-        cv2.imshow( "multifoveated image with 4 foveas", output )
-        cv2.waitKey( 0 )
+        winname = 'Estimation multifoveated'
+        cv2.namedWindow( winname, cv2.WINDOW_NORMAL )
+        cv2.imshow( winname, output )
+        cv2.waitKey( 1 )
         #cv2.destroyAllWindows()
 
     
@@ -894,7 +911,7 @@ class Statistics :
         multifovea = Multifovea( parameters.u, params )
         multifovea.multifoveatedFeatures( scene, params )
         multifovea.multifoveatedMatching( model, params )
-        fpdf = statistics.weightedFunctionMultifovea( multifovea, params )
+        fpdf = self.weightedFunctionMultifovea( multifovea, params )
         #print( fpdf )
         indexSave = 0; biggerSum = 0.0;
         for index in range( 0, len( array ) ):
@@ -944,7 +961,7 @@ class Statistics :
                 foveas.append( (j - math.floor( parameters.u[1]/2 )) )
             if ( ( config == 1 ) and ( j == parameters.u[1]/2 ) ):
                 foveas.pop(); foveas.pop(); # removing x and y
-                
+               
         #print( foveas )
         colors = []
         for i in range( 0, int(len( foveas )/2) ):

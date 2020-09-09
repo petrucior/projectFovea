@@ -144,6 +144,24 @@ class Parameters:
         self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
                               self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
 
+    def updateParameterSizes( self, u, w, threshold ):
+        '''
+        \fn updateParameterSizes( u, w, threshold )
+
+        \brief Updating the U = ( ux, uy ) that corresponds the image size and W = ( wx, wy ) responsible by 
+        resize the image
+
+        \param u - Size of image
+        \param w - SmallestLevel = [ wx, wy ] 
+        \param threshold - Threshold features
+        '''
+        self.u = u
+        self.w = w
+        self.thresholdFeatures = threshold
+        # checking parameters
+        self.checkParameters( self.m, self.w, self.u, self.f, self.bvector, self.etavector, self.levelvector, \
+                              self.growthfactor, self.typeShape, self.typeFovea, self.typeMultifovea )
+
 
     def fixFovea( self ):
         '''
