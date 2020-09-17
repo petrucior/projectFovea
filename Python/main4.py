@@ -134,6 +134,7 @@ def main():
                 thresholdFeatures = 15
                 w = [80, 80]
                 params.updateParameterSizes( u, w, thresholdFeatures ) 
+
                 
                 '''
                 for c in range(0, 4):
@@ -193,6 +194,7 @@ def main():
                     
                 '''
 
+
                 for c in range(0, 3):
                 
                     ######################################################
@@ -227,7 +229,7 @@ def main():
                     else:
                         file.write( str( "{0:.2f}".format(round(errorRRLG,2)) ) + '\t' + \
                                     str( "{0:.2f}".format(round(errorILG,2)) ) + '\t' )
-
+               
                     
                     key = cv2.waitKey( 1 )
                     if ( key == ord('q') ):
@@ -236,6 +238,8 @@ def main():
                 # Line break
                 file.write('\n')
                 count += 1
+                
+                
     cv2.destroyAllWindows()
 
 

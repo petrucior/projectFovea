@@ -1,4 +1,4 @@
-#OA
+#
 # Executing file:
 # $ gnuplot -c graphicError4Plots.gnu graphError1.dat graphError2.dat test1A.(gif/eps) test2A.(gif/eps) test1B.(gif/eps) test2B.(gif/eps)
 # graphError1.dat -> RRLG and ILG
@@ -9,13 +9,16 @@
 # EPS
 set term postscript landscape color solid  
 set xlabel 'Imagens'
-set ylabel 'Error (pixels)'
+set ylabel 'Erro (pixels)'
 set key top left
 set style function linespoints
 set style line 1 lw 4 lc rgb '#990042' ps 0.7 pt 1# pi 5
 set style line 2 lw 3 lc rgb '#31f120' ps 0.5 pt 2# pi 3
 set style line 3 lw 3 lc rgb '#0044a5' ps 0.5 pt 6# pi 5
 set style line 4 lw 4 lc rgb '#888888' ps 0.3 pt 4# pi 4
+
+# Setting without legends
+#set nokey
 
 datasetA = ARG1
 datasetB = ARG2

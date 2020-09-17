@@ -99,7 +99,8 @@ class Statistics :
         \param parameters - Parameters of fovea structure
         '''
         file = open("data/function.dat", "w")
-        stepx = 20; stepy = 20;
+        #stepx = 20; stepy = 20;
+        stepx = 5; stepy = 5;
         # loop image
         for i in range( 0, parameters.u[1], stepx ): # rows
             for j in range( 0, parameters.u[0], stepy ): # cols

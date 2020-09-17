@@ -108,18 +108,22 @@ def main():
             # Controls from fovea
             if ( key == ord('d') ):
                 params.w[0] = min( params.u[0], params.w[0] + 10 )
+                print( params.w[0] )
             if ( key == ord('a') ):
                 params.w[0] = max( 1, params.w[0] - 10 )
+                print( params.w[0] )
             if ( key == ord('c') ):
                 params.w[1] = min( params.u[1] - 1, params.w[1] + 10 )
+                print( params.w[1] )
             if ( key == ord('z') ):
                 params.w[1] = max( 1, params.w[1] - 10 )
+                print( params.w[1] )
             if ( key == ord('m') ): # changes the index of the fovea
                 index += 1
                 index = index % int( len(params.f)/2 )
             if ( key == ord('g') ):
-                statistics.plotProportion( model, scene, fovea, parameters )
-                statistics.plotFunction( model, scene, fovea, params )
+                #statistics.plotProportion( model, scene, multifovea, params )
+                statistics.plotFunction( model, scene, multifovea.foveas[0], params )
             
         # Configuration with 4 foveas ( config 0 )
         #params = statistics.poseFoveas( params, 0 )
